@@ -1,0 +1,64 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "99f41455afa4ebb3253e57faee563961",
+    "packages": [
+        {
+            "name": "pdga/exception",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PDGA/php-exceptions.git",
+                "reference": "0952ff7e32714614709dc48d7aa4fd4b1265057f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PDGA/php-exceptions/zipball/0952ff7e32714614709dc48d7aa4fd4b1265057f",
+                "reference": "0952ff7e32714614709dc48d7aa4fd4b1265057f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PDGA\\Exception\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PDGA",
+                    "email": "it@pdga.com",
+                    "homepage": "https://www.pdga.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Custom exception classes used by the PDGA.",
+            "homepage": "https://github.com/PDGA/php-exceptions",
+            "support": {
+                "issues": "https://github.com/PDGA/php-exceptions/issues",
+                "source": "https://github.com/PDGA/php-exceptions/tree/1.0.2"
+            },
+            "time": "2022-08-29T22:52:23+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=8.0.0"
+    },
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
+}
