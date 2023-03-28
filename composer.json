@@ -1,0 +1,24 @@
+{
+  "name": "pdga/php-data-objects",
+  "type": "library",
+  "description": "Custom data object classes used by the PDGA.",
+  "keywords": [],
+  "homepage": "https://github.com/PDGA/php-data-objects",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "PDGA",
+      "email": "it@pdga.com",
+      "homepage": "https://www.pdga.com",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=8.0.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "PDGA\\DataObjects\\": "src/"
+    }
+  }
+}
