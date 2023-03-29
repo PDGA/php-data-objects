@@ -16,7 +16,7 @@ class SequentialArrayValidator implements Validator
      */
     public function validate(mixed $val): bool
     {
-        if (is_null($val) || !isset($val))
+        if (is_null($val))
         {
             return true;
         }
