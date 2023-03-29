@@ -18,7 +18,7 @@ final class SequentialArrayValidatorTest extends TestCase
      */
     public function testGetErrorMessage(): void
     {
-        $expected_value = "The array field must be a sequential (non-associative) array.";
+        $expected_value = "The array field must be a sequential (non-associative) zero-indexed array.";
         $result = $this->array_validator->getErrorMessage("array");
 
         $this->assertSame($expected_value, $result);
