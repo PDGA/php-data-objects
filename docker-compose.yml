@@ -1,9 +1,9 @@
 version: '3.8'
 services:
   php:
-    image: php:8.1-cli-alpine
+    image: php:8.2.4-cli-alpine
     volumes:
-      - ./:/var/pgda
+      - ./:/var/pdga
     working_dir: /var/pdga
 
   composer:
