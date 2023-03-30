@@ -85,7 +85,7 @@ final class ISO8601ValidatorTest extends TestCase
     /**
      * Strings in ISO8601 format for valid dates should result in true.
      */
-    public function testValidArray(): void
+    public function testValidISOString(): void
     {
         $value = "2023-03-30T23:25:42Z";
         $expected_value = true;
