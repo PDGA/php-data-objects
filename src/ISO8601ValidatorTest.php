@@ -71,12 +71,24 @@ final class ISO8601ValidatorTest extends TestCase
     }
 
     /**
-     * Strings in ISO8601 format for but don't contain valid dates should result in false.
+     * Strings in ISO8601 format but don't contain valid dates should result in false.
      */
     public function testIsoStringForInvalidDatePassedIn(): void
     {
         $value = "2023-15-31T23:25:42Z";
         $expected_value = false;
+        $result = $this->iso_validator->validate($value);
+
+        $this->assertSame($expected_value, $result);
+    }
+
+    /**
+     * Strings in ISO8601 format that only contain date info should result in true.
+     */
+    public function testIsoStringForOnlyDatePassedIn(): void
+    {
+        $value = "2023-12-31";
+        $expected_value = true;
         $result = $this->iso_validator->validate($value);
 
         $this->assertSame($expected_value, $result);
