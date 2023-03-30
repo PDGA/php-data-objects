@@ -12,15 +12,6 @@ class ISO8601Validator implements Validator
      * Validates that the passed in value is null or undefined,
      * or is a string in ISO8601 date format.
      *
-     * Note that this checks that if a string is passed in that has
-     * the right format and can be turned into a date by the DateTime
-     * class. The DateTime class will morph some invalid dates (February 30 or
-     * November 31) into a valid date (March 2 and December 1) but will fail
-     * to create dates for values that are totally invalid (a month higher than 12
-     * or a day larger than 31).
-     *
-     * DATETIME DOES NOT VALIDATE THAT THE STRING MATCHES 1:1 A REAL DATE IN ALL CASES.
-     *
      * @param mixed $val The value to validate.
      * @return bool Returns true if the passed in value is null, undefined, or
      * a string in ISO8601 date format.
@@ -37,28 +28,33 @@ class ISO8601Validator implements Validator
             return false;
         }
 
-        if (preg_match('/^'.
+        if (!preg_match('/^'.
             '(\d{4}-\d{2}-\d{2})(T'. // YYYY-MM-DDT ex: 2014-01-01T
             '\d{2}:\d{2}:\d{2}'.  // HH:MM:SS  ex: 17:00:00
             '(Z|((-|\+)\d{2}:\d{2})))?'.  // Z or +01:00 or -01:00
-            '$/', $val, $matches) == 1)
+            '$/', $val, $matches))
         {
-            try
-            {
-                $format = 'Y-m-d';
-                $date_check = new DateTime($val);
-                if ($date_check->format($format) == $matches[1])
-                {
-                    return true;
-                }
-            }
-            catch (Exception $e)
-            {
-                return false;
-            }
+            return false;
         }
 
-        return false;
+        try
+        {
+            $format = 'Y-m-d';
+            $date_check = new DateTime($val);
+            // If the date created by DateTime doesn't match the date part of the value
+            // passed in then the value date is not valid.
+            if ($date_check->format($format) == $matches[1])
+            {
+                return true;
+            }
+
+            return false;
+        }
+        // Invalid dates (ie month of 15+ or day of 32+ etc) will result in en exception.
+        catch (Exception $e)
+        {
+            return false;
+        }
     }
 
     /**
