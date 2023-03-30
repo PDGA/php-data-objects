@@ -18,7 +18,7 @@ final class DateValidatorTest extends TestCase
      */
     public function testGetErrorMessage(): void
     {
-        $expected_value = "The date field must be a Date type or a string in ISO8601 date format.";
+        $expected_value = "The date field must be a DateTime or a string in ISO8601 date format.";
         $result = $this->date_validator->getErrorMessage("date");
 
         $this->assertSame($expected_value, $result);

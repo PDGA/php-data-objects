@@ -13,7 +13,7 @@ class ISO8601Validator implements Validator
      * or is a string in ISO8601 date format.
      *
      * Note that this checks that if a string is passed in that has
-     * the right format it can be turned into a date by the DateTime
+     * the right format and can be turned into a date by the DateTime
      * class. The DateTime class will morph some invalid dates (February 30 or
      * November 31) into a valid date (March 2 and December 1) but will fail
      * to create dates for values that are totally invalid (a month higher than 12
