@@ -1,0 +1,72 @@
+<?php
+
+namespace PDGA\DataObjects;
+
+use \DateTime;
+use \Exception;
+use PDGA\DataObjects\Validator;
+
+class ISO8601Validator implements Validator
+{
+    /**
+     * Validates that the passed in value is null or undefined,
+     * or is a string in ISO8601 date format.
+     *
+     * Note that this checks that if a string is passed in that has
+     * the right format it can be turned into a date by the DateTime
+     * class. The DateTime class will morph some invalid dates (February 30 or
+     * November 31) into a valid date (March 2 and December 1) but will fail
+     * to create dates for values that are totally invalid (a month higher than 12
+     * or a day larger than 31).
+     *
+     * DATETIME DOES NOT VALIDATE THAT THE STRING MATCHES 1:1 A REAL DATE IN ALL CASES.
+     *
+     * @param mixed $val The value to validate.
+     * @return bool Returns true if the passed in value is null, undefined, or
+     * a string in ISO8601 date format.
+     */
+    public function validate(mixed $val): bool
+    {
+        if (is_null($val))
+        {
+            return true;
+        }
+
+        if (!is_string($val))
+        {
+            return false;
+        }
+
+        if (preg_match('/^'.
+            '\d{4}-\d{2}-\d{2}T'. // YYYY-MM-DDT ex: 2014-01-01T
+            '\d{2}:\d{2}:\d{2}'.  // HH-MM-SS  ex: 17:00:00
+            '(Z|((-|\+)\d{2}:\d{2}))'.  // Z or +01:00 or -01:00
+            '$/', $val) == 1)
+        {
+            try
+            {
+                new DateTime($val);
+                return true;
+            }
+            catch (Exception $e)
+            {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns an error indicating that the passed in property name is supposed to be a
+     * string in ISO8601 format.
+     *
+     * @param string $propName The name of the property.
+     * @return string Returns an error string which includes the name of the property and
+     * the valid type the property should be.
+     */
+    public function getErrorMessage(string $propName): string
+    {
+        return "The $propName field must be a string in ISO8601 date format.";
+    }
+}
