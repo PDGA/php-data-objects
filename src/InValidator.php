@@ -7,13 +7,13 @@ namespace PDGA\DataObjects;
  */
 class InValidator implements Validator
 {
-    private array $values;
+    private array $valid_values;
 
     public function __construct(
-        array $values
+        array $valid_values
     )
     {
-        $this->values = $values;
+        $this->valid_values = $valid_values;
     }
 
     public function validate(mixed $val): bool
@@ -25,11 +25,11 @@ class InValidator implements Validator
         }
 
         // Find the item in the $values array with strict comparison.
-        return in_array($val, $this->values, true);
+        return in_array($val, $this->valid_values, true);
     }
 
     public function getErrorMessage(string $propName): string
     {
-        return "$propName must be one of these values: " . implode(', ', $this->values);
+        return "$propName must be one of these values: " . implode(', ', $this->valid_values);
     }
 }
