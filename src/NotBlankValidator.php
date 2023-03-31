@@ -19,7 +19,17 @@ class NotBlankValidator implements Validator
             return true;
         }
 
-        return !empty($val);
+        if (is_string($val) && empty(trim($val)))
+        {
+            return false;
+        }
+
+        if (isset($val))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     /**
