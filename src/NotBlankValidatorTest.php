@@ -38,12 +38,17 @@ final class NotBlankValidatorTest extends TestCase
     /**
      * Empty string values should result in false.
      */
-    public function testEmptyStringValuePassedIn(): void
+    public function testInvalidStringValuesPassedIn(): void
     {
-        $expected_value = false;
-        $result = $this->not_blank_validator->validate('');
+        $invalid_values = [
+            '',
+            ' ',
+        ];
 
-        $this->assertSame($expected_value, $result);
+        foreach ($invalid_values as $value)
+        {
+            $this->assertFalse($this->not_blank_validator->validate($value));
+        }
     }
 
     /**
@@ -55,6 +60,8 @@ final class NotBlankValidatorTest extends TestCase
             'this is a string',
             123456,
             true,
+            0,
+            false,
         ];
 
         foreach ($valid_values as $value)
