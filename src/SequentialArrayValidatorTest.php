@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 
 use PDGA\DataObjects\SequentialArrayValidator;
 
-final class SequentialArrayValidatorTest extends TestCase
+class SequentialArrayValidatorTest extends TestCase
 {
     private $array_validator;
 
