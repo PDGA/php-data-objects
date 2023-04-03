@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 
 use PDGA\DataObjects\ZipValidator;
 
-final class ZipValidatorTest extends TestCase
+class ZipValidatorTest extends TestCase
 {
     private $zip_validator;
 
