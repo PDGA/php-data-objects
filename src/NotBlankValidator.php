@@ -33,12 +33,12 @@ class NotBlankValidator implements Validator
     }
 
     /**
-     * Returns an error indicating that the passed in property name is supposed to be a
-     * bool.
+     * Returns an error indicating that the passed in property name is supposed to be
+     * not blank.
      *
      * @param string $propName The name of the property.
      * @return string Returns an error string which includes the name of the property and
-     * the valid type the property should be.
+     * that the property should be not blank.
      */
     public function getErrorMessage(string $propName): string
     {
