@@ -11,11 +11,11 @@ docker compose run --rm -u $(id -u):$(id -g) composer install
 ### Run Unit Tests
 
 ```
-./run-tests.sh
+./bin/phpunit
 ```
 
 ### Require this Library as a Dependency
 
 ```
-composer require pdga/php-data-objects
+composer require pdga/data-objects
 ```
