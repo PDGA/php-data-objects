@@ -24,11 +24,11 @@ class NotNullValidator implements Validator
 
     /**
      * Returns an error indicating that the passed in property name is supposed to be a
-     * bool.
+     * string.
      *
      * @param string $propName The name of the property.
      * @return string Returns an error string which includes the name of the property and
-     * the valid type the property should be.
+     * that the property should not be null.
      */
     public function getErrorMessage(string $propName): string
     {
