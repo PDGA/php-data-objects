@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 
 use PDGA\DataObjects\NotNullValidator;
 
-final class NotNullValidatorTest extends TestCase
+class NotNullValidatorTest extends TestCase
 {
     private $not_null_validator;
 
