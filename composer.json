@@ -1,5 +1,5 @@
 {
-  "name": "pdga/php-data-objects",
+  "name": "pdga/data-objects",
   "type": "library",
   "description": "Custom data object classes used by the PDGA.",
   "keywords": [],
