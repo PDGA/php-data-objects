@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 
 use PDGA\DataObjects\Validators\DateValidator;
 
-final class DateValidatorTest extends TestCase
+class DateValidatorTest extends TestCase
 {
     private $date_validator;
 

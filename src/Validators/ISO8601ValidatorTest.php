@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 
 use PDGA\DataObjects\Validators\ISO8601Validator;
 
-final class ISO8601ValidatorTest extends TestCase
+class ISO8601ValidatorTest extends TestCase
 {
     private $iso_validator;
 

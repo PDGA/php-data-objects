@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 
 use PDGA\DataObjects\Validators\BoolValidator;
 
-final class BoolValidatorTest extends TestCase
+class BoolValidatorTest extends TestCase
 {
     private $bool_validator;
 
