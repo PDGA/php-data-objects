@@ -23,8 +23,8 @@ class NotNullValidator implements Validator
     }
 
     /**
-     * Returns an error indicating that the passed in property name is supposed to be a
-     * string.
+     * Returns an error indicating that the passed in property name is supposed to be
+     * not null.
      *
      * @param string $propName The name of the property.
      * @return string Returns an error string which includes the name of the property and
