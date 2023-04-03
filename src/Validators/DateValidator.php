@@ -1,9 +1,9 @@
 <?php
 
-namespace PDGA\DataObjects;
+namespace PDGA\DataObjects\Validators;
 
-use PDGA\DataObjects\Validator;
-use PDGA\DataObjects\ISO8601Validator;
+use PDGA\DataObjects\Validators\Validator;
+use PDGA\DataObjects\Validators\ISO8601Validator;
 
 class DateValidator implements Validator
 {

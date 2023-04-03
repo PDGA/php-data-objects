@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-use PDGA\DataObjects\DateValidator;
+use PDGA\DataObjects\Validators\DateValidator;
 
 final class DateValidatorTest extends TestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace PDGA\DataObjects;
+namespace PDGA\DataObjects\Validators;
 
 /**
  * Validates maximum length of strings, integers and arrays.

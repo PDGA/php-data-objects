@@ -1,6 +1,6 @@
 <?php
 
-namespace PDGA\DataObjects;
+namespace PDGA\DataObjects\Validators;
 
 /**
  * Validates that a value is within an array. Uses strict comparison: types, value and case must match.

@@ -1,6 +1,6 @@
 <?php
 
-namespace PDGA\DataObjects;
+namespace PDGA\DataObjects\Validators;
 
 /**
  * Validates integers and values which can be converted to integers.

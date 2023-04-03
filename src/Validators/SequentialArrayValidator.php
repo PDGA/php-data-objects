@@ -1,8 +1,8 @@
 <?php
 
-namespace PDGA\DataObjects;
+namespace PDGA\DataObjects\Validators;
 
-use PDGA\DataObjects\Validator;
+use PDGA\DataObjects\Validators\Validator;
 
 class SequentialArrayValidator implements Validator
 {
