@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 
 use PDGA\DataObjects\NotBlankValidator;
 
-final class NotBlankValidatorTest extends TestCase
+class NotBlankValidatorTest extends TestCase
 {
     private $not_blank_validator;
 
