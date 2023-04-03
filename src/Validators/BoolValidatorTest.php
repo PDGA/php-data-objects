@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-use PDGA\DataObjects\BoolValidator;
+use PDGA\DataObjects\Validators\BoolValidator;
 
 class BoolValidatorTest extends TestCase
 {

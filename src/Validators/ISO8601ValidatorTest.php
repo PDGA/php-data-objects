@@ -2,15 +2,15 @@
 
 use PHPUnit\Framework\TestCase;
 
-use PDGA\DataObjects\DateValidator;
+use PDGA\DataObjects\Validators\ISO8601Validator;
 
-class DateValidatorTest extends TestCase
+class ISO8601ValidatorTest extends TestCase
 {
-    private $date_validator;
+    private $iso_validator;
 
     protected function setUp(): void
     {
-        $this->date_validator = new DateValidator();
+        $this->iso_validator = new ISO8601Validator();
     }
 
     /**
@@ -18,8 +18,8 @@ class DateValidatorTest extends TestCase
      */
     public function testGetErrorMessage(): void
     {
-        $expected_value = "The date field must be a DateTime or a string in ISO8601 date format.";
-        $result = $this->date_validator->getErrorMessage("date");
+        $expected_value = "The iso_string field must be a string in ISO8601 date format.";
+        $result = $this->iso_validator->getErrorMessage("iso_string");
 
         $this->assertSame($expected_value, $result);
     }
@@ -30,7 +30,7 @@ class DateValidatorTest extends TestCase
     public function testNullPassedIn(): void
     {
         $expected_value = true;
-        $result = $this->date_validator->validate(null);
+        $result = $this->iso_validator->validate(null);
 
         $this->assertSame($expected_value, $result);
     }
@@ -42,18 +42,18 @@ class DateValidatorTest extends TestCase
     {
         $value;
         $expected_value = true;
-        $result = $this->date_validator->validate($value);
+        $result = $this->iso_validator->validate($value);
 
         $this->assertSame($expected_value, $result);
     }
 
     /**
-     * Non-date values should result in false.
+     * Non-string values should result in false.
      */
-    public function testNonDateValuePassedIn(): void
+    public function testNonStringValuePassedIn(): void
     {
         $expected_value = false;
-        $result = $this->date_validator->validate(1234);
+        $result = $this->iso_validator->validate(1234);
 
         $this->assertSame($expected_value, $result);
     }
@@ -65,19 +65,31 @@ class DateValidatorTest extends TestCase
     {
         $value = "test";
         $expected_value = false;
-        $result = $this->date_validator->validate($value);
+        $result = $this->iso_validator->validate($value);
 
         $this->assertSame($expected_value, $result);
     }
 
     /**
-     * Strings in ISO8601 format for but don't contain valid dates should result in false.
+     * Strings in ISO8601 format but don't contain valid dates should result in false.
      */
     public function testIsoStringForInvalidDatePassedIn(): void
     {
         $value = "2023-15-31T23:25:42Z";
         $expected_value = false;
-        $result = $this->date_validator->validate($value);
+        $result = $this->iso_validator->validate($value);
+
+        $this->assertSame($expected_value, $result);
+    }
+
+    /**
+     * Strings in ISO8601 format that only contain date info should result in true.
+     */
+    public function testIsoStringForOnlyDatePassedIn(): void
+    {
+        $value = "2023-12-31";
+        $expected_value = true;
+        $result = $this->iso_validator->validate($value);
 
         $this->assertSame($expected_value, $result);
     }
@@ -89,19 +101,7 @@ class DateValidatorTest extends TestCase
     {
         $value = "2023-03-30T23:25:42Z";
         $expected_value = true;
-        $result = $this->date_validator->validate($value);
-
-        $this->assertSame($expected_value, $result);
-    }
-
-    /**
-     * DateTimes should result in true.
-     */
-    public function testValidDateTime(): void
-    {
-        $value = new \DateTime();
-        $expected_value = true;
-        $result = $this->date_validator->validate($value);
+        $result = $this->iso_validator->validate($value);
 
         $this->assertSame($expected_value, $result);
     }

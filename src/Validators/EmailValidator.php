@@ -1,6 +1,6 @@
 <?php
 
-namespace PDGA\DataObjects;
+namespace PDGA\DataObjects\Validators;
 
 /**
  * Validates email addresses. Whitespace does not validate.

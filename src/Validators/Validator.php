@@ -1,6 +1,6 @@
 <?php
 
-namespace PDGA\DataObjects;
+namespace PDGA\DataObjects\Validators;
 
 /**
  * All concrete validators should implement this interface.

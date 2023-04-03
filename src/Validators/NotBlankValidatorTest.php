@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-use PDGA\DataObjects\NotBlankValidator;
+use PDGA\DataObjects\Validators\NotBlankValidator;
 
 class NotBlankValidatorTest extends TestCase
 {

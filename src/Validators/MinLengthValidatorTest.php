@@ -1,22 +1,22 @@
 <?php
 
-namespace PDGA\DataObjects;
+namespace PDGA\DataObjects\Validators;
 
 use PHPUnit\Framework\TestCase;
 
-class MaxLengthValidatorTest extends TestCase
+class MinLengthValidatorTest extends TestCase
 {
-    private MaxLengthValidator $validator;
+    private MinLengthValidator $validator;
 
     /**
-     * All tests are against a max length of 5.
+     * All tests are against a min length of 5.
      * @var int
      */
-    private int $max_length = 5;
+    private int $min_length = 5;
 
     public function setUp(): void
     {
-        $this->validator = new MaxLengthValidator($this->max_length);
+        $this->validator = new MinLengthValidator($this->min_length);
     }
 
     public function testGetErrorMessage()
@@ -24,7 +24,7 @@ class MaxLengthValidatorTest extends TestCase
         $propName = 'Property';
 
         $this->assertEquals(
-            "Maximum length of $propName is $this->max_length characters.",
+            "Minimum length of $propName is $this->min_length characters.",
             $this->validator->getErrorMessage($propName)
         );
     }
@@ -38,16 +38,16 @@ class MaxLengthValidatorTest extends TestCase
         $this->assertEquals(true, $this->validator->validate($value));
     }
 
-    public function testStringExceedsMaxLength()
+    public function testStringExceedsMinLength()
     {
         // Use a string value longer than 5 characters.
         $value = "longerthanfive";
 
-        // The value should not validate.
-        $this->assertEquals(false, $this->validator->validate($value));
+        // The value should validate.
+        $this->assertEquals(true, $this->validator->validate($value));
     }
 
-    public function testStringEqualsMaxLength()
+    public function testStringEqualsMinLength()
     {
         // Use a string of 5 characters.
         $value = "bang!";
@@ -56,25 +56,25 @@ class MaxLengthValidatorTest extends TestCase
         $this->assertEquals(true, $this->validator->validate($value));
     }
 
-    public function testStringUnderMaxLength()
+    public function testStringUnderMinLength()
     {
         // Use a string of 4 characters.
         $value = "four";
-
-        // The value should validate.
-        $this->assertEquals(true, $this->validator->validate($value));
-    }
-
-    public function testIntegerExceedsMaxLength()
-    {
-        // Use an integer longer than 5 characters.
-        $value = 123456;
 
         // The value should not validate.
         $this->assertEquals(false, $this->validator->validate($value));
     }
 
-    public function testIntegerEqualsMaxLength()
+    public function testIntegerExceedsMinLength()
+    {
+        // Use an integer longer than 5 characters.
+        $value = 123456;
+
+        // The value should validate.
+        $this->assertEquals(true, $this->validator->validate($value));
+    }
+
+    public function testIntegerEqualsMinLength()
     {
         // Use an integer of 5 characters.
         $value = 12345;
@@ -83,25 +83,25 @@ class MaxLengthValidatorTest extends TestCase
         $this->assertEquals(true, $this->validator->validate($value));
     }
 
-    public function testIntegerUnderMaxLength()
+    public function testIntegerUnderMinLength()
     {
         // Use an integer shorter than 5 characters.
         $value = 1234;
-
-        // The value should validate.
-        $this->assertEquals(true, $this->validator->validate($value));
-    }
-
-    public function testArrayExceedsMaxLength()
-    {
-        // Use an array of more than 5 items.
-        $value = [1, 2, 3, 4, 5, 6];
 
         // The value should not validate.
         $this->assertEquals(false, $this->validator->validate($value));
     }
 
-    public function testArrayEqualsMaxLength()
+    public function testArrayExceedsMinLength()
+    {
+        // Use an array of more than 5 items.
+        $value = [1, 2, 3, 4, 5, 6];
+
+        // The value should validate.
+        $this->assertEquals(true, $this->validator->validate($value));
+    }
+
+    public function testArrayEqualsMinLength()
     {
         // Use an array of 5 items.
         $value = [1, 2, 3, 4, 5];
@@ -110,22 +110,22 @@ class MaxLengthValidatorTest extends TestCase
         $this->assertEquals(true, $this->validator->validate($value));
     }
 
-    public function testArrayUnderMaxLength()
+    public function testArrayUnderMinLength()
     {
         // Use an array of fewer than 5 items.
         $value = [1, 2, 3, 4];
 
-        // The value should validate.
-        $this->assertEquals(true, $this->validator->validate($value));
+        // The value should not validate.
+        $this->assertEquals(false, $this->validator->validate($value));
     }
 
-    public function testMultiDimensionalArrayUnderMaxLength()
+    public function testMultiDimensionalArrayUnderMinLength()
     {
         // Use an array of fewer than 5 items at the first dimension
         // with more than 5 items total in all dimensions.
         $value = [1, 2, 3, 4 => [5, 6, 7, 8]];
 
-        // The value should validate.
-        $this->assertEquals(true, $this->validator->validate($value));
+        // The value should not validate.
+        $this->assertEquals(false, $this->validator->validate($value));
     }
 }

@@ -1,10 +1,10 @@
 <?php
 
-namespace PDGA\DataObjects;
+namespace PDGA\DataObjects\Validators;
 
 use \DateTime;
 use \Exception;
-use PDGA\DataObjects\Validator;
+use PDGA\DataObjects\Validators\Validator;
 
 class ISO8601Validator implements Validator
 {

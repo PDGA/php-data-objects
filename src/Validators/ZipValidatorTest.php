@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-use PDGA\DataObjects\ZipValidator;
+use PDGA\DataObjects\Validators\ZipValidator;
 
 class ZipValidatorTest extends TestCase
 {
@@ -18,7 +18,7 @@ class ZipValidatorTest extends TestCase
      */
     public function testGetErrorMessage(): void
     {
-        $expected_value = "The zip field must be no longer than 15 characters.";
+        $expected_value = "The zip field must not be an array and must be no longer than 15 characters.";
         $result = $this->zip_validator->getErrorMessage("zip");
 
         $this->assertSame($expected_value, $result);
