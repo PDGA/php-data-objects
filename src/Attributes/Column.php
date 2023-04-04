@@ -54,7 +54,7 @@ class Column
      */
     public function getMaxLength(): ?int
     {
-        return $this->name;
+        return $this->maxLength;
     }
 
     /**
