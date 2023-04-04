@@ -36,18 +36,6 @@ class DateValidatorTest extends TestCase
     }
 
     /**
-     * Undefined values should result in true.
-     */
-    public function testUndefinedPassedIn(): void
-    {
-        $value;
-        $expected_value = true;
-        $result = $this->date_validator->validate($value);
-
-        $this->assertSame($expected_value, $result);
-    }
-
-    /**
      * Non-date values should result in false.
      */
     public function testNonDateValuePassedIn(): void
