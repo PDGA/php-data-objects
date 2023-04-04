@@ -7,13 +7,6 @@ use Attribute;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class Column
 {
-    private string $name;
-    private string $sqlDataType;
-    private int $maxLength;
-    private bool $isPrimary;
-    private bool $isGenerated;
-    private bool $hasDefault;
-
     /**
      * Constructor for Column attribute.
      *
@@ -25,21 +18,14 @@ class Column
      * @param bool $hasDefault - Boolean to indicate if the column has a default value. Defaults to false.
      */
     public function __construct(
-        string $name,
-        string $sqlDataType = null,
-        int $maxLength = null,
-        bool $isPrimary = false,
-        bool $isGenerated = false,
-        bool $hasDefault = false
+        private string $name,
+        private string $sqlDataType = null,
+        private int $maxLength = null,
+        private bool $isPrimary = false,
+        private bool $isGenerated = false,
+        private bool $hasDefault = false
     )
-    {
-        $this->name        = $name;
-        $this->sqlDataType = $sqlDataType;
-        $this->maxLength   = $maxLength;
-        $this->isPrimary   = $isPrimary;
-        $this->isGenerated = $isGenerated;
-        $this->hasDefault  = $hasDefault;
-    }
+    {}
 
     /**
      * Returns the name of the column.
