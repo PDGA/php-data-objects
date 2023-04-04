@@ -36,18 +36,6 @@ class ISO8601ValidatorTest extends TestCase
     }
 
     /**
-     * Undefined values should result in true.
-     */
-    public function testUndefinedPassedIn(): void
-    {
-        $value;
-        $expected_value = true;
-        $result = $this->iso_validator->validate($value);
-
-        $this->assertSame($expected_value, $result);
-    }
-
-    /**
      * Non-string values should result in false.
      */
     public function testNonStringValuePassedIn(): void

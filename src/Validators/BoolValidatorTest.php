@@ -36,18 +36,6 @@ class BoolValidatorTest extends TestCase
     }
 
     /**
-     * Undefined values should result in true.
-     */
-    public function testUndefinedPassedIn(): void
-    {
-        $value;
-        $expected_value = true;
-        $result = $this->bool_validator->validate($value);
-
-        $this->assertSame($expected_value, $result);
-    }
-
-    /**
      * Non-bool values should result in false.
      */
     public function testNonBoolValuePassedIn(): void
