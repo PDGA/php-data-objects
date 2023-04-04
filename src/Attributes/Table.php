@@ -7,7 +7,7 @@ use Attribute;
 #[Attribute(Attribute::TARGET_CLASS)]
 class Table
 {
-    private $table_name;
+    private $name;
 
     /**
      * Constructor for the Table attribute.
@@ -16,7 +16,7 @@ class Table
      */
     public function __construct(string $name)
     {
-        $this->table_name = $name;
+        $this->name = $name;
     }
 
     /**
@@ -26,6 +26,6 @@ class Table
      */
     public function getName(): string
     {
-        return $this->table_name;
+        return $this->name;
     }
 }
