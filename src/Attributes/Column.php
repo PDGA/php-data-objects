@@ -19,8 +19,8 @@ class Column
      */
     public function __construct(
         private string $name,
-        private string $sqlDataType = null,
-        private int $maxLength = null,
+        private ?string $sqlDataType = null,
+        private ?int $maxLength = null,
         private bool $isPrimary = false,
         private bool $isGenerated = false,
         private bool $hasDefault = false
