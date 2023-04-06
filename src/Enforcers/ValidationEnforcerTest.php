@@ -3,9 +3,9 @@
 use PHPUnit\Framework\TestCase;
 
 use PDGA\DataObjects\Enforcers\ValidationEnforcer;
-use PDGA\Exception\ValidationListException;
-use PDGA\DataObjects\Validators\MaxLengthValidator;
 use PDGA\DataObjects\Validators\EmailValidator;
+use PDGA\DataObjects\Validators\MaxLengthValidator;
+use PDGA\Exception\ValidationListException;
 
 class Person
 {
