@@ -16,6 +16,9 @@ class ValidationEnforcer
     /**
      * Validates the properties of an object against a class definition.
      *
+     * @param array|object $object - The values to validate.
+     * @param string $className - The name of the class to validate against.
+     *
      * @throws ValidationListException - Throws a ValidationListException which
      * includes a cumulative list of errors encountered during validation for each
      * property on the object.
@@ -88,7 +91,7 @@ class ValidationEnforcer
     /**
      * Returns true if the property is defined on the object.
      *
-     * @param mixed $object - Either an object or an array on which to determine
+     * @param array|object $object - Either an object or an array on which to determine
      * if the property is defined.
      * @param string $property - The property being looked for.
      * @return bool Returns true if the property is defined on the object.
@@ -103,7 +106,7 @@ class ValidationEnforcer
     /**
      * Returns true if the property is defined as null on the object.
      *
-     * @param mixed $object - Either an object or an array on which to determine
+     * @param array|object $object - Either an object or an array on which to determine
      * if the property is defined as null.
      * @param string $property - The property being looked at.
      * @return bool Returns true if the property is defined as null on the object.
@@ -118,7 +121,7 @@ class ValidationEnforcer
     /**
      * Returns the inverse of the propIsDefined function.  See above.
      *
-     * @param mixed $object - Either an object or an array on which to determine
+     * @param array|object $object - Either an object or an array on which to determine
      * if the property is not defined.
      * @param string $property - The property being looked for.
      * @return bool Returns true if the property is not defined on the object.
@@ -131,7 +134,7 @@ class ValidationEnforcer
     /**
      * Returns true if the property is not defined as null on the object.
      *
-     * @param mixed $object - Either an object or an array on which to determine
+     * @param array|object $object - Either an object or an array on which to determine
      * if the property is not defined as null.
      * @param string $property - The property being looked for.
      * @return bool Returns true if the property is not defined as null on the object.
