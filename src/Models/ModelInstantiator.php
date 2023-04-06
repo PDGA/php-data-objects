@@ -79,7 +79,7 @@ class ModelInstantiator
 
         foreach ($this->dataObjectPropertyColumns($class) as $property => $column)
         {
-            $data_object->{$property} = $db_model[$column] ?? null;
+            $data_object->{$property} = $db_model[$column];
         }
 
         return $data_object;
@@ -101,7 +101,7 @@ class ModelInstantiator
 
         foreach ($this->dataObjectPropertyColumns($data_object::class) as $property => $column)
         {
-            $array[$property] = $data_object->{$property} ?? null;
+            $array[$property] = $data_object->{$property};
         }
 
         return $array;
