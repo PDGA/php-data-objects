@@ -30,7 +30,13 @@ class ModelInstantiator
         // Assign all public properties.
         foreach ($this->dataObjectPropertyColumns($class) as $property => $column)
         {
-            $instance->{$property} = $arr[$property] ?? null;
+            // Ignore unset properties.
+            if (!isset($arr[$property]))
+            {
+                continue;
+            }
+
+            $instance->{$property} = $arr[$property];
         }
 
         return $instance;
@@ -54,6 +60,12 @@ class ModelInstantiator
         // Loop through all assigned properties of the object.
         foreach ($this->dataObjectPropertyColumns($data_object::class) as $property => $column)
         {
+            // Ignore unset properties.
+            if (!isset($data_object->{$property}))
+            {
+                continue;
+            }
+
             // Assign key based on the name property of the Column attribute.
             $model_array[$column] = $data_object->{$property};
         }
