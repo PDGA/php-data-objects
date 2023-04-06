@@ -9,12 +9,13 @@ use PDGA\DataObjects\Validators\DateValidator;
 use PDGA\DataObjects\Validators\IntValidator;
 use PDGA\DataObjects\Validators\NotNullValidator;
 use PDGA\DataObjects\Validators\StringValidator;
+use PDGA\DataObjects\Validators\Validator;
 use PDGA\Exception\ValidationListException;
 
 class ValidationEnforcer
 {
     /**
-     * Validates the properties of an object against a class definition.
+     * Enforces the validation of the properties of an object against a class definition.
      *
      * @param array|object $object - The values to validate.
      * @param string $className - The name of the class to validate against.
@@ -23,7 +24,7 @@ class ValidationEnforcer
      * includes a cumulative list of errors encountered during validation for each
      * property on the object.
      */
-    public function validate(mixed $object, string $className): void
+    public function enforce(mixed $object, string $className): void
     {
 
         $validators = [
@@ -61,21 +62,27 @@ class ValidationEnforcer
                     }
                 }
                 //If the property is null make sure it is allowed to be null.
-                else if (!$propCanNull)
+                else if (!$propCanNull && $this->propIsNull($arr, $propName))
                 {
                     $validationErrors->addError($validators["null"]->getErrorMessage($propName), $propName);
-                    $validationErrors->addError($validator->getErrorMessage($propName), $propName);
+                    if (!is_null($validator))
+                    {
+                        $validationErrors->addError($validator->getErrorMessage($propName), $propName);
+                    }
                 }
 
                 //If the property has any attributes make sure they are enforced.
                 foreach($propAttrs as $attr)
                 {
                     $validatorName = $attr->getName();
-                    $attrValidator = new $validatorName(...$attr->getArguments());
-
-                    if (!$attrValidator->validate($arr[$propName]))
+                    if (is_subclass_of($validatorName, Validator::class))
                     {
-                        $validationErrors->addError($attrValidator->getErrorMessage($propName), $propName);
+                        $attrValidator = new $validatorName(...$attr->getArguments());
+
+                        if (!$attrValidator->validate($arr[$propName]))
+                        {
+                            $validationErrors->addError($attrValidator->getErrorMessage($propName), $propName);
+                        }
                     }
                 }
             }
@@ -85,7 +92,6 @@ class ValidationEnforcer
         {
             throw $validationErrors;
         }
-
     }
 
     /**
