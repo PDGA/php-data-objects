@@ -48,16 +48,22 @@ class YesNoConverterTest extends TestCase
             $this->converter->onSave(true)
         );
 
-        // Truthy value (1) converts to 'yes'.
-        $this->assertSame(
-            'yes',
-            $this->converter->onSave(1)
-        );
-
         // Boolean false converts to 'no'.
         $this->assertSame(
             'no',
             $this->converter->onSave(false)
+        );
+
+        // Truthy value (1) converts to 'no'.
+        $this->assertSame(
+            'no',
+            $this->converter->onSave(1)
+        );
+
+        // Truthy value ('abc') converts to 'no'.
+        $this->assertSame(
+            'no',
+            $this->converter->onSave('abc')
         );
 
         // Falsy value (0) converts to 'no'.

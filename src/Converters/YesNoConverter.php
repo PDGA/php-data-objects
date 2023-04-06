@@ -7,15 +7,15 @@ namespace PDGA\DataObjects\Converters;
  */
 class YesNoConverter implements Converter
 {
-    public function onRetrieve(mixed $val): bool
+    public function onRetrieve($val): bool
     {
         // Boolean of whether the value is a string 'yes'; any values other than 'yes' return false.
         return $val === 'yes';
     }
 
-    public function onSave(mixed $val): string
+    public function onSave($val): string
     {
-        // Truthy values convert to 'yes'.
-        return $val ? 'yes' : 'no';
+        // Only boolean true converts to 'yes'.
+        return $val === true ? 'yes' : 'no';
     }
 }
