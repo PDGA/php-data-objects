@@ -9,7 +9,7 @@ use ReflectionProperty;
 class ModelInstantiator
 {
     /**
-     * Converts an associate array to a validated instance of a data object class.
+     * Converts an associative array to a validated instance of a data object class.
      *
      * @param array  $arr   an array of values corresponding to the public properties of the data object.
      * @param string $class Fully-qualified class name of the data object.
