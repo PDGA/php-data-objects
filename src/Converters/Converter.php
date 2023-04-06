@@ -2,7 +2,7 @@
 
 namespace PDGA\DataObjects\Converters;
 
-interface ConverterInterface
+interface Converter
 {
     public function onRetrieve(mixed $val): mixed;
 

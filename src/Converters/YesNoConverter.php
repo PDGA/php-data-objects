@@ -5,7 +5,7 @@ namespace PDGA\DataObjects\Converters;
 /**
  * Converts 'yes'/'no' values into booleans and vice versa for truthy/falsy values.
  */
-class YesNoConverter implements ConverterInterface
+class YesNoConverter implements Converter
 {
     public function onRetrieve(mixed $val): bool
     {
