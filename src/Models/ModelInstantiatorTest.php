@@ -2,7 +2,6 @@
 
 namespace PDGA\DataObjects\Models;
 
-use PDGA\DataObjects\DataObjects\PdgaMember;
 use PHPUnit\Framework\TestCase;
 
 class ModelInstantiatorTest extends TestCase
@@ -18,20 +17,22 @@ class ModelInstantiatorTest extends TestCase
     {
         // Create an input associative array.
         $array = [
-            'pdgaNumber' => 24472,
-            'firstName'  => 'Peter',
-            'email'      => 'pcrist@pdga.com',
-            'fakeProp'   => 'fake'
+            'pdgaNumber'   => 24472,
+            'firstName'    => 'Peter',
+            'email'        => 'pcrist@pdga.com',
+
+            // testProperty exists in the class but does not have a Column attribute.
+            'testProperty' => 'test'
         ];
 
         // Convert the array to a data object.
         $data_object = $this->model_instantiator->arrayToDataObject(
             $array,
-            PdgaMember::class
+            ModelInstantiatorTestObject::class
         );
 
         // We should get the correct class instance.
-        $this->assertTrue($data_object instanceof PdgaMember);
+        $this->assertTrue($data_object instanceof ModelInstantiatorTestObject);
 
         // Valid properties should be set.
         $this->assertEquals($array['firstName'], $data_object->firstName);
@@ -45,7 +46,7 @@ class ModelInstantiatorTest extends TestCase
     public function testDataObjectToDatabaseModel(): void
     {
         // Create an input data object.
-        $data_object             = new PdgaMember();
+        $data_object             = new ModelInstantiatorTestObject();
         $data_object->firstName  = 'Ken';
         $data_object->lastName   = 'Climo';
         $data_object->pdgaNumber = 4297;
@@ -74,7 +75,7 @@ class ModelInstantiatorTest extends TestCase
         ];
 
         // This data object should match the conversion output.
-        $data_object             = new PdgaMember();
+        $data_object             = new ModelInstantiatorTestObject();
         $data_object->firstName  = 'Ken';
         $data_object->lastName   = 'Climo';
         $data_object->pdgaNumber = 4297;
@@ -82,14 +83,14 @@ class ModelInstantiatorTest extends TestCase
 
         $this->assertEquals(
             $data_object,
-            $this->model_instantiator->databaseModelToDataObject($db_model, PdgaMember::class)
+            $this->model_instantiator->databaseModelToDataObject($db_model, ModelInstantiatorTestObject::class)
         );
     }
 
     public function testDataObjectToArray(): void
     {
         // Create an input data object instance.
-        $data_object             = new PdgaMember();
+        $data_object             = new ModelInstantiatorTestObject();
         $data_object->firstName  = 'Ken';
         $data_object->lastName   = 'Climo';
         $data_object->pdgaNumber = 4297;
@@ -105,6 +106,20 @@ class ModelInstantiatorTest extends TestCase
                 'email'      => 'champ@pdga.com'
             ],
             $this->model_instantiator->dataObjectToArray($data_object)
+        );
+    }
+
+    public function testDataObjectPropertyColumns()
+    {
+        // We should get an array with property names as keys and the corresponding Column.name as values.
+        $this->assertSame(
+            [
+                'pdgaNumber' => 'PDGANum',
+                'firstName'  => 'FirstName',
+                'lastName'   => 'LastName',
+                'email'      => 'Email'
+            ],
+            $this->model_instantiator->dataObjectPropertyColumns(ModelInstantiatorTestObject::class)
         );
     }
 }

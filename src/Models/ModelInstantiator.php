@@ -5,6 +5,7 @@ namespace PDGA\DataObjects\Models;
 use PDGA\DataObjects\Attributes\Column;
 
 use ReflectionProperty;
+use ReflectionException;
 
 class ModelInstantiator
 {
@@ -14,6 +15,7 @@ class ModelInstantiator
      * @param array  $arr   an array of values corresponding to the public properties of the data object.
      * @param string $class Fully-qualified class name of the data object.
      *
+     * @throws ReflectionException
      * @return object
      */
     public function arrayToDataObject(
@@ -26,14 +28,9 @@ class ModelInstantiator
         // TODO validate.
 
         // Assign all public properties.
-        foreach (array_keys(get_class_vars($class)) as $property)
+        foreach ($this->dataObjectPropertyColumns($class) as $property => $column)
         {
-            if (!isset($arr[$property]))
-            {
-                continue;
-            }
-
-            $instance->{$property} = $arr[$property];
+            $instance->{$property} = $arr[$property] ?? null;
         }
 
         return $instance;
@@ -45,8 +42,7 @@ class ModelInstantiator
      *
      * @param object $data_object An instance of a hydrated data object.
      *
-     * @throws \ReflectionException
-     *
+     * @throws ReflectionException
      * @return array
      */
     public function dataObjectToDatabaseModel(
@@ -56,15 +52,10 @@ class ModelInstantiator
         $model_array = [];
 
         // Loop through all assigned properties of the object.
-        foreach (get_object_vars($data_object) as $property => $value)
+        foreach ($this->dataObjectPropertyColumns($data_object::class) as $property => $column)
         {
-            $property_reflection = new ReflectionProperty($data_object::class, $property);
-
-            // Get the Column attribute.
-            $attribute = $property_reflection->getAttributes(Column::class);
-
             // Assign key based on the name property of the Column attribute.
-            $model_array[$attribute[0]->newInstance()->getName()] = $value;
+            $model_array[$column] = $data_object->{$property};
         }
 
         return $model_array;
@@ -76,7 +67,7 @@ class ModelInstantiator
      * @param array  $db_model An associative array from a database model.
      * @param string $class    The class name of the corresponding data object.
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      * @return object
      */
     public function databaseModelToDataObject(
@@ -86,19 +77,9 @@ class ModelInstantiator
     {
         $data_object = new $class();
 
-        // Loop through all properties of the class; we use get_class_vars to include unassigned properties.
-        foreach (array_keys(get_class_vars($class)) as $property)
+        foreach ($this->dataObjectPropertyColumns($class) as $property => $column)
         {
-            $property_reflection = new ReflectionProperty($class, $property);
-            $attribute           = $property_reflection->getAttributes(Column::class);
-            $key                 = $attribute[0]->newInstance()->getName();
-
-            if (!isset($db_model[$key]))
-            {
-                continue;
-            }
-
-            $data_object->{$property} = $db_model[$key];
+            $data_object->{$property} = $db_model[$column] ?? null;
         }
 
         return $data_object;
@@ -109,12 +90,54 @@ class ModelInstantiator
      *
      * @param object $data_object An instance of a hydrated data object.
      *
+     * @throws ReflectionException
      * @return array
      */
     public function dataObjectToArray(
         object $data_object
     ): array
     {
-        return (array) $data_object;
+        $array = [];
+
+        foreach ($this->dataObjectPropertyColumns($data_object::class) as $property => $column)
+        {
+            $array[$property] = $data_object->{$property} ?? null;
+        }
+
+        return $array;
+    }
+
+    /**
+     * Returns an array of all properties of a data object that have a Column attribute.
+     * The keys are the property names and the values are the Column 'name' attribute.
+     *
+     * @param string $class
+     *
+     * @throws ReflectionException
+     * @return array
+     */
+    public function dataObjectPropertyColumns(
+        string $class
+    ): array
+    {
+        $columns = [];
+
+        // Loop through all properties of the class; we use get_class_vars to include unassigned properties.
+        foreach (array_keys(get_class_vars($class)) as $property)
+        {
+            // Find the Column attribute for the property.
+            $property_reflection = new ReflectionProperty($class, $property);
+            $attribute           = $property_reflection->getAttributes(Column::class);
+
+            // If there is no Column attribute, skip this property.
+            if (!$attribute)
+            {
+                continue;
+            }
+
+            $columns[$property] = $attribute[0]->newInstance()->getName();
+        }
+
+        return $columns;
     }
 }

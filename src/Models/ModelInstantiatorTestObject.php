@@ -1,6 +1,6 @@
 <?php
 
-namespace PDGA\DataObjects\DataObjects;
+namespace PDGA\DataObjects\Models;
 
 use PDGA\DataObjects\Attributes\Column;
 use PDGA\DataObjects\Attributes\Table;
@@ -9,7 +9,7 @@ use PDGA\DataObjects\Attributes\Table;
  * Placeholder class.
  */
 #[Table]
-class PdgaMember
+class ModelInstantiatorTestObject
 {
     #[Column(
         name: 'PDGANum',
@@ -34,4 +34,11 @@ class PdgaMember
         sqlDataType: 'varchar',
     )]
     public ?string $email;
+
+    /**
+     * Used to test properties without a Column attribute.
+     *
+     * @var bool
+     */
+    public bool $testProperty = false;
 }
