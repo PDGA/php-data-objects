@@ -31,7 +31,7 @@ class ValidationEnforcerTest extends TestCase
         $person = ['email' => 'foo@bar.com', 'id' => 42];
         try
         {
-            $this->enforcer->validate($person, Person::class);
+            $this->enforcer->enforce($person, Person::class);
             $this->assertTrue(true);
         }
         catch (ValidationListException $e)
@@ -45,7 +45,7 @@ class ValidationEnforcerTest extends TestCase
         $person = ['email' => 1234, 'id' => 42];
         try
         {
-            $this->enforcer->validate($person, Person::class);
+            $this->enforcer->enforce($person, Person::class);
             $this->assertTrue(false, "Failed to validate types correctly.");
         }
         catch (ValidationListException $e)
@@ -62,7 +62,7 @@ class ValidationEnforcerTest extends TestCase
         $person = ['email' => 'foo@bar.com'];
         try
         {
-            $this->enforcer->validate($person, Person::class);
+            $this->enforcer->enforce($person, Person::class);
             $this->assertTrue(true);
         }
         catch (ValidationListException $e)
@@ -77,7 +77,7 @@ class ValidationEnforcerTest extends TestCase
         $person = ['email' => 'test a bad string', 'id' => 42];
         try
         {
-            $this->enforcer->validate($person, Person::class);
+            $this->enforcer->enforce($person, Person::class);
             $this->assertTrue(false, "Failed to validate attributes correctly.");
         }
         catch (ValidationListException $e)
@@ -97,7 +97,7 @@ class ValidationEnforcerTest extends TestCase
         $person = ['email' => null, 'id' => 42];
         try
         {
-            $this->enforcer->validate($person, Person::class);
+            $this->enforcer->enforce($person, Person::class);
             $this->assertTrue(true);
         }
         catch (ValidationListException $e)
@@ -112,7 +112,7 @@ class ValidationEnforcerTest extends TestCase
         $person = ['email' => 'foo@bar.com', 'id' => null];
         try
         {
-            $this->enforcer->validate($person, Person::class);
+            $this->enforcer->enforce($person, Person::class);
             $this->assertTrue(false, "Failed to validate attributes correctly.");
         }
         catch (ValidationListException $e)
