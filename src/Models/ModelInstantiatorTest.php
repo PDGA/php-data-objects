@@ -19,10 +19,12 @@ class ModelInstantiatorTest extends TestCase
         $array = [
             'pdgaNumber'   => 24472,
             'firstName'    => 'Peter',
-            'email'        => 'pcrist@pdga.com',
 
             // testProperty exists in the class but does not have a Column attribute.
-            'testProperty' => 'test'
+            'testProperty' => 'test',
+
+            // fakeProperty does not exist in the class.
+            'fakeProperty' => 'faker',
         ];
 
         // Convert the array to a data object.
@@ -37,15 +39,22 @@ class ModelInstantiatorTest extends TestCase
         // Valid properties should be set.
         $this->assertEquals($array['firstName'], $data_object->firstName);
         $this->assertEquals($array['pdgaNumber'], $data_object->pdgaNumber);
-        $this->assertEquals($array['email'], $data_object->email);
 
-        // The extraneous array key should not exist on the data object.
-        $this->assertFalse(property_exists($data_object, 'fakeProp'));
+        // Unset properties in the array should also be unset in the data object instance.
+        $this->assertFalse(isset($data_object->email));
+
+        // The property without a Column attribute exist on the data object but not be set to the array value.
+        $this->assertTrue(property_exists($data_object, 'testProperty'));
+        $this->assertNotEquals($array['testProperty'], $data_object->testProperty);
+
+        // The extraneous array key should not exist as a property or be set on the data object.
+        $this->assertFalse(property_exists($data_object, 'fakeProperty'));
+        $this->assertFalse(isset($data_object->fakeProperty));
     }
 
     public function testDataObjectToDatabaseModel(): void
     {
-        // Create an input data object.
+        // Create an input data object with all Column properties set.
         $data_object             = new ModelInstantiatorTestObject();
         $data_object->firstName  = 'Ken';
         $data_object->lastName   = 'Climo';
@@ -59,6 +68,23 @@ class ModelInstantiatorTest extends TestCase
                 'FirstName' => 'Ken',
                 'LastName'  => 'Climo',
                 'Email'     => 'champ@pdga.com'
+            ],
+            $this->model_instantiator->dataObjectToDatabaseModel($data_object)
+        );
+
+        // Create an input data object with the 'email' property unset.
+        $data_object             = new ModelInstantiatorTestObject();
+        $data_object->firstName  = 'Ken';
+        $data_object->lastName   = 'Climo';
+        $data_object->pdgaNumber = 4297;
+
+        // We should get a valid database model associative array on conversion.
+        // Note that 'Email' is not set in the returned array.
+        $this->assertSame(
+            [
+                'PDGANum'   => 4297,
+                'FirstName' => 'Ken',
+                'LastName'  => 'Climo',
             ],
             $this->model_instantiator->dataObjectToDatabaseModel($data_object)
         );
