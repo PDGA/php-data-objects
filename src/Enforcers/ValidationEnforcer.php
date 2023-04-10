@@ -144,7 +144,7 @@ class ValidationEnforcer
     {
         $arr = is_array($object) ? $object : (array) $object;
 
-        return $this->propIsDefined($arr, $property) && is_null($arr["$property"]);
+        return $this->propIsDefined($arr, $property) && is_null($arr[$property]);
     }
 
     /**
@@ -172,6 +172,6 @@ class ValidationEnforcer
     {
         $arr = is_array($object) ? $object : (array) $object;
 
-        return $this->propIsDefined($arr, $property) && !is_null($arr["$property"]);
+        return $this->propIsDefined($arr, $property) && !is_null($arr[$property]);
     }
 }
