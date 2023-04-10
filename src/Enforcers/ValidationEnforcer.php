@@ -32,10 +32,8 @@ class ValidationEnforcer
         $metadata = $this->getValidationMetadata($className);
 
         //For each property defined on the class.
-        foreach($metadata as $prop)
+        foreach ($metadata as $propName => $propMeta)
         {
-            $propName = $prop['reflectionProperty']->getName();
-
             //If the property is not included on the object skip it.
             if ($this->propIsUndefined($arr, $propName))
             {
@@ -43,7 +41,7 @@ class ValidationEnforcer
             }
 
             //Attempt to validate each property that is on the object.
-            foreach ($prop['validators'] as $validator)
+            foreach ($propMeta['validators'] as $validator)
             {
                 if (!$validator->validate($arr[$propName]))
                 {
