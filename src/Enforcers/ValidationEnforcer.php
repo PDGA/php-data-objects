@@ -26,17 +26,61 @@ class ValidationEnforcer
      */
     public function enforce(mixed $object, string $className): void
     {
+        $arr = is_array($object) ? $object : (array) $object;
+        $validationErrors = new ValidationListException();
+        $metadata = $this->getValidationMetadata($className);
 
+        //For each property defined on the class.
+        foreach($metadata as $prop)
+        {
+            $propName = $prop['reflectionProperty']->getName();
+
+            //If the property is not included on the object skip it.
+            if ($this->propIsUndefined($arr, $propName))
+            {
+                continue;
+            }
+
+            //Attempt to validate each property that is on the object.
+            foreach ($prop['validators'] as $validator)
+            {
+                if (!$validator->validate($arr[$propName]))
+                {
+                    $validationErrors->addError($validator->getErrorMessage($propName), $propName);
+                }
+            }
+        }
+
+        if (count($validationErrors->getErrors()))
+        {
+            throw $validationErrors;
+        }
+    }
+
+    /**
+     * Returns an associative array with key/value pairs as follows:
+     *   key: a property fo the provided class
+     *   value: an associative array containing two keys; a 'reflectionProperty' which
+     *     is an object of type ReflectionProperty so some metadata about the property
+     *     can be referenced in other functions (such as nullability of the property)
+     *     and 'validators' which is an array of instantiated Validators for every
+     *     validation that the given property has defined on it.
+     *
+     * @param string className - The name of the class for which the validation metadata
+     * is to be created.
+     * @return array See above description.
+     */
+    public function getValidationMetadata(string $className): array
+    {
         $validators = [
             "int"      => new IntValidator(),
             "string"   => new StringValidator(),
             "bool"     => new BoolValidator(),
             "DateTime" => new DateValidator(),
-            "null"     => new NotNullValidator(),
+            "notNull"  => new NotNullValidator(),
         ];
 
-        $arr = is_array($object) ? $object : (array) $object;
-        $validationErrors = new ValidationListException();
+        $metadata = [];
 
         $ref   = new ReflectionClass($className);
         $props = $ref->getProperties();
@@ -49,49 +93,32 @@ class ValidationEnforcer
             $propAttrs   = $prop->getAttributes();
             $propCanNull = $prop->getType()->allowsNull();
 
-            //If the class property is passed in with the object.
-            if ($this->propIsDefined($arr, $propName))
+            $metadata[$propName] = ['reflectionProperty' => $prop, 'validators' => []];
+            $validator = array_key_exists($propType, $validators) ? $validators[$propType] : null;
+
+            if (!is_null($validator))
             {
-                //If the property is not null and a validator exists for that type make sure the type is correct.
-                $validator = array_key_exists($propType, $validators) ? $validators[$propType] : null;
-                if ($this->propIsNotNull($arr, $propName) && !is_null($validator))
-                {
-                    if (!$validator->validate($arr[$propName]))
-                    {
-                        $validationErrors->addError($validator->getErrorMessage($propName), $propName);
-                    }
-                }
-                //If the property is null make sure it is allowed to be null.
-                else if (!$propCanNull && $this->propIsNull($arr, $propName))
-                {
-                    $validationErrors->addError($validators["null"]->getErrorMessage($propName), $propName);
-                    if (!is_null($validator))
-                    {
-                        $validationErrors->addError($validator->getErrorMessage($propName), $propName);
-                    }
-                }
+                $metadata[$propName]['validators'][] = $validator;
+            }
 
-                //If the property has any attributes make sure they are enforced.
-                foreach($propAttrs as $attr)
-                {
-                    $validatorName = $attr->getName();
-                    if (is_subclass_of($validatorName, Validator::class))
-                    {
-                        $attrValidator = new $validatorName(...$attr->getArguments());
+            if (!$propCanNull)
+            {
+                $metadata[$propName]['validators'][] = $validators['notNull'];
+            }
 
-                        if (!$attrValidator->validate($arr[$propName]))
-                        {
-                            $validationErrors->addError($attrValidator->getErrorMessage($propName), $propName);
-                        }
-                    }
+            //If the property has any validation attributes make sure they are included.
+            foreach($propAttrs as $attr)
+            {
+                $validatorName = $attr->getName();
+                if (is_subclass_of($validatorName, Validator::class))
+                {
+                    $attrValidator = new $validatorName(...$attr->getArguments());
+                    $metadata[$propName]['validators'][] = $attrValidator;
                 }
             }
         }
 
-        if (count($validationErrors->getErrors()))
-        {
-            throw $validationErrors;
-        }
+        return $metadata;
     }
 
     /**
