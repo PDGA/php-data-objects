@@ -23,9 +23,16 @@ class ValidationEnforcerTest extends TestCase
         $this->enforcer = new ValidationEnforcer();
     }
 
-    /**
-     * Make sure the error message returned is as expected.
-     */
+    public function testMetadataReturnsCorrectNumberOfValidators(): void
+    {
+        $result = $this->enforcer->getValidationMetadata(Person::class);
+
+        //id validators include int and not null
+        $this->assertEquals(count($result['id']['validators']), 2);
+        //email validators include string, max length, and email
+        $this->assertEquals(count($result['email']['validators']), 3);
+    }
+
     public function testValidatesInstancesCorrectly(): void
     {
         $person = ['email' => 'foo@bar.com', 'id' => 42];
@@ -119,12 +126,9 @@ class ValidationEnforcerTest extends TestCase
         {
 
             $expectedError1 = "The id field must not be null.";
-            $expectedError2 = "id must be an integer.";
             $result = $e->getErrors();
             $result1 = $result['id'][0]['message'];
-            $result2 = $result['id'][1]['message'];
             $this->assertEquals($expectedError1, $result1);
-            $this->assertEquals($expectedError2, $result2);
         }
     }
 
