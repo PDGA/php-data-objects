@@ -112,8 +112,7 @@ class ValidationEnforcer
                 $validatorName = $attr->getName();
                 if (is_subclass_of($validatorName, Validator::class))
                 {
-                    $attrValidator = new $validatorName(...$attr->getArguments());
-                    $metadata[$propName]['validators'][] = $attrValidator;
+                    $metadata[$propName]['validators'][] = $attr->newInstance();
                 }
             }
         }
