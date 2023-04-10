@@ -2,7 +2,6 @@
 
 namespace PDGA\DataObjects\Enforcers;
 
-use \ReflectionClass;
 use \ReflectionAttribute;
 
 use PDGA\DataObjects\Attributes\Column;
@@ -25,14 +24,10 @@ class ModelValidationEnforcer extends ValidationEnforcer
     {
         $metadata = parent::getValidationMetadata($className);
 
-        $ref   = new ReflectionClass($className);
-        $props = $ref->getProperties();
-
         //For each property defined on the class.
-        foreach($props as $prop)
+        foreach ($metadata as $propName => $propMeta)
         {
-            $propName  = $prop->getName();
-            $propAttrs = $prop->getAttributes(Column::class, ReflectionAttribute::IS_INSTANCEOF);
+            $propAttrs = $propMeta['reflectionProperty']->getAttributes(Column::class, ReflectionAttribute::IS_INSTANCEOF);
 
             //If the property has a column attribute add the max length validator if
             //max length is not null on the column.
