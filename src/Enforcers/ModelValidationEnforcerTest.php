@@ -15,7 +15,9 @@ class NamedPerson
     )]
     #[MaxLengthValidator(15), EmailValidator]
     public ?string $email;
+
     public int $id;
+
     #[Column(
         name: 'name',
         maxLength: 20
