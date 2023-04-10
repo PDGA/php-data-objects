@@ -3,6 +3,7 @@
 namespace PDGA\DataObjects\Enforcers;
 
 use \ReflectionClass;
+use \ReflectionAttribute;
 
 use PDGA\DataObjects\Validators\BoolValidator;
 use PDGA\DataObjects\Validators\DateValidator;
@@ -90,7 +91,7 @@ class ValidationEnforcer
         {
             $propName    = $prop->getName();
             $propType    = $prop->getType()->getName();
-            $propAttrs   = $prop->getAttributes();
+            $propAttrs   = $prop->getAttributes(Validator::class, ReflectionAttribute::IS_INSTANCEOF);
             $propCanNull = $prop->getType()->allowsNull();
 
             $metadata[$propName] = ['reflectionProperty' => $prop, 'validators' => []];
@@ -109,11 +110,7 @@ class ValidationEnforcer
             //If the property has any validation attributes make sure they are included.
             foreach($propAttrs as $attr)
             {
-                $validatorName = $attr->getName();
-                if (is_subclass_of($validatorName, Validator::class))
-                {
-                    $metadata[$propName]['validators'][] = $attr->newInstance();
-                }
+                $metadata[$propName]['validators'][] = $attr->newInstance();
             }
         }
 
