@@ -2,6 +2,9 @@
 
 namespace PDGA\DataObjects\Validators;
 
+use Attribute;
+
+#[Attribute]
 /**
  * Validates minimum length of strings, integers and arrays.
  */

@@ -2,6 +2,9 @@
 
 namespace PDGA\DataObjects\Validators;
 
+use Attribute;
+
+#[Attribute]
 /**
  * Validates that a given value is a string.
  */

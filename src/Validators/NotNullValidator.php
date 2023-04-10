@@ -2,8 +2,11 @@
 
 namespace PDGA\DataObjects\Validators;
 
+use Attribute;
+
 use PDGA\DataObjects\Validators\Validator;
 
+#[Attribute]
 class NotNullValidator implements Validator
 {
     /**
