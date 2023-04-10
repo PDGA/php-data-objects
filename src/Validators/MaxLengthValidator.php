@@ -2,6 +2,9 @@
 
 namespace PDGA\DataObjects\Validators;
 
+use Attribute;
+
+#[Attribute]
 /**
  * Validates maximum length of strings, integers and arrays.
  */

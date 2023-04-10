@@ -2,6 +2,9 @@
 
 namespace PDGA\DataObjects\Validators;
 
+use Attribute;
+
+#[Attribute]
 /**
  * Validates that a value is within an array. Uses strict comparison: types, value and case must match.
  */

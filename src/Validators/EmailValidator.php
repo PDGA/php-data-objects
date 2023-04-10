@@ -2,10 +2,13 @@
 
 namespace PDGA\DataObjects\Validators;
 
+use Attribute;
+
+#[Attribute]
 /**
  * Validates email addresses. Whitespace does not validate.
  */
-class EmailValidator
+class EmailValidator implements Validator
 {
     public function validate(mixed $val): bool
     {

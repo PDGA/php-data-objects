@@ -4,8 +4,11 @@ namespace PDGA\DataObjects\Validators;
 
 use \DateTime;
 use \Exception;
+use Attribute;
+
 use PDGA\DataObjects\Validators\Validator;
 
+#[Attribute]
 class ISO8601Validator implements Validator
 {
     /**

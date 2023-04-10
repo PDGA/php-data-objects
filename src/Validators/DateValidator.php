@@ -2,9 +2,12 @@
 
 namespace PDGA\DataObjects\Validators;
 
+use Attribute;
+
 use PDGA\DataObjects\Validators\Validator;
 use PDGA\DataObjects\Validators\ISO8601Validator;
 
+#[Attribute]
 class DateValidator implements Validator
 {
     /**
