@@ -36,7 +36,7 @@ class ModelInstantiator
         foreach ($this->dataObjectPropertyColumns($class) as $property => $column)
         {
             // Ignore properties which are not specified in the incoming array.
-            if (!isset($arr[$property]))
+            if ($enforcer->propIsUndefined($arr, $property))
             {
                 continue;
             }
