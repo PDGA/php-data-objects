@@ -7,6 +7,7 @@ use \ReflectionAttribute;
 
 use PDGA\DataObjects\Validators\BoolValidator;
 use PDGA\DataObjects\Validators\DateValidator;
+use PDGA\DataObjects\Validators\FloatValidator;
 use PDGA\DataObjects\Validators\IntValidator;
 use PDGA\DataObjects\Validators\NotNullValidator;
 use PDGA\DataObjects\Validators\StringValidator;
@@ -75,6 +76,7 @@ class ValidationEnforcer
             "int"      => new IntValidator(),
             "string"   => new StringValidator(),
             "bool"     => new BoolValidator(),
+            "float"    => new FloatValidator(),
             "DateTime" => new DateValidator(),
             "notNull"  => new NotNullValidator(),
         ];
