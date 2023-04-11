@@ -4,6 +4,7 @@ namespace PDGA\DataObjects\Models;
 
 use PDGA\DataObjects\Attributes\Column;
 use PDGA\DataObjects\Attributes\Table;
+use PDGA\DataObjects\Converters\YesNoConverter;
 
 /**
  * Placeholder class.
@@ -34,6 +35,13 @@ class ModelInstantiatorTestObject
         sqlDataType: 'varchar',
     )]
     public ?string $email;
+
+    #[Column(
+        name: 'Privacy',
+        sqlDataType: 'enum',
+        converter: YesNoConverter::class,
+    )]
+    public ?bool $privacy;
 
     /**
      * Used to test properties without a Column attribute.

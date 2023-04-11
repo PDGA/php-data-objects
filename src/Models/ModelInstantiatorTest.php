@@ -60,6 +60,7 @@ class ModelInstantiatorTest extends TestCase
         $data_object->lastName   = 'Climo';
         $data_object->pdgaNumber = 4297;
         $data_object->email      = 'champ@pdga.com';
+        $data_object->privacy    = true;
 
         // We should get a valid database model associative array on conversion.
         $this->assertSame(
@@ -67,7 +68,8 @@ class ModelInstantiatorTest extends TestCase
                 'PDGANum'   => 4297,
                 'FirstName' => 'Ken',
                 'LastName'  => 'Climo',
-                'Email'     => 'champ@pdga.com'
+                'Email'     => 'champ@pdga.com',
+                'Privacy'   => 'yes',
             ],
             $this->model_instantiator->dataObjectToDatabaseModel($data_object)
         );
@@ -97,7 +99,8 @@ class ModelInstantiatorTest extends TestCase
             'PDGANum'   => 4297,
             'FirstName' => 'Ken',
             'LastName'  => 'Climo',
-            'Email'     => 'champ@pdga.com'
+            'Email'     => 'champ@pdga.com',
+            'Privacy'   => 'yes'
         ];
 
         // This data object should match the conversion output.
@@ -106,6 +109,7 @@ class ModelInstantiatorTest extends TestCase
         $data_object->lastName   = 'Climo';
         $data_object->pdgaNumber = 4297;
         $data_object->email      = 'champ@pdga.com';
+        $data_object->privacy    = true;
 
         $this->assertEquals(
             $data_object,
@@ -121,6 +125,7 @@ class ModelInstantiatorTest extends TestCase
         $data_object->lastName   = 'Climo';
         $data_object->pdgaNumber = 4297;
         $data_object->email      = 'champ@pdga.com';
+        $data_object->privacy    = true;
 
         // The output array should reflect the data object properties.
         // Note that the order of the array keys matters and must match the class definition.
@@ -129,7 +134,8 @@ class ModelInstantiatorTest extends TestCase
                 'pdgaNumber' => 4297,
                 'firstName'  => 'Ken',
                 'lastName'   => 'Climo',
-                'email'      => 'champ@pdga.com'
+                'email'      => 'champ@pdga.com',
+                'privacy'    => true,
             ],
             $this->model_instantiator->dataObjectToArray($data_object)
         );
@@ -137,15 +143,53 @@ class ModelInstantiatorTest extends TestCase
 
     public function testDataObjectPropertyColumns()
     {
-        // We should get an array with property names as keys and the corresponding Column.name as values.
+        // We should get an array with property names as keys and the corresponding Column attributes as values.
         $this->assertSame(
             [
-                'pdgaNumber' => 'PDGANum',
-                'firstName'  => 'FirstName',
-                'lastName'   => 'LastName',
-                'email'      => 'Email'
+                'pdgaNumber',
+                'firstName',
+                'lastName',
+                'email',
+                'privacy'
             ],
-            $this->model_instantiator->dataObjectPropertyColumns(ModelInstantiatorTestObject::class)
+            array_keys($this->model_instantiator->dataObjectPropertyColumns(ModelInstantiatorTestObject::class))
+        );
+    }
+
+    public function testConvertPropertyOnSave()
+    {
+        // Create a data object with a property that uses the YesNoConverter.
+        $data_object = new ModelInstantiatorTestObject();
+        $data_object->privacy = true;
+        
+        $columns = $this->model_instantiator->dataObjectPropertyColumns(ModelInstantiatorTestObject::class);
+
+        // Boolean true should return 'yes' when converting to a db model.
+        $this->assertSame(
+            'yes',
+            $this->model_instantiator->convertPropertyOnSave(
+                $columns['privacy'],
+                $data_object->privacy,
+            )
+        );
+    }
+
+    public function testConvertPropertyOnRetrieve()
+    {
+        // Create a db model with a property that uses the YesNoConverter.
+        $db_model = [
+            'Privacy' => 'no',
+        ];
+
+        $columns = $this->model_instantiator->dataObjectPropertyColumns(ModelInstantiatorTestObject::class);
+
+        // 'No' should return boolean false when converting to a data object.
+        $this->assertSame(
+            false,
+            $this->model_instantiator->convertPropertyOnRetrieve(
+                $columns['privacy'],
+                $db_model['Privacy'],
+            )
         );
     }
 }
