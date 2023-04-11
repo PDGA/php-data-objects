@@ -3,6 +3,8 @@
 namespace PDGA\DataObjects\Models;
 
 use PDGA\DataObjects\Attributes\Column;
+use PDGA\DataObjects\Enforcers\ValidationEnforcer;
+use PDGA\Exception\ValidationListException;
 
 use ReflectionProperty;
 use ReflectionException;
@@ -16,6 +18,7 @@ class ModelInstantiator
      * @param string $class Fully-qualified class name of the data object.
      *
      * @throws ReflectionException
+     * @throws ValidationListException
      * @return object
      */
     public function arrayToDataObject(
@@ -23,15 +26,17 @@ class ModelInstantiator
         string $class
     ): object
     {
-        $instance = new $class();
+        // Validate the array, throws ValidationListException if something is invalid.
+        $enforcer = new ValidationEnforcer();
+        $enforcer->enforce($arr, $class);
 
-        // TODO validate.
+        $instance = new $class();
 
         // Assign public properties.
         foreach ($this->dataObjectPropertyColumns($class) as $property => $column)
         {
             // Ignore properties which are not specified in the incoming array.
-            if (!isset($arr[$property]))
+            if ($enforcer->propIsUndefined($arr, $property))
             {
                 continue;
             }

@@ -2,6 +2,7 @@
 
 namespace PDGA\DataObjects\Models;
 
+use PDGA\Exception\ValidationListException;
 use PHPUnit\Framework\TestCase;
 
 class ModelInstantiatorTest extends TestCase
@@ -21,17 +22,24 @@ class ModelInstantiatorTest extends TestCase
             'firstName'    => 'Peter',
 
             // testProperty exists in the class but does not have a Column attribute.
-            'testProperty' => 'test',
+            'testProperty' => true,
 
             // fakeProperty does not exist in the class.
             'fakeProperty' => 'faker',
         ];
 
-        // Convert the array to a data object.
-        $data_object = $this->model_instantiator->arrayToDataObject(
-            $array,
-            ModelInstantiatorTestObject::class
-        );
+        try
+        {
+            // Convert the array to a data object.
+            $data_object = $this->model_instantiator->arrayToDataObject(
+                $array,
+                ModelInstantiatorTestObject::class
+            );
+        }
+        catch (ValidationListException $e)
+        {
+            $this->assertTrue(false, "Failed to validate parameters. " . json_encode($e->getErrors()));
+        }
 
         // We should get the correct class instance.
         $this->assertTrue($data_object instanceof ModelInstantiatorTestObject);
