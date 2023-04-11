@@ -3,6 +3,7 @@
 namespace PDGA\DataObjects\Attributes;
 
 use Attribute;
+use PDGA\DataObjects\Converters\Converter;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class Column
@@ -16,7 +17,7 @@ class Column
      * @param bool $isPrimary - Boolean to indicate if the column is a primary column. Defaults to false.
      * @param bool $isGenerated - Boolean to indicate if the column is auto-generated. Defaults to false.
      * @param bool $hasDefault - Boolean to indicate if the column has a default value. Defaults to false.
-     * @param ?string $converter - Optional name of a Converter class for value conversion. Defaults to null.
+     * @param ?Converter $converter - Optional instance of a Converter class for value conversion. Defaults to null.
      */
     public function __construct(
         private string $name,
@@ -25,7 +26,7 @@ class Column
         private bool $isPrimary = false,
         private bool $isGenerated = false,
         private bool $hasDefault = false,
-        private ?string $converter = null,
+        private ?Converter $converter = null,
     )
     {}
 
@@ -90,11 +91,11 @@ class Column
     }
 
     /**
-     * Returns converter property value.
+     * Returns Converter instance.
      *
-     * @return ?string
+     * @return ?Converter
      */
-    public function getConverter(): ?string
+    public function getConverter(): ?Converter
     {
         return $this->converter;
     }

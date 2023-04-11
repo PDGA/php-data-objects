@@ -39,7 +39,7 @@ class ModelInstantiatorTestObject
     #[Column(
         name: 'Privacy',
         sqlDataType: 'enum',
-        converter: YesNoConverter::class,
+        converter: new YesNoConverter(),
     )]
     public ?bool $privacy;
 

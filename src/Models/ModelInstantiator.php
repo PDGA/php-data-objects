@@ -181,10 +181,7 @@ class ModelInstantiator
             return $property;
         }
 
-        $converter_class = $column->getConverter();
-        $converter = new $converter_class();
-
-        return $converter->onSave($property);
+        return $column->getConverter()->onSave($property);
     }
 
     /**
@@ -206,9 +203,6 @@ class ModelInstantiator
             return $property;
         }
 
-        $converter_class = $column->getConverter();
-        $converter = new $converter_class();
-
-        return $converter->onRetrieve($property);
+        return $column->getConverter()->onRetrieve($property);
     }
 }

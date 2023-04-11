@@ -161,7 +161,7 @@ class ModelInstantiatorTest extends TestCase
         // Create a data object with a property that uses the YesNoConverter.
         $data_object = new ModelInstantiatorTestObject();
         $data_object->privacy = true;
-        
+
         $columns = $this->model_instantiator->dataObjectPropertyColumns(ModelInstantiatorTestObject::class);
 
         // Boolean true should return 'yes' when converting to a db model.
