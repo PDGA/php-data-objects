@@ -66,8 +66,11 @@ class ModelInstantiator
                 continue;
             }
 
-            // Assign key based on the name property of the Column attribute.
-            $model_array[$column] = $data_object->{$property};
+            // Assign key based on the name property of the Column attribute. Apply value converter when applicable.
+            $model_array[$column->getName()] = $this->convertPropertyOnSave(
+                $column,
+                $data_object->{$property}
+            );
         }
 
         return $model_array;
@@ -92,7 +95,11 @@ class ModelInstantiator
         // Set all Column-attributed properties to the corresponding database column value.
         foreach ($this->dataObjectPropertyColumns($class) as $property => $column)
         {
-            $data_object->{$property} = $db_model[$column];
+            // Set property; apply value converter when applicable.
+            $data_object->{$property} = $this->convertPropertyOnRetrieve(
+                $column,
+                $db_model[$column->getName()],
+            );
         }
 
         return $data_object;
@@ -123,7 +130,7 @@ class ModelInstantiator
 
     /**
      * Returns an array of all properties of a data object that have a Column attribute.
-     * The keys are the property names and the values are the Column 'name' attribute.
+     * The keys are the property names and the values are the Column attribute instance.
      *
      * @param string $class
      *
@@ -149,9 +156,53 @@ class ModelInstantiator
                 continue;
             }
 
-            $columns[$property] = $attribute[0]->newInstance()->getName();
+            $columns[$property] = $attribute[0]->newInstance();
         }
 
         return $columns;
+    }
+
+    /**
+     * Converts a property for saving if there is a 'converter' value of its Attribute.
+     *
+     * @param Column $column
+     * @param mixed  $property
+     *
+     * @return mixed
+     */
+    public function convertPropertyOnSave(
+        Column $column,
+        mixed  $property,
+    ): mixed
+    {
+        // No Converter for this Column; return the original value.
+        if (!$column->getConverter())
+        {
+            return $property;
+        }
+
+        return $column->getConverter()->onSave($property);
+    }
+
+    /**
+     * Converts a property for retrieval if there is a 'converter' value of its Attribute.
+     *
+     * @param Column $column
+     * @param mixed  $property
+     *
+     * @return mixed
+     */
+    public function convertPropertyOnRetrieve(
+        Column $column,
+        mixed  $property,
+    ): mixed
+    {
+        // No Converter for this Column; return the original value.
+        if (!$column->getConverter())
+        {
+            return $property;
+        }
+
+        return $column->getConverter()->onRetrieve($property);
     }
 }
