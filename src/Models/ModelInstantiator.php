@@ -12,12 +12,11 @@ use ReflectionException;
 class ModelInstantiator
 {
     /**
-     * Converts an associative array to a validated instance of a data object class.
+     * Converts an associative array to a validated instance of a Data Object class.
      *
-     * @param array  $arr   an array of values corresponding to the public properties of the data object.
-     * @param string $class Fully-qualified class name of the data object.
+     * @param array  $arr   an array of values corresponding to the public properties of the Data Object.
+     * @param string $class Fully-qualified class name of the Data Object.
      *
-     * @throws ReflectionException
      * @throws ValidationListException
      * @return object
      */
@@ -33,7 +32,7 @@ class ModelInstantiator
         $instance = new $class();
 
         // Assign public properties.
-        foreach ($this->dataObjectPropertyColumns($class) as $property => $column)
+        foreach ($this->dataObjectProperties($class) as $property)
         {
             // Ignore properties which are not specified in the incoming array.
             if ($enforcer->propIsUndefined($arr, $property))
@@ -48,10 +47,10 @@ class ModelInstantiator
     }
 
     /**
-     * Converts a data object to an associative array with keys matching database fields for the
+     * Converts a Data Object to an associative array with keys matching database fields for the
      * corresponding database model.
      *
-     * @param object $data_object An instance of a hydrated data object.
+     * @param object $data_object An instance of a hydrated Data Object.
      *
      * @throws ReflectionException
      * @return array
@@ -82,10 +81,10 @@ class ModelInstantiator
     }
 
     /**
-     * Converts an associative array from a database model to a data object instance.
+     * Converts an associative array from a database model to a Data Object instance.
      *
      * @param array  $db_model An associative array from a database model.
-     * @param string $class    The class name of the corresponding data object.
+     * @param string $class    The class name of the corresponding Data Object.
      *
      * @throws ReflectionException
      * @return object
@@ -111,11 +110,10 @@ class ModelInstantiator
     }
 
     /**
-     * Converts a data object instance to an array.
+     * Converts a Data Object instance to an array.
      *
-     * @param object $data_object An instance of a hydrated data object.
+     * @param object $data_object An instance of a hydrated Data Object.
      *
-     * @throws ReflectionException
      * @return array
      */
     public function dataObjectToArray(
@@ -125,7 +123,7 @@ class ModelInstantiator
         $array = [];
 
         // Set all Column-attributed properties to a key-value in the outgoing array.
-        foreach ($this->dataObjectPropertyColumns($data_object::class) as $property => $column)
+        foreach ($this->dataObjectProperties($data_object::class) as $property)
         {
             $array[$property] = $data_object->{$property};
         }
@@ -134,7 +132,7 @@ class ModelInstantiator
     }
 
     /**
-     * Returns an array of all properties of a data object that have a Column attribute.
+     * Returns an array of all properties of a Data Object that have a Column attribute.
      * The keys are the property names and the values are the Column attribute instance.
      *
      * @param string $class
@@ -165,6 +163,21 @@ class ModelInstantiator
         }
 
         return $columns;
+    }
+
+    /**
+     * Returns all properties of a Data Object class.
+     *
+     * @param string $class
+     *
+     * @return array
+     */
+    public function dataObjectProperties(
+        string $class
+    ): array
+    {
+        // Return all properties of the object including unassigned properties.
+        return array_keys(get_class_vars($class));
     }
 
     /**
