@@ -12,10 +12,10 @@ use ReflectionException;
 class ModelInstantiator
 {
     /**
-     * Converts an associative array to a validated instance of a data object class.
+     * Converts an associative array to a validated instance of a Data Object class.
      *
-     * @param array  $arr   an array of values corresponding to the public properties of the data object.
-     * @param string $class Fully-qualified class name of the data object.
+     * @param array  $arr   an array of values corresponding to the public properties of the Data Object.
+     * @param string $class Fully-qualified class name of the Data Object.
      *
      * @throws ValidationListException
      * @return object
@@ -47,10 +47,10 @@ class ModelInstantiator
     }
 
     /**
-     * Converts a data object to an associative array with keys matching database fields for the
+     * Converts a Data Object to an associative array with keys matching database fields for the
      * corresponding database model.
      *
-     * @param object $data_object An instance of a hydrated data object.
+     * @param object $data_object An instance of a hydrated Data Object.
      *
      * @throws ReflectionException
      * @return array
@@ -81,10 +81,10 @@ class ModelInstantiator
     }
 
     /**
-     * Converts an associative array from a database model to a data object instance.
+     * Converts an associative array from a database model to a Data Object instance.
      *
      * @param array  $db_model An associative array from a database model.
-     * @param string $class    The class name of the corresponding data object.
+     * @param string $class    The class name of the corresponding Data Object.
      *
      * @throws ReflectionException
      * @return object
@@ -110,9 +110,9 @@ class ModelInstantiator
     }
 
     /**
-     * Converts a data object instance to an array.
+     * Converts a Data Object instance to an array.
      *
-     * @param object $data_object An instance of a hydrated data object.
+     * @param object $data_object An instance of a hydrated Data Object.
      *
      * @return array
      */
@@ -132,7 +132,7 @@ class ModelInstantiator
     }
 
     /**
-     * Returns an array of all properties of a data object that have a Column attribute.
+     * Returns an array of all properties of a Data Object that have a Column attribute.
      * The keys are the property names and the values are the Column attribute instance.
      *
      * @param string $class
@@ -166,7 +166,7 @@ class ModelInstantiator
     }
 
     /**
-     * Returns all properties of a data object class.
+     * Returns all properties of a Data Object class.
      *
      * @param string $class
      *

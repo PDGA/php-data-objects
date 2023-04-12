@@ -30,7 +30,7 @@ class ModelInstantiatorTest extends TestCase
 
         try
         {
-            // Convert the array to a data object.
+            // Convert the array to a Data Object.
             $data_object = $this->model_instantiator->arrayToDataObject(
                 $array,
                 ModelInstantiatorTestObject::class
@@ -48,21 +48,21 @@ class ModelInstantiatorTest extends TestCase
         $this->assertEquals($array['firstName'], $data_object->firstName);
         $this->assertEquals($array['pdgaNumber'], $data_object->pdgaNumber);
 
-        // Unset properties in the array should also be unset in the data object instance.
+        // Unset properties in the array should also be unset in the Data Object instance.
         $this->assertFalse(isset($data_object->email));
 
         // The property without a Column attribute should be set to the array value.
         $this->assertTrue(property_exists($data_object, 'testProperty'));
         $this->assertEquals($array['testProperty'], $data_object->testProperty);
 
-        // The extraneous array key should not exist as a property or be set on the data object.
+        // The extraneous array key should not exist as a property or be set on the Data Object.
         $this->assertFalse(property_exists($data_object, 'fakeProperty'));
         $this->assertFalse(isset($data_object->fakeProperty));
     }
 
     public function testDataObjectToDatabaseModel(): void
     {
-        // Create an input data object with all Column properties set.
+        // Create an input Data Object with all Column properties set.
         $data_object             = new ModelInstantiatorTestObject();
         $data_object->firstName  = 'Ken';
         $data_object->lastName   = 'Climo';
@@ -82,7 +82,7 @@ class ModelInstantiatorTest extends TestCase
             $this->model_instantiator->dataObjectToDatabaseModel($data_object)
         );
 
-        // Create an input data object with the 'email' property unset.
+        // Create an input Data Object with the 'email' property unset.
         $data_object             = new ModelInstantiatorTestObject();
         $data_object->firstName  = 'Ken';
         $data_object->lastName   = 'Climo';
@@ -111,7 +111,7 @@ class ModelInstantiatorTest extends TestCase
             'Privacy'   => 'yes'
         ];
 
-        // This data object should match the conversion output.
+        // This Data Object should match the conversion output.
         $data_object             = new ModelInstantiatorTestObject();
         $data_object->firstName  = 'Ken';
         $data_object->lastName   = 'Climo';
@@ -127,7 +127,7 @@ class ModelInstantiatorTest extends TestCase
 
     public function testDataObjectToArray(): void
     {
-        // Create an input data object instance.
+        // Create an input Data Object instance.
         $data_object               = new ModelInstantiatorTestObject();
         $data_object->firstName    = 'Ken';
         $data_object->lastName     = 'Climo';
@@ -136,7 +136,7 @@ class ModelInstantiatorTest extends TestCase
         $data_object->privacy      = true;
         $data_object->testProperty = true;
 
-        // The output array should reflect the data object properties.
+        // The output array should reflect the Data Object properties.
         // Note that the order of the array keys matters and must match the class definition.
         $this->assertSame(
             [
@@ -184,7 +184,7 @@ class ModelInstantiatorTest extends TestCase
 
     public function testConvertPropertyOnSave()
     {
-        // Create a data object with a property that uses the YesNoConverter.
+        // Create a Data Object with a property that uses the YesNoConverter.
         $data_object = new ModelInstantiatorTestObject();
         $data_object->privacy = true;
 
@@ -209,7 +209,7 @@ class ModelInstantiatorTest extends TestCase
 
         $columns = $this->model_instantiator->dataObjectPropertyColumns(ModelInstantiatorTestObject::class);
 
-        // 'No' should return boolean false when converting to a data object.
+        // 'No' should return boolean false when converting to a Data Object.
         $this->assertSame(
             false,
             $this->model_instantiator->convertPropertyOnRetrieve(
