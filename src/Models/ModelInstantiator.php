@@ -17,7 +17,6 @@ class ModelInstantiator
      * @param array  $arr   an array of values corresponding to the public properties of the data object.
      * @param string $class Fully-qualified class name of the data object.
      *
-     * @throws ReflectionException
      * @throws ValidationListException
      * @return object
      */
@@ -33,7 +32,7 @@ class ModelInstantiator
         $instance = new $class();
 
         // Assign public properties.
-        foreach ($this->dataObjectPropertyColumns($class) as $property => $column)
+        foreach ($this->dataObjectProperties($class) as $property)
         {
             // Ignore properties which are not specified in the incoming array.
             if ($enforcer->propIsUndefined($arr, $property))
@@ -115,7 +114,6 @@ class ModelInstantiator
      *
      * @param object $data_object An instance of a hydrated data object.
      *
-     * @throws ReflectionException
      * @return array
      */
     public function dataObjectToArray(
@@ -125,7 +123,7 @@ class ModelInstantiator
         $array = [];
 
         // Set all Column-attributed properties to a key-value in the outgoing array.
-        foreach ($this->dataObjectPropertyColumns($data_object::class) as $property => $column)
+        foreach ($this->dataObjectProperties($data_object::class) as $property)
         {
             $array[$property] = $data_object->{$property};
         }
@@ -165,6 +163,21 @@ class ModelInstantiator
         }
 
         return $columns;
+    }
+
+    /**
+     * Returns all properties of a data object class.
+     *
+     * @param string $class
+     *
+     * @return array
+     */
+    public function dataObjectProperties(
+        string $class
+    ): array
+    {
+        // Return all properties of the object including unassigned properties.
+        return array_keys(get_class_vars($class));
     }
 
     /**

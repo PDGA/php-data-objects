@@ -51,9 +51,9 @@ class ModelInstantiatorTest extends TestCase
         // Unset properties in the array should also be unset in the data object instance.
         $this->assertFalse(isset($data_object->email));
 
-        // The property without a Column attribute exist on the data object but not be set to the array value.
+        // The property without a Column attribute should be set to the array value.
         $this->assertTrue(property_exists($data_object, 'testProperty'));
-        $this->assertNotEquals($array['testProperty'], $data_object->testProperty);
+        $this->assertEquals($array['testProperty'], $data_object->testProperty);
 
         // The extraneous array key should not exist as a property or be set on the data object.
         $this->assertFalse(property_exists($data_object, 'fakeProperty'));
@@ -128,22 +128,24 @@ class ModelInstantiatorTest extends TestCase
     public function testDataObjectToArray(): void
     {
         // Create an input data object instance.
-        $data_object             = new ModelInstantiatorTestObject();
-        $data_object->firstName  = 'Ken';
-        $data_object->lastName   = 'Climo';
-        $data_object->pdgaNumber = 4297;
-        $data_object->email      = 'champ@pdga.com';
-        $data_object->privacy    = true;
+        $data_object               = new ModelInstantiatorTestObject();
+        $data_object->firstName    = 'Ken';
+        $data_object->lastName     = 'Climo';
+        $data_object->pdgaNumber   = 4297;
+        $data_object->email        = 'champ@pdga.com';
+        $data_object->privacy      = true;
+        $data_object->testProperty = true;
 
         // The output array should reflect the data object properties.
         // Note that the order of the array keys matters and must match the class definition.
         $this->assertSame(
             [
-                'pdgaNumber' => 4297,
-                'firstName'  => 'Ken',
-                'lastName'   => 'Climo',
-                'email'      => 'champ@pdga.com',
-                'privacy'    => true,
+                'pdgaNumber'   => 4297,
+                'firstName'    => 'Ken',
+                'lastName'     => 'Climo',
+                'email'        => 'champ@pdga.com',
+                'privacy'      => true,
+                'testProperty' => true,
             ],
             $this->model_instantiator->dataObjectToArray($data_object)
         );
@@ -158,9 +160,25 @@ class ModelInstantiatorTest extends TestCase
                 'firstName',
                 'lastName',
                 'email',
-                'privacy'
+                'privacy',
             ],
             array_keys($this->model_instantiator->dataObjectPropertyColumns(ModelInstantiatorTestObject::class))
+        );
+    }
+
+    public function testDataObjectProperties()
+    {
+        // We should get an array with all property names as values.
+        $this->assertSame(
+            [
+                'pdgaNumber',
+                'firstName',
+                'lastName',
+                'email',
+                'privacy',
+                'testProperty',
+            ],
+            $this->model_instantiator->dataObjectProperties(ModelInstantiatorTestObject::class)
         );
     }
 
