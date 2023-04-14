@@ -5,7 +5,7 @@ Data object related code for the PDGA's back-end PHP API systems.
 ### Install Composer Deps
 
 ```
-./bin/phpunit install
+./bin/composer install
 ```
 
 ### Run Unit Tests
