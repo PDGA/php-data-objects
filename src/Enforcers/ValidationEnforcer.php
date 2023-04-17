@@ -46,7 +46,12 @@ class ValidationEnforcer
             {
                 if (!$validator->validate($arr[$propName]))
                 {
-                    $validationErrors->addError($validator->getErrorMessage($propName), $propName);
+                    $validationErrors->addError(
+                        $validator->getErrorMessage($propName),
+                        $propName,
+                        null,
+                        $arr[$propName],
+                    );
                 }
             }
         }
