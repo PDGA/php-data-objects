@@ -9,6 +9,7 @@ use PDGA\DataObjects\Validators\BoolValidator;
 use PDGA\DataObjects\Validators\DateValidator;
 use PDGA\DataObjects\Validators\FloatValidator;
 use PDGA\DataObjects\Validators\IntValidator;
+use PDGA\DataObjects\Validators\NotBlankValidator;
 use PDGA\DataObjects\Validators\NotNullValidator;
 use PDGA\DataObjects\Validators\StringValidator;
 use PDGA\DataObjects\Validators\Validator;
@@ -110,6 +111,12 @@ class ValidationEnforcer
             if (!$propCanNull)
             {
                 $metadata[$propName]['validators'][] = $validators['notNull'];
+            }
+
+            //String-type properties cannot be blank.
+            if ($propType === 'string')
+            {
+                $metadata[$propName]['validators'][] = new NotBlankValidator();
             }
 
             //If the property has any validation attributes make sure they are included.

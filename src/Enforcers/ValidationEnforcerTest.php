@@ -12,6 +12,7 @@ class Person
     #[MaxLengthValidator(15), EmailValidator]
     public ?string $email;
     public int $id;
+    public ?string $name;
 }
 
 class ValidationEnforcerTest extends TestCase
@@ -29,8 +30,8 @@ class ValidationEnforcerTest extends TestCase
 
         //id validators include int and not null
         $this->assertEquals(count($result['id']['validators']), 2);
-        //email validators include string, max length, and email
-        $this->assertEquals(count($result['email']['validators']), 3);
+        //email validators include string, not blank, max length, and email
+        $this->assertEquals(count($result['email']['validators']), 4);
     }
 
     public function testValidatesInstancesCorrectly(): void
@@ -74,7 +75,6 @@ class ValidationEnforcerTest extends TestCase
         }
         catch (ValidationListException $e)
         {
-
             $this->assertTrue(false, "Failed to validate types. " . json_encode($e->getErrors()));
         }
     }
@@ -109,7 +109,6 @@ class ValidationEnforcerTest extends TestCase
         }
         catch (ValidationListException $e)
         {
-
             $this->assertTrue(false, "Failed to validate types. " . json_encode($e->getErrors()));
         }
     }
@@ -124,7 +123,6 @@ class ValidationEnforcerTest extends TestCase
         }
         catch (ValidationListException $e)
         {
-
             $expectedError1 = "The id field must not be null.";
             $result = $e->getErrors();
             $result1 = $result['id'][0]['message'];
@@ -178,5 +176,20 @@ class ValidationEnforcerTest extends TestCase
     {
         $person = ['email' => 'foo@bar.com', 'id' => null];
         $this->assertFalse($this->enforcer->propIsNotNull($person, 'id'));
+    }
+
+    public function testNoBlankStrings(): void
+    {
+        $person = ['name' => '', 'id' => 42];
+        try
+        {
+            $this->enforcer->enforce($person, Person::class);
+            $this->assertTrue(false, 'Blank string validation failed.');
+        }
+        catch (ValidationListException $e)
+        {
+            $this->assertEquals(1, count($e->getErrors()));
+            $this->assertEquals('The name field must not be blank.', $e->getErrors()['name'][0]['message']);
+        }
     }
 }
