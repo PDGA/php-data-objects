@@ -41,10 +41,12 @@ class ModelValidationEnforcerTest extends TestCase
 
         //id validators include int and not null
         $this->assertEquals(count($result['id']['validators']), 2);
-        //email validators include string, max length, max length (from the column) and email
-        $this->assertEquals(count($result['email']['validators']), 4);
-        //name validators include string, max length, max length (from the column), and not null
-        $this->assertEquals(count($result['email']['validators']), 4);
+        //email validators include string, not blank, max length, max length
+        //(from the column) and email
+        $this->assertEquals(count($result['email']['validators']), 5);
+        //name validators include string, not blank, max length, max length
+        //(from the column), and not null
+        $this->assertEquals(count($result['name']['validators']), 5);
     }
 
 }
