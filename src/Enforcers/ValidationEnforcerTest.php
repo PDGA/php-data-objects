@@ -13,6 +13,7 @@ class Person
     public ?string $email;
     public int $id;
     public ?string $name;
+    public array $widgets;
 }
 
 class ValidationEnforcerTest extends TestCase
@@ -190,6 +191,35 @@ class ValidationEnforcerTest extends TestCase
         {
             $this->assertEquals(1, count($e->getErrors()));
             $this->assertEquals('The name field must not be blank.', $e->getErrors()['name'][0]['message']);
+        }
+    }
+
+    public function testNestedArray(): void
+    {
+        $person = ['id' => 42, 'widgets' => [1, 2, 3]];
+        try
+        {
+            $this->enforcer->enforce($person, Person::class);
+            $this->assertTrue(true);
+        }
+        catch (ValidationListException $e)
+        {
+            $this->assertTrue(false, 'Array validation failed.');
+        }
+
+        $person = ['id' => 42, 'widgets' => ['a' => 'b']];
+        try
+        {
+            $this->enforcer->enforce($person, Person::class);
+            $this->assertTrue(false, 'Array validation failed (assoc)');
+        }
+        catch (ValidationListException $e)
+        {
+            $this->assertEquals(1, count($e->getErrors()));
+            $this->assertEquals(
+                'The widgets field must be a sequential (non-associative) zero-indexed array.',
+                 $e->getErrors()['widgets'][0]['message'],
+            );
         }
     }
 }

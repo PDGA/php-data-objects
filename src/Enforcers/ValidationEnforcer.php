@@ -11,6 +11,7 @@ use PDGA\DataObjects\Validators\FloatValidator;
 use PDGA\DataObjects\Validators\IntValidator;
 use PDGA\DataObjects\Validators\NotBlankValidator;
 use PDGA\DataObjects\Validators\NotNullValidator;
+use PDGA\DataObjects\Validators\SequentialArrayValidator;
 use PDGA\DataObjects\Validators\StringValidator;
 use PDGA\DataObjects\Validators\Validator;
 use PDGA\Exception\ValidationListException;
@@ -85,6 +86,7 @@ class ValidationEnforcer
             "float"    => new FloatValidator(),
             "DateTime" => new DateValidator(),
             "notNull"  => new NotNullValidator(),
+            "array"    => new SequentialArrayValidator(),
         ];
 
         $metadata = [];
