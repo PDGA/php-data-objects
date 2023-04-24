@@ -2,10 +2,13 @@
 
 namespace PDGA\DataObjects\Models;
 
+use PDGA\DataObjects\Attributes\Cardinality;
 use PDGA\DataObjects\Attributes\Column;
 use PDGA\DataObjects\Enforcers\ValidationEnforcer;
-use PDGA\Exception\ValidationListException;
+use PDGA\Exception\ValidationException;
 
+use ReflectionAttribute;
+use ReflectionClass;
 use ReflectionProperty;
 use ReflectionException;
 
@@ -18,6 +21,7 @@ class ModelInstantiator
      * @param string $class Fully-qualified class name of the Data Object.
      *
      * @throws ValidationListException
+     * @throws ValidationException
      * @return object
      */
     public function arrayToDataObject(
@@ -31,16 +35,59 @@ class ModelInstantiator
 
         $instance = new $class();
 
+        // This holds information about OneToMany and ManyToOne relationships.
+        $cardinalities = $this->dataObjectPropertyCardinalities($class);
+
         // Assign public properties.
         foreach ($this->dataObjectProperties($class) as $property)
         {
-            // Ignore properties which are not specified in the incoming array.
+            // Ignore properties which are not specified in the incoming array,
+            // and properties which define relationships to other Data Objects.
+            if (
+                $enforcer->propIsDefined($arr, $property) &&
+                !array_key_exists($property, $cardinalities)
+            )
+            {
+                $instance->{$property} = $arr[$property];
+            }
+        }
+
+        // Assign related Data Objects based on Cardinality attributes.
+        foreach ($cardinalities as $property => $card)
+        {
             if ($enforcer->propIsUndefined($arr, $property))
             {
                 continue;
             }
 
-            $instance->{$property} = $arr[$property];
+            // Map to an nested array of Data Objects.
+            if ($card->getDescription() === 'OneToMany')
+            {
+                $instances = [];
+
+                foreach ($arr[$property] as $relation)
+                {
+                    $instances[] = $this->arrayToDataObject(
+                        $relation,
+                        $card->getRelationClass(),
+                    );
+                }
+
+                $instance->{$property} = $instances;
+            }
+            // ManyToOne: Map to a single nested Data Object.
+            else
+            {
+                if (!is_array($arr[$property]))
+                {
+                    throw new ValidationException("{$property} must be an associative array.");
+                }
+
+                $instance->{$property} = $this->arrayToDataObject(
+                    $arr[$property],
+                    $card->getRelationClass(),
+                );
+            }
         }
 
         return $instance;
@@ -163,6 +210,42 @@ class ModelInstantiator
         }
 
         return $columns;
+    }
+
+    /**
+     * Returns an array of all properties of a Data Object that have a
+     * Cardinality attribute, either OneToMany or ManyToOne.  Each key in the
+     * returned array is a Data Object property name, and the value is a
+     * Cardinality instance.
+     *
+     * @param string $class
+     *
+     * @throws ReflectionException
+     * @return array
+     */
+    public function dataObjectPropertyCardinalities(
+        string $class
+    ): array
+    {
+        $props = (new ReflectionClass($class))->getProperties();
+        $cards = [];
+
+        foreach ($props as $prop)
+        {
+            $attrs = $prop->getAttributes(
+                Cardinality::class,
+                ReflectionAttribute::IS_INSTANCEOF,
+            );
+
+            if (!$attrs)
+            {
+                continue;
+            }
+
+            $cards[$prop->getName()] = $attrs[0]->newInstance();
+        }
+
+        return $cards;
     }
 
     /**

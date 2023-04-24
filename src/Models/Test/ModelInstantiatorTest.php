@@ -2,10 +2,13 @@
 
 namespace PDGA\DataObjects\Models\Test;
 
+use PDGA\Exception\ValidationException;
 use PDGA\Exception\ValidationListException;
 use PHPUnit\Framework\TestCase;
 
 use PDGA\DataObjects\Models\ModelInstantiator;
+use PDGA\DataObjects\Models\Test\Member;
+use PDGA\DataObjects\Models\Test\PhoneNumber;
 
 class ModelInstantiatorTest extends TestCase
 {
@@ -60,6 +63,94 @@ class ModelInstantiatorTest extends TestCase
         // The extraneous array key should not exist as a property or be set on the Data Object.
         $this->assertFalse(property_exists($data_object, 'fakeProperty'));
         $this->assertFalse(isset($data_object->fakeProperty));
+    }
+
+    /**
+     * Tests instantiation of a nested array of Data Objects.
+     */
+    public function testArrayToDataObjectNestedArray(): void
+    {
+        $member_arr = [
+            'pdgaNumber' => 42,
+            'firstName'  => 'Jeff',
+            'lastName'   => 'Lebowski',
+
+            // This should get assigned to an array of PhoneNumber instances.
+            'phoneNumbers' => [
+                ['pdgaNumber' => 42, 'phone' => '999-888-7777'],
+                ['pdgaNumber' => 42, 'phone' => '111-222-3333'],
+            ],
+        ];
+
+        $member = $this->model_instantiator->arrayToDataObject(
+            $member_arr,
+            Member::class
+        );
+
+        $this->assertEquals(2, count($member->phoneNumbers));
+        $this->assertTrue($member->phoneNumbers[0] instanceof PhoneNumber);
+        $this->assertEquals(
+            $member_arr['phoneNumbers'][0]['pdgaNumber'],
+            $member->phoneNumbers[0]->pdgaNumber,
+        );
+
+        $this->assertTrue($member->phoneNumbers[1] instanceof PhoneNumber);
+        $this->assertEquals(
+            $member_arr['phoneNumbers'][1]['phone'],
+            $member->phoneNumbers[1]->phone,
+        );
+
+        $this->assertTrue(true);
+    }
+
+    /**
+     * Tests instantiation of a single nested Data Objects.
+     */
+    public function testArrayToDataObjectNestedObject(): void
+    {
+        $pn_arr = [
+            'pdgaNumber' => 42,
+            'phone'      => '123-456-7890',
+
+            // Maps to a single Member instance.
+            'member' => [
+                'pdgaNumber' => 42,
+                'firstName'  => 'Jeff',
+                'lastName'   => 'Lebowski',
+            ],
+        ];
+
+        $pn = $this->model_instantiator->arrayToDataObject(
+            $pn_arr,
+            PhoneNumber::class,
+        );
+
+        $this->assertTrue($pn->member instanceof Member);
+        $this->assertEquals($pn->member->firstName, 'Jeff');
+    }
+
+    /**
+     * Raises a validation exception when a nested object is not an array.
+     */
+    public function testArrayToDataObjectBadNestedObject(): void
+    {
+        $pn_arr = [
+            'phone' => '123-456-7890',
+            'member' => 'I am not an array.',
+        ];
+
+        try
+        {
+            $this->model_instantiator->arrayToDataObject(
+                $pn_arr,
+                PhoneNumber::class,
+            );
+            $this->assertTrue(false);
+        }
+        catch (ValidationException $e)
+        {
+            $this->assertEquals('member must be an associative array.', $e->getMessage());
+        }
     }
 
     public function testDataObjectToDatabaseModel(): void
