@@ -10,35 +10,34 @@ use Attribute;
 abstract class Cardinality
 {
     /**
-     * Initialize with the two related classes, left and right.  The
-     * cardinality is from left to right, like a RDBMS.
+     * Initialize with a related class, relation.  The cardinality is from left
+     * to right, like a RDBMS, so the class that uses this attribute is like
+     * the left table, and the relation is like the right table.
      *
-     * @param string $left - The left Data Object class.
-     * @param string $right - The right, related Data Object class.
+     * @param string $relation - The right, related Data Object class.
      */
     public function __construct(
-        protected string $left,
-        protected string $right,
+        protected string $relation,
     ) {}
 
-    /**
-     * Get an instance of the left class.
-     *
-     * @return object A Data Object instance.
-     */
-    public function getLeftInstance(): object
+   /**
+    * Get the fully-qualified path of the relation.
+    *
+    * @return string Class path.
+    */
+    public function getRelationClass(): string
     {
-        return new $this->left;
+        return $this->relation;
     }
 
    /**
-    * Get an instance of the right class.
+    * Get an instance of the relation (right) class.
     *
     * @return object A Data Object instance.
     */
-    public function getRightInstance(): object
+    public function getRelationInstance(): object
     {
-        return new $this->right;
+        return new $this->relation;
     }
 
     /**
@@ -46,5 +45,5 @@ abstract class Cardinality
      *
      * @return string
      */
-    abstract public function describe(): string;
+    abstract public function getDescription(): string;
 }

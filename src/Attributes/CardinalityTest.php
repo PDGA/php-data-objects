@@ -6,23 +6,24 @@ use PHPUnit\Framework\TestCase;
 
 use PDGA\DataObjects\Attributes\OneToMany;
 
-// Test classes.  A Person has Phone Numbers (OTM cardinality).
-class Person {}
-class PhoneNumber {}
+class TestPhoneNumber {}
 
 class CardinalityTest extends TestCase
 {
-    public function testLeftInstance(): void
+    public function testRelationClass(): void
     {
-        $card = new OneToMany(Person::class, PhoneNumber::class);
+        $card = new OneToMany(TestPhoneNumber::class);
 
-        $this->assertTrue($card->getLeftInstance() instanceof Person);
+        $this->assertEquals(
+            'PDGA\DataObjects\Attributes\TestPhoneNumber',
+            $card->getRelationClass(),
+        );
     }
 
-    public function testRightInstance(): void
+    public function testRelationInstance(): void
     {
-        $card = new OneToMany(Person::class, PhoneNumber::class);
+        $card = new OneToMany(TestPhoneNumber::class);
 
-        $this->assertTrue($card->getRightInstance() instanceof PhoneNumber);
+        $this->assertTrue($card->getRelationInstance() instanceof TestPhoneNumber);
     }
 }

@@ -10,8 +10,8 @@ class ManyToOneTest extends TestCase
 {
     public function testDescription(): void
     {
-        // Classes are ignored here.
-        $card = new ManyToOne(object::class, object::class);
-        $this->assertEquals('ManyToOne', $card->describe());
+        // Class is ignored here.
+        $card = new ManyToOne(object::class);
+        $this->assertEquals('ManyToOne', $card->getDescription());
     }
 }

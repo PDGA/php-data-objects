@@ -14,7 +14,7 @@ class ManyToOne extends Cardinality
      *
      * @return string Always "ManyToOne"
      */
-    public function describe(): string
+    public function getDescription(): string
     {
         return "ManyToOne";
     }

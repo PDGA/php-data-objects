@@ -14,7 +14,7 @@ class OneToMany extends Cardinality
      *
      * @return string Always "OneToMany"
      */
-    public function describe(): string
+    public function getDescription(): string
     {
         return "OneToMany";
     }
