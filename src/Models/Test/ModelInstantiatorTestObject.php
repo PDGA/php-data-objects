@@ -1,6 +1,6 @@
 <?php
 
-namespace PDGA\DataObjects\Models;
+namespace PDGA\DataObjects\Models\Test;
 
 use PDGA\DataObjects\Attributes\Column;
 use PDGA\DataObjects\Attributes\Table;

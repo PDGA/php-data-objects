@@ -1,9 +1,11 @@
 <?php
 
-namespace PDGA\DataObjects\Models;
+namespace PDGA\DataObjects\Models\Test;
 
 use PDGA\Exception\ValidationListException;
 use PHPUnit\Framework\TestCase;
+
+use PDGA\DataObjects\Models\ModelInstantiator;
 
 class ModelInstantiatorTest extends TestCase
 {
