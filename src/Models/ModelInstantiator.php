@@ -159,6 +159,43 @@ class ModelInstantiator
             }
         }
 
+        // Now handle nested relationship data.
+        foreach ($this->dataObjectPropertyCardinalities($class) as $property => $card)
+        {
+            // "alias" is the name of the property on the DB model, which comes
+            // from the Cardinality attribute.
+            $alias = $card->getAlias();
+
+            if (!$enforcer->propIsDefined($db_model, $alias))
+            {
+                continue;
+            }
+
+            // Related Data Object class.
+            $relation_class = $card->getRelationClass();
+
+            if ($card->getDescription() === 'OneToMany')
+            {
+                $data_object->{$property} = [];
+
+                foreach ($db_model[$alias] as $relation_db_model)
+                {
+                    $data_object->{$property}[] = $this->databaseModelToDataObject(
+                        $relation_db_model,
+                        $relation_class,
+                    );
+                }
+            }
+            // Many-to-one relationship (a single nested Data Object).
+            else
+            {
+                $data_object->{$property} = $this->databaseModelToDataObject(
+                    $db_model[$alias],
+                    $relation_class,
+                );
+            }
+        }
+
         return $data_object;
     }
 

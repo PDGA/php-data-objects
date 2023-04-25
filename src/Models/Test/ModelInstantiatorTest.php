@@ -232,6 +232,64 @@ class ModelInstantiatorTest extends TestCase
         );
     }
 
+    public function testDatabaseModelToDataObjectNestedArray(): void
+    {
+        $member_db = [
+            'PDGANumber'   => 42,
+            'FirstName'    => 'Franko',
+            'PhoneNumbers' => [
+                ['Phone' => '999-999-9999']
+            ],
+        ];
+
+        $member = $this->model_instantiator->databaseModelToDataObject(
+            $member_db,
+            Member::class,
+        );
+
+        $member_arr = $this->model_instantiator->dataObjectToArray($member);
+
+        $this->assertEqualsCanonicalizing(
+            [
+                'pdgaNumber'   => 42,
+                'firstName'    => 'Franko',
+                'phoneNumbers' => [
+                    ['phone' => '999-999-9999']
+                ],
+            ],
+            $member_arr,
+        );
+    }
+
+    public function testDatabaseModelToDataObjectNestedObject(): void
+    {
+        $phone_db = [
+            'Phone' => '999-999-9999',
+            'Member' => [
+                'PDGANumber' => 42,
+                'LastName'   => 'Salentino',
+            ],
+        ];
+
+        $phone = $this->model_instantiator->databaseModelToDataObject(
+            $phone_db,
+            PhoneNumber::class,
+        );
+
+        $phone_arr = $this->model_instantiator->dataObjectToArray($phone);
+
+        $this->assertEqualsCanonicalizing(
+            [
+                'phone'  => '999-999-9999',
+                'member' => [
+                    'pdgaNumber' => 42,
+                    'lastName'   => 'Salentino',
+                ],
+            ],
+            $phone_arr,
+        );
+    }
+
     public function testDataObjectToArray(): void
     {
         // Create an input Data Object instance.
