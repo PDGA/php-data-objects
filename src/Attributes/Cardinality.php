@@ -15,9 +15,12 @@ abstract class Cardinality
      * the left table, and the relation is like the right table.
      *
      * @param string $relation - The right, related Data Object class.
+     * @param string $alias    - In query results, this is the name of the
+     * property where the related data are set.
      */
     public function __construct(
         protected string $relation,
+        protected string $alias,
     ) {}
 
    /**
@@ -38,6 +41,16 @@ abstract class Cardinality
     public function getRelationInstance(): object
     {
         return new $this->relation;
+    }
+
+    /**
+     * Get the alias of the related table in query results.
+     *
+     * @return string Relationship alias in query results.
+     */
+    public function getAlias(): string
+    {
+        return $this->alias;
     }
 
     /**

@@ -12,7 +12,7 @@ class CardinalityTest extends TestCase
 {
     public function testRelationClass(): void
     {
-        $card = new OneToMany(TestPhoneNumber::class);
+        $card = new OneToMany(TestPhoneNumber::class, 'PhoneNumbers');
 
         $this->assertEquals(
             'PDGA\DataObjects\Attributes\TestPhoneNumber',
@@ -22,8 +22,15 @@ class CardinalityTest extends TestCase
 
     public function testRelationInstance(): void
     {
-        $card = new OneToMany(TestPhoneNumber::class);
+        $card = new OneToMany(TestPhoneNumber::class, 'PhoneNumbers');
 
         $this->assertTrue($card->getRelationInstance() instanceof TestPhoneNumber);
+    }
+
+    public function testGetAlias(): void
+    {
+        $card = new OneToMany(TestPhoneNumber::class, 'PhoneNumbers');
+
+        $this->assertEquals('PhoneNumbers', $card->getAlias());
     }
 }

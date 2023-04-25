@@ -10,6 +10,6 @@ class PhoneNumber
     public int $pdgaNumber;
     public string $phone;
 
-    #[ManyToOne(Member::class)]
+    #[ManyToOne(Member::class, 'Member')]
     public Member $member;
 }

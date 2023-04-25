@@ -11,7 +11,7 @@ class OneToManyTest extends TestCase
     public function testDescription(): void
     {
         // Class is ignored here.
-        $card = new OneToMany(object::class, object::class);
+        $card = new OneToMany(object::class, 'fake');
         $this->assertEquals('OneToMany', $card->getDescription());
     }
 }

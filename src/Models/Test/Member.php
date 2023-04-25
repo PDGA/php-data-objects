@@ -11,6 +11,6 @@ class Member
     public string $firstName;
     public string $lastName;
 
-    #[OneToMany(PhoneNumber::class)]
+    #[OneToMany(PhoneNumber::class, 'PhoneNumbers')]
     public array $phoneNumbers;
 }
