@@ -167,15 +167,28 @@ class ModelInstantiator
         object $data_object
     ): array
     {
-        $array = [];
-
-        // Set all Column-attributed properties to a key-value in the outgoing array.
-        foreach ($this->dataObjectProperties($data_object::class) as $property)
+        // Internal driver function that recursively converts an object to an
+        // array and accepts a mixed-type argument.
+        $to_array = function(mixed $data_obj) use (&$to_array)
         {
-            $array[$property] = $data_object->{$property};
-        }
+            if (is_null($data_obj) || is_scalar($data_obj))
+            {
+                return $data_obj;
+            }
 
-        return $array;
+            // $data_obj is an array or object.  Cast to array, then cast each
+            // element recursively.
+            $arr = (array) $data_obj;
+
+            foreach ($arr as &$ele)
+            {
+                $ele = $to_array($ele);
+            }
+
+            return $arr;
+        };
+
+        return $to_array($data_object);
     }
 
     /**

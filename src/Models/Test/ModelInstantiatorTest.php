@@ -260,6 +260,41 @@ class ModelInstantiatorTest extends TestCase
         );
     }
 
+    public function testDataObjectToArrayNested(): void
+    {
+        // This is a goofy structure, but it tests recursion of both nested
+        // objects and arrays.  A Member with one Phone Number with a Member.
+        $member = new Member();
+        $member->pdgaNumber = 42;
+        $member->firstName  = 'Jane';
+
+        $member->phoneNumbers = [new PhoneNumber()];
+        $member->phoneNumbers[0]->pdgaNumber = 42;
+        $member->phoneNumbers[0]->phone      = '123-456-7890';
+
+        $member->phoneNumbers[0]->member = new Member();
+        $member->phoneNumbers[0]->member->pdgaNumber = 42;
+        $member->phoneNumbers[0]->member->firstName  = 'Jane';
+
+        $this->assertEqualsCanonicalizing(
+            [
+                'firstName'    => 'Jane',
+                'pdgaNumber'   => 42,
+                'phoneNumbers' => [
+                    [
+                        'pdgaNumber' => 42,
+                        'phone' => '123-456-7890',
+                        'member' => [
+                            'firstName'    => 'Jane',
+                            'pdgaNumber'   => 42,
+                        ],
+                    ],
+                ],
+            ],
+            $this->model_instantiator->dataObjectToArray($member),
+        );
+    }
+
     public function testDataObjectPropertyColumns()
     {
         // We should get an array with property names as keys and the corresponding Column attributes as values.
