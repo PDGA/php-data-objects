@@ -218,6 +218,20 @@ class ModelInstantiatorTest extends TestCase
         );
     }
 
+    public function testPartialDatabaseModelToDataObject(): void
+    {
+        // Partial DB model for a ModelInstantiatorTestObject.
+        $db_model = ['PDGANum' => 4297];
+
+        $data_object             = new ModelInstantiatorTestObject();
+        $data_object->pdgaNumber = 4297;
+
+        $this->assertEquals(
+            $data_object,
+            $this->model_instantiator->databaseModelToDataObject($db_model, ModelInstantiatorTestObject::class)
+        );
+    }
+
     public function testDataObjectToArray(): void
     {
         // Create an input Data Object instance.

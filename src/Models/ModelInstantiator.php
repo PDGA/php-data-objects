@@ -142,15 +142,21 @@ class ModelInstantiator
     ): object
     {
         $data_object = new $class();
+        $enforcer    = new ValidationEnforcer();
 
         // Set all Column-attributed properties to the corresponding database column value.
         foreach ($this->dataObjectPropertyColumns($class) as $property => $column)
         {
-            // Set property; apply value converter when applicable.
-            $data_object->{$property} = $this->convertPropertyOnRetrieve(
-                $column,
-                $db_model[$column->getName()],
-            );
+            $col_name = $column->getName();
+
+            if ($enforcer->propIsDefined($db_model, $col_name))
+            {
+                // Set property; apply value converter when applicable.
+                $data_object->{$property} = $this->convertPropertyOnRetrieve(
+                    $column,
+                    $db_model[$column->getName()],
+                );
+            }
         }
 
         return $data_object;
