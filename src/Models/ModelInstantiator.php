@@ -154,7 +154,7 @@ class ModelInstantiator
                 // Set property; apply value converter when applicable.
                 $data_object->{$property} = $this->convertPropertyOnRetrieve(
                     $column,
-                    $db_model[$column->getName()],
+                    $db_model[$col_name],
                 );
             }
         }
@@ -166,7 +166,7 @@ class ModelInstantiator
             // from the Cardinality attribute.
             $alias = $card->getAlias();
 
-            if (!$enforcer->propIsDefined($db_model, $alias))
+            if ($enforcer->propIsUndefined($db_model, $alias))
             {
                 continue;
             }
