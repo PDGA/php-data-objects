@@ -244,6 +244,22 @@ class ModelInstantiatorTest extends TestCase
         );
     }
 
+    public function testPartialDataObjectToArray(): void
+    {
+        $data_object               = new ModelInstantiatorTestObject();
+        $data_object->firstName    = 'Ken';
+        $data_object->lastName     = 'Climo';
+
+        $this->assertSame(
+            [
+                'firstName'    => 'Ken',
+                'lastName'     => 'Climo',
+                'testProperty' => false, // Default.
+            ],
+            $this->model_instantiator->dataObjectToArray($data_object)
+        );
+    }
+
     public function testDataObjectPropertyColumns()
     {
         // We should get an array with property names as keys and the corresponding Column attributes as values.
