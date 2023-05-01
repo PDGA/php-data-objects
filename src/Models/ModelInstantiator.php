@@ -9,7 +9,6 @@ use PDGA\Exception\ValidationException;
 
 use \Datetime;
 use ReflectionAttribute;
-use ReflectionClass;
 use ReflectionProperty;
 use ReflectionException;
 
@@ -45,12 +44,14 @@ class ModelInstantiator
             // Ignore properties which are not specified in the incoming array,
             // and properties which define relationships to other Data Objects.
             if (
-                $enforcer->propIsDefined($arr, $property) &&
-                !array_key_exists($property, $cardinalities)
+                $enforcer->propIsDefined($arr, $property->propertyName) &&
+                !array_key_exists($property->propertyName, $cardinalities)
             )
             {
-                $property_reflection = new ReflectionProperty($class, $property);
-                $instance->{$property} = $property_reflection->getType()->getName() === 'DateTime' ? new DateTime($arr[$property]) : $arr[$property];
+                $instance->{$property->propertyName} = $enforcer->propIsNotNull($arr, $property->propertyName)
+                    && $property->ReflectionProperty->getType()->getName() === 'DateTime'
+                    ? new DateTime($arr[$property->propertyName])
+                    : $arr[$property->propertyName];
             }
         }
 
@@ -256,12 +257,12 @@ class ModelInstantiator
     {
         $columns = [];
 
-        // Loop through all properties of the class; we use get_class_vars to include unassigned properties.
-        foreach (array_keys(get_class_vars($class)) as $property)
+        // Loop through all properties of the class.
+        $properties = $this->dataObjectProperties($class);
+        foreach ($properties as $property)
         {
             // Find the Column attribute for the property.
-            $property_reflection = new ReflectionProperty($class, $property);
-            $attribute           = $property_reflection->getAttributes(Column::class);
+            $attribute = $property->ReflectionProperty->getAttributes(Column::class);
 
             // If there is no Column attribute, skip this property.
             if (!$attribute)
@@ -290,12 +291,12 @@ class ModelInstantiator
         string $class
     ): array
     {
-        $props = (new ReflectionClass($class))->getProperties();
+        $properties = $this->dataObjectProperties($class);
         $cards = [];
 
-        foreach ($props as $prop)
+        foreach ($properties as $prop)
         {
-            $attrs = $prop->getAttributes(
+            $attrs = $prop->ReflectionProperty->getAttributes(
                 Cardinality::class,
                 ReflectionAttribute::IS_INSTANCEOF,
             );
@@ -308,11 +309,13 @@ class ModelInstantiator
             $cards[$prop->getName()] = $attrs[0]->newInstance();
         }
 
+
         return $cards;
     }
 
     /**
-     * Returns all properties of a Data Object class.
+     * Returns all properties of a Data Object class coupled with
+     * the ReflectionProperty information for each property.
      *
      * @param string $class
      *
@@ -322,8 +325,16 @@ class ModelInstantiator
         string $class
     ): array
     {
+        $properties = [];
+        $array_keys = array_keys(get_class_vars($class));
+
+        foreach ($array_keys as $prop)
+        {
+            $properties[] = ['propertyName' => $prop, 'ReflectionProperty' => new ReflectionProperty($class, $prop)];
+        }
+
         // Return all properties of the object including unassigned properties.
-        return array_keys(get_class_vars($class));
+        return $properties;
     }
 
     /**
