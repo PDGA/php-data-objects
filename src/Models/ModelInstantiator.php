@@ -36,12 +36,18 @@ class ModelInstantiator
 
         $instance = new $class();
 
+        $property_reflection = $this->dataObjectProperties($class);
+
         // This holds information about OneToMany and ManyToOne relationships.
-        $cardinalities = $this->dataObjectPropertyCardinalities($class);
+        $cardinalities = $this->dataObjectPropertyCardinalities($property_reflection);
 
         // Assign public properties.
-        foreach ($this->dataObjectProperties($class) as $property)
+        foreach ($property_reflection as $reflection)
         {
+            $property = $reflection->getName();
+            $type     = $reflection->getType()->getName();
+            $not_null = $enforcer->propIsNotNull($arr, $property);
+
             // Ignore properties which are not specified in the incoming array,
             // and properties which define relationships to other Data Objects.
             if (
@@ -49,8 +55,9 @@ class ModelInstantiator
                 !array_key_exists($property, $cardinalities)
             )
             {
-                $property_reflection = new ReflectionProperty($class, $property);
-                $instance->{$property} = $property_reflection->getType()->getName() === 'DateTime' ? new DateTime($arr[$property]) : $arr[$property];
+                $instance->{$property} = $not_null && $type === 'DateTime'
+                    ? new DateTime($arr[$property])
+                    : $arr[$property];
             }
         }
 
@@ -110,8 +117,10 @@ class ModelInstantiator
     {
         $model_array = [];
 
+        $property_reflection = $this->dataObjectProperties($data_object::class);
+
         // Loop through all Column-attributed properties of the object.
-        foreach ($this->dataObjectPropertyColumns($data_object::class) as $property => $column)
+        foreach ($this->dataObjectPropertyColumns($property_reflection) as $property => $column)
         {
             // Ignore unset properties.
             if (!isset($data_object->{$property}))
@@ -143,11 +152,12 @@ class ModelInstantiator
         string $class
     ): object
     {
-        $data_object = new $class();
-        $enforcer    = new ValidationEnforcer();
+        $data_object         = new $class();
+        $enforcer            = new ValidationEnforcer();
+        $property_reflection = $this->dataObjectProperties($class);
 
         // Set all Column-attributed properties to the corresponding database column value.
-        foreach ($this->dataObjectPropertyColumns($class) as $property => $column)
+        foreach ($this->dataObjectPropertyColumns($property_reflection) as $property => $column)
         {
             $col_name = $column->getName();
 
@@ -162,7 +172,7 @@ class ModelInstantiator
         }
 
         // Now handle nested relationship data.
-        foreach ($this->dataObjectPropertyCardinalities($class) as $property => $card)
+        foreach ($this->dataObjectPropertyCardinalities($property_reflection) as $property => $card)
         {
             // "alias" is the name of the property on the DB model, which comes
             // from the Cardinality attribute.
@@ -245,23 +255,22 @@ class ModelInstantiator
      * Returns an array of all properties of a Data Object that have a Column attribute.
      * The keys are the property names and the values are the Column attribute instance.
      *
-     * @param string $class
+     * @param array $props - An Array of ReflectionProperties.
      *
      * @throws ReflectionException
      * @return array
      */
     public function dataObjectPropertyColumns(
-        string $class
+        array $props
     ): array
     {
         $columns = [];
 
-        // Loop through all properties of the class; we use get_class_vars to include unassigned properties.
-        foreach (array_keys(get_class_vars($class)) as $property)
+        // Loop through all ReflectionProperties.
+        foreach ($props as $property)
         {
             // Find the Column attribute for the property.
-            $property_reflection = new ReflectionProperty($class, $property);
-            $attribute           = $property_reflection->getAttributes(Column::class);
+            $attribute = $property->getAttributes(Column::class);
 
             // If there is no Column attribute, skip this property.
             if (!$attribute)
@@ -269,7 +278,7 @@ class ModelInstantiator
                 continue;
             }
 
-            $columns[$property] = $attribute[0]->newInstance();
+            $columns[$property->getName()] = $attribute[0]->newInstance();
         }
 
         return $columns;
@@ -281,16 +290,15 @@ class ModelInstantiator
      * returned array is a Data Object property name, and the value is a
      * Cardinality instance.
      *
-     * @param string $class
+     * @param array $props - An Array of ReflectionProperties.
      *
      * @throws ReflectionException
      * @return array
      */
     public function dataObjectPropertyCardinalities(
-        string $class
+        array $props
     ): array
     {
-        $props = (new ReflectionClass($class))->getProperties();
         $cards = [];
 
         foreach ($props as $prop)
@@ -312,7 +320,7 @@ class ModelInstantiator
     }
 
     /**
-     * Returns all properties of a Data Object class.
+     * Returns ReflectionProperties for all properties of a Data Object class.
      *
      * @param string $class
      *
@@ -322,8 +330,8 @@ class ModelInstantiator
         string $class
     ): array
     {
-        // Return all properties of the object including unassigned properties.
-        return array_keys(get_class_vars($class));
+        // Return ReflectionProperties of all properties of the object including unassigned properties.
+        return (new ReflectionClass($class))->getProperties();
     }
 
     /**
