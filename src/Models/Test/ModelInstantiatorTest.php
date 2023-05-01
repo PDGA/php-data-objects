@@ -2,6 +2,9 @@
 
 namespace PDGA\DataObjects\Models\Test;
 
+use \DateTime;
+use ReflectionClass;
+
 use PDGA\Exception\ValidationException;
 use PDGA\Exception\ValidationListException;
 use PHPUnit\Framework\TestCase;
@@ -25,6 +28,7 @@ class ModelInstantiatorTest extends TestCase
         $array = [
             'pdgaNumber'   => 24472,
             'firstName'    => 'Peter',
+            'birthDate'    => '2020-01-01',
 
             // testProperty exists in the class but does not have a Column attribute.
             'testProperty' => true,
@@ -162,6 +166,7 @@ class ModelInstantiatorTest extends TestCase
         $data_object->pdgaNumber = 4297;
         $data_object->email      = 'champ@pdga.com';
         $data_object->privacy    = true;
+        $data_object->birthDate  = new DateTime('2020-01-01');
 
         // We should get a valid database model associative array on conversion.
         $this->assertSame(
@@ -171,6 +176,7 @@ class ModelInstantiatorTest extends TestCase
                 'LastName'  => 'Climo',
                 'Email'     => 'champ@pdga.com',
                 'Privacy'   => 'yes',
+                'BirthDate' => '2020-01-01T00:00:00+00:00',
             ],
             $this->model_instantiator->dataObjectToDatabaseModel($data_object)
         );
@@ -201,7 +207,8 @@ class ModelInstantiatorTest extends TestCase
             'FirstName' => 'Ken',
             'LastName'  => 'Climo',
             'Email'     => 'champ@pdga.com',
-            'Privacy'   => 'yes'
+            'Privacy'   => 'yes',
+            'BirthDate' => '2020-01-01',
         ];
 
         // This Data Object should match the conversion output.
@@ -211,6 +218,7 @@ class ModelInstantiatorTest extends TestCase
         $data_object->pdgaNumber = 4297;
         $data_object->email      = 'champ@pdga.com';
         $data_object->privacy    = true;
+        $data_object->birthDate  = new DateTime('2020-01-01');
 
         $this->assertEquals(
             $data_object,
@@ -300,6 +308,7 @@ class ModelInstantiatorTest extends TestCase
         $data_object->email        = 'champ@pdga.com';
         $data_object->privacy      = true;
         $data_object->testProperty = true;
+        $data_object->birthDate    = new DateTime('2020-01-01');
 
         // The output array should reflect the Data Object properties.
         // Note that the order of the array keys matters and must match the class definition.
@@ -310,6 +319,7 @@ class ModelInstantiatorTest extends TestCase
                 'lastName'     => 'Climo',
                 'email'        => 'champ@pdga.com',
                 'privacy'      => true,
+                'birthDate'    => '2020-01-01T00:00:00+00:00',
                 'testProperty' => true,
             ],
             $this->model_instantiator->dataObjectToArray($data_object)
@@ -369,6 +379,7 @@ class ModelInstantiatorTest extends TestCase
 
     public function testDataObjectPropertyColumns()
     {
+        $property_reflection = $this->model_instantiator->dataObjectProperties(ModelInstantiatorTestObject::class);
         // We should get an array with property names as keys and the corresponding Column attributes as values.
         $this->assertSame(
             [
@@ -377,23 +388,17 @@ class ModelInstantiatorTest extends TestCase
                 'lastName',
                 'email',
                 'privacy',
+                'birthDate',
             ],
-            array_keys($this->model_instantiator->dataObjectPropertyColumns(ModelInstantiatorTestObject::class))
+            array_keys($this->model_instantiator->dataObjectPropertyColumns($property_reflection))
         );
     }
 
     public function testDataObjectProperties()
     {
         // We should get an array with all property names as values.
-        $this->assertSame(
-            [
-                'pdgaNumber',
-                'firstName',
-                'lastName',
-                'email',
-                'privacy',
-                'testProperty',
-            ],
+        $this->assertEquals(
+            (new ReflectionClass(ModelInstantiatorTestObject::class))->getProperties(),
             $this->model_instantiator->dataObjectProperties(ModelInstantiatorTestObject::class)
         );
     }
@@ -403,8 +408,9 @@ class ModelInstantiatorTest extends TestCase
         // Create a Data Object with a property that uses the YesNoConverter.
         $data_object = new ModelInstantiatorTestObject();
         $data_object->privacy = true;
+        $property_reflection = $this->model_instantiator->dataObjectProperties(ModelInstantiatorTestObject::class);
 
-        $columns = $this->model_instantiator->dataObjectPropertyColumns(ModelInstantiatorTestObject::class);
+        $columns = $this->model_instantiator->dataObjectPropertyColumns($property_reflection);
 
         // Boolean true should return 'yes' when converting to a db model.
         $this->assertSame(
@@ -423,7 +429,8 @@ class ModelInstantiatorTest extends TestCase
             'Privacy' => 'no',
         ];
 
-        $columns = $this->model_instantiator->dataObjectPropertyColumns(ModelInstantiatorTestObject::class);
+        $property_reflection = $this->model_instantiator->dataObjectProperties(ModelInstantiatorTestObject::class);
+        $columns = $this->model_instantiator->dataObjectPropertyColumns($property_reflection);
 
         // 'No' should return boolean false when converting to a Data Object.
         $this->assertSame(
