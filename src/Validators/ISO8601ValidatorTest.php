@@ -92,5 +92,10 @@ class ISO8601ValidatorTest extends TestCase
         $result = $this->iso_validator->validate($value);
 
         $this->assertSame($expected_value, $result);
+
+        $value2 = "2020-01-01T00:00:00+00:00";
+        $result2 = $this->iso_validator->validate($value2);
+
+        $this->assertSame($expected_value, $result2);
     }
 }
