@@ -7,6 +7,7 @@ use PDGA\DataObjects\Attributes\Column;
 use PDGA\DataObjects\Enforcers\ValidationEnforcer;
 use PDGA\Exception\ValidationException;
 
+use \Datetime;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionProperty;
@@ -48,7 +49,8 @@ class ModelInstantiator
                 !array_key_exists($property, $cardinalities)
             )
             {
-                $instance->{$property} = $arr[$property];
+                $property_reflection = new ReflectionProperty($class, $property);
+                $instance->{$property} = $property_reflection->getType()->getName() === 'DateTime' ? new DateTime($arr[$property]) : $arr[$property];
             }
         }
 
@@ -217,6 +219,11 @@ class ModelInstantiator
             if (is_null($data_obj) || is_scalar($data_obj))
             {
                 return $data_obj;
+            }
+
+            if ($data_obj instanceof DateTime)
+            {
+                return $data_obj->format(DateTime::ATOM);
             }
 
             // $data_obj is an array or object.  Cast to array, then cast each
