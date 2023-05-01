@@ -254,7 +254,7 @@ class ModelInstantiator
      * Returns an array of all properties of a Data Object that have a Column attribute.
      * The keys are the property names and the values are the Column attribute instance.
      *
-     * @param string $class
+     * @param array $props - An Array of ReflectionProperties.
      *
      * @throws ReflectionException
      * @return array
@@ -265,7 +265,7 @@ class ModelInstantiator
     {
         $columns = [];
 
-        // Loop through all properties of the class; we use get_class_vars to include unassigned properties.
+        // Loop through all ReflectionProperties.
         foreach ($props as $property)
         {
             // Find the Column attribute for the property.
@@ -289,7 +289,7 @@ class ModelInstantiator
      * returned array is a Data Object property name, and the value is a
      * Cardinality instance.
      *
-     * @param string $class
+     * @param array $props - An Array of ReflectionProperties.
      *
      * @throws ReflectionException
      * @return array
@@ -319,7 +319,7 @@ class ModelInstantiator
     }
 
     /**
-     * Returns all properties of a Data Object class.
+     * Returns ReflectionProperties for all properties of a Data Object class.
      *
      * @param string $class
      *
@@ -329,7 +329,7 @@ class ModelInstantiator
         string $class
     ): array
     {
-        // Return all properties of the object including unassigned properties.
+        // Return ReflectionProperties of all properties of the object including unassigned properties.
         return (new ReflectionClass($class))->getProperties();
     }
 
