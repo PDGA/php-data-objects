@@ -3,6 +3,7 @@
 namespace PDGA\DataObjects\Models\Test;
 
 use \DateTime;
+use ReflectionClass;
 
 use PDGA\Exception\ValidationException;
 use PDGA\Exception\ValidationListException;
@@ -378,6 +379,7 @@ class ModelInstantiatorTest extends TestCase
 
     public function testDataObjectPropertyColumns()
     {
+        $property_reflection = $this->model_instantiator->dataObjectProperties(ModelInstantiatorTestObject::class);
         // We should get an array with property names as keys and the corresponding Column attributes as values.
         $this->assertSame(
             [
@@ -388,23 +390,15 @@ class ModelInstantiatorTest extends TestCase
                 'privacy',
                 'birthDate',
             ],
-            array_keys($this->model_instantiator->dataObjectPropertyColumns(ModelInstantiatorTestObject::class))
+            array_keys($this->model_instantiator->dataObjectPropertyColumns($property_reflection))
         );
     }
 
     public function testDataObjectProperties()
     {
         // We should get an array with all property names as values.
-        $this->assertSame(
-            [
-                'pdgaNumber',
-                'firstName',
-                'lastName',
-                'email',
-                'privacy',
-                'birthDate',
-                'testProperty',
-            ],
+        $this->assertEquals(
+            (new ReflectionClass(ModelInstantiatorTestObject::class))->getProperties(),
             $this->model_instantiator->dataObjectProperties(ModelInstantiatorTestObject::class)
         );
     }
@@ -414,8 +408,9 @@ class ModelInstantiatorTest extends TestCase
         // Create a Data Object with a property that uses the YesNoConverter.
         $data_object = new ModelInstantiatorTestObject();
         $data_object->privacy = true;
+        $property_reflection = $this->model_instantiator->dataObjectProperties(ModelInstantiatorTestObject::class);
 
-        $columns = $this->model_instantiator->dataObjectPropertyColumns(ModelInstantiatorTestObject::class);
+        $columns = $this->model_instantiator->dataObjectPropertyColumns($property_reflection);
 
         // Boolean true should return 'yes' when converting to a db model.
         $this->assertSame(
@@ -434,7 +429,8 @@ class ModelInstantiatorTest extends TestCase
             'Privacy' => 'no',
         ];
 
-        $columns = $this->model_instantiator->dataObjectPropertyColumns(ModelInstantiatorTestObject::class);
+        $property_reflection = $this->model_instantiator->dataObjectProperties(ModelInstantiatorTestObject::class);
+        $columns = $this->model_instantiator->dataObjectPropertyColumns($property_reflection);
 
         // 'No' should return boolean false when converting to a Data Object.
         $this->assertSame(
