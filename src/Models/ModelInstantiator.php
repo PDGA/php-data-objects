@@ -45,6 +45,8 @@ class ModelInstantiator
         foreach ($property_reflection as $reflection)
         {
             $property = $reflection->getName();
+            $type     = $reflection->getType()->getName();
+            $not_null = $enforcer->propIsNotNull($arr, $property);
 
             // Ignore properties which are not specified in the incoming array,
             // and properties which define relationships to other Data Objects.
@@ -53,8 +55,7 @@ class ModelInstantiator
                 !array_key_exists($property, $cardinalities)
             )
             {
-                $instance->{$property} = $enforcer->propIsNotNull($arr, $property)
-                    && $reflection->getType()->getName() === 'DateTime'
+                $instance->{$property} = $not_null && $type === 'DateTime'
                     ? new DateTime($arr[$property])
                     : $arr[$property];
             }
