@@ -353,7 +353,9 @@ class ModelInstantiator
             return $property;
         }
 
-        return $column->getConverter()->onSave($property);
+        return $property === null
+            ? null
+            : $column->getConverter()->onSave($property);
     }
 
     /**
@@ -375,6 +377,8 @@ class ModelInstantiator
             return $property;
         }
 
-        return $column->getConverter()->onRetrieve($property);
+        return $property === null
+            ? null
+            : $column->getConverter()->onRetrieve($property);
     }
 }

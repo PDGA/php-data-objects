@@ -422,6 +422,24 @@ class ModelInstantiatorTest extends TestCase
         );
     }
 
+    public function testDontConvertNullPropertyOnSave()
+    {
+        // Privacy uses the yes/no converter, but it's null so it shouldn't be
+        // converted.
+        $data_object = new ModelInstantiatorTestObject();
+        $data_object->privacy = null;
+        $property_reflection = $this->model_instantiator->dataObjectProperties(ModelInstantiatorTestObject::class);
+
+        $columns = $this->model_instantiator->dataObjectPropertyColumns($property_reflection);
+
+        $this->assertNull(
+            $this->model_instantiator->convertPropertyOnSave(
+                $columns['privacy'],
+                $data_object->privacy,
+            )
+        );
+    }
+
     public function testConvertPropertyOnRetrieve()
     {
         // Create a db model with a property that uses the YesNoConverter.
@@ -435,6 +453,23 @@ class ModelInstantiatorTest extends TestCase
         // 'No' should return boolean false when converting to a Data Object.
         $this->assertSame(
             false,
+            $this->model_instantiator->convertPropertyOnRetrieve(
+                $columns['privacy'],
+                $db_model['Privacy'],
+            )
+        );
+    }
+
+    public function testDontConvertNullPropertyOnRetrieve()
+    {
+        $db_model = [
+            'Privacy' => null,
+        ];
+
+        $property_reflection = $this->model_instantiator->dataObjectProperties(ModelInstantiatorTestObject::class);
+        $columns = $this->model_instantiator->dataObjectPropertyColumns($property_reflection);
+
+        $this->assertNull(
             $this->model_instantiator->convertPropertyOnRetrieve(
                 $columns['privacy'],
                 $db_model['Privacy'],
