@@ -379,7 +379,7 @@ class ModelInstantiator
     ): mixed
     {
         // No Converter for this Column; return the original value.
-        if (!$column->getConverter() || $property === null)
+        if (!$column->getConverter())
         {
             return $property;
         }
