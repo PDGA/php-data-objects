@@ -348,12 +348,19 @@ class ModelInstantiator
         mixed  $property,
     ): mixed
     {
-        // If there's no converter OR the property is null, then return the original value.
-        if (!$column->getConverter() || $property === null)
+        // No Converter for this Column; return the original value.
+        if (!$column->getConverter())
         {
             return $property;
         }
 
+        // If the property is null, then return null.
+        if ($property === null)
+        {
+            return $property;
+        }
+
+        // Convert for save.
         return $column->getConverter()->onSave($property);
     }
 
@@ -371,8 +378,14 @@ class ModelInstantiator
         mixed  $property,
     ): mixed
     {
-        // If there's no converter OR the property is null, then return the original value.
+        // No Converter for this Column; return the original value.
         if (!$column->getConverter() || $property === null)
+        {
+            return $property;
+        }
+
+        // If the property is null, then return null.
+        if ($property === null)
         {
             return $property;
         }
