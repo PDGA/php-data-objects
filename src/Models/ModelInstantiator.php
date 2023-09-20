@@ -335,7 +335,8 @@ class ModelInstantiator
     }
 
     /**
-     * Converts a property for saving if there is a 'converter' value of its Attribute.
+     * Converts a property for saving if there is a 'converter' value of its
+     * Attribute and the property is not null.
      *
      * @param Column $column
      * @param mixed  $property
@@ -353,11 +354,19 @@ class ModelInstantiator
             return $property;
         }
 
+        // If the property is null, then return null.
+        if ($property === null)
+        {
+            return $property;
+        }
+
+        // Convert for save.
         return $column->getConverter()->onSave($property);
     }
 
     /**
-     * Converts a property for retrieval if there is a 'converter' value of its Attribute.
+     * Converts a property on retrieval if there is a 'converter' value of its
+     * Attribute and the property is not null.
      *
      * @param Column $column
      * @param mixed  $property
@@ -371,6 +380,12 @@ class ModelInstantiator
     {
         // No Converter for this Column; return the original value.
         if (!$column->getConverter())
+        {
+            return $property;
+        }
+
+        // If the property is null, then return null.
+        if ($property === null)
         {
             return $property;
         }
