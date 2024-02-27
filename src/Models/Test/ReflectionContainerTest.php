@@ -55,6 +55,8 @@ class ReflectionContainerTest extends TestCase
         $member_cardinalities = $this->reflection_container->dataObjectPropertyCardinalities($member_property_reflection);
         $phone_number_cardinalities = $this->reflection_container->dataObjectPropertyCardinalities($phone_number_property_reflection);
 
+        // This tests that the cardinalities are correct. Deeper testing is difficult as the
+        // properties of the cardinality objects are protected.
         $this->assertTrue($member_cardinalities['phoneNumbers'] instanceof OneToMany);
         $this->assertTrue($phone_number_cardinalities['member'] instanceof ManyToOne);
     }
