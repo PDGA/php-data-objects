@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use PDGA\DataObjects\Models\ReflectionContainer;
 use PDGA\DataObjects\Models\Test\Member;
 use PDGA\DataObjects\Models\Test\ModelInstantiatorTestObject;
+use PDGA\DataObjects\Attributes\ManyToOne;
 use PDGA\DataObjects\Attributes\OneToMany;
 
 class ReflectionContainerTest extends TestCase
@@ -48,10 +49,13 @@ class ReflectionContainerTest extends TestCase
 
     public function testDataObjectPropertyCardinalities()
     {
-        $property_reflection = $this->reflection_container->dataObjectProperties(Member::class);
+        $member_property_reflection = $this->reflection_container->dataObjectProperties(Member::class);
+        $phone_number_property_reflection = $this->reflection_container->dataObjectProperties(PhoneNumber::class);
 
-        $cardinalities = $this->reflection_container->dataObjectPropertyCardinalities($property_reflection);
+        $member_cardinalities = $this->reflection_container->dataObjectPropertyCardinalities($member_property_reflection);
+        $phone_number_cardinalities = $this->reflection_container->dataObjectPropertyCardinalities($phone_number_property_reflection);
 
-        $this->assertTrue($cardinalities['phoneNumbers'] instanceof OneToMany);
+        $this->assertTrue($member_cardinalities['phoneNumbers'] instanceof OneToMany);
+        $this->assertTrue($phone_number_cardinalities['member'] instanceof ManyToOne);
     }
 }
