@@ -118,6 +118,7 @@ class ModelInstantiator
     ): array
     {
         $model_array = [];
+        $enforcer    = new ValidationEnforcer();
 
         $property_reflection = $this->reflection_container
             ->dataObjectProperties($data_object::class);
@@ -128,8 +129,8 @@ class ModelInstantiator
         // Loop through all Column-attributed properties of the object.
         foreach ($column_reflection as $property => $column)
         {
-            // Ignore unset properties.
-            if (!isset($data_object->{$property}))
+            // Ignore undefined properties.
+            if ($enforcer->propIsUndefined($data_object, $property))
             {
                 continue;
             }

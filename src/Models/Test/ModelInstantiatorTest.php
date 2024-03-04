@@ -198,6 +198,21 @@ class ModelInstantiatorTest extends TestCase
             ],
             $this->model_instantiator->dataObjectToDatabaseModel($data_object)
         );
+
+    }
+
+    public function testDataObjectToDatabaseModelConvertsNulls(): void
+    {
+        $data_object             = new ModelInstantiatorTestObject();
+        $data_object->firstName  = null;
+
+        // We should get a valid database model associative array on conversion.
+        $this->assertSame(
+            [
+                'FirstName' => null,
+            ],
+            $this->model_instantiator->dataObjectToDatabaseModel($data_object)
+        );
     }
 
     public function testDatabaseModelToDataObject(): void
