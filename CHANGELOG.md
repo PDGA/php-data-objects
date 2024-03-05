@@ -1,3 +1,7 @@
+### 2.1.0
+
+* Support passing Eloquent models to `ModelInstantiator#dataObjectToDatabaseModel` for efficiency.
+
 ### 2.0.1
 * `ModelInstantiator#dataObjectToDatabaseModel` Now copies `NULL` from DB models to Data Objects.
 
