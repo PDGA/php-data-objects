@@ -148,14 +148,15 @@ class ModelInstantiator
     /**
      * Converts an associative array from a database model to a Data Object instance.
      *
-     * @param array  $db_model An associative array from a database model.
-     * @param string $class    The class name of the corresponding Data Object.
+     * @param array|object $db_model An associative array or Collection-like
+     * object from a database model, such as an Eloquent model.
+     * @param string $class The class name of the corresponding Data Object.
      *
      * @throws ReflectionException
      * @return object
      */
     public function databaseModelToDataObject(
-        array  $db_model,
+        $db_model,
         string $class
     ): object
     {
@@ -163,9 +164,21 @@ class ModelInstantiator
         $enforcer            = new ValidationEnforcer();
         $property_reflection = $this->reflection_container
             ->dataObjectProperties($class);
-
         $column_reflection   = $this->reflection_container
             ->dataObjectPropertyColumns($property_reflection);
+
+        // Special case for Eloquent models, which have an "attributes" array.
+        // It's significantly faster to use this existing array than for the
+        // caller to convert the model using toArray().
+        if (is_object($db_model) && method_exists($db_model, 'getAttributes'))
+        {
+            $attributes = $db_model->getAttributes();
+
+            if (is_array($attributes))
+            {
+                $db_model = $attributes;
+            }
+        }
 
         // Set all Column-attributed properties to the corresponding database column value.
         foreach ($column_reflection as $property => $column)

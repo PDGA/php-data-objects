@@ -4,13 +4,15 @@ namespace PDGA\DataObjects\Models\Test;
 
 use \DateTime;
 
+use PHPUnit\Framework\TestCase;
+
 use PDGA\Exception\ValidationException;
 use PDGA\Exception\ValidationListException;
-use PHPUnit\Framework\TestCase;
 
 use PDGA\DataObjects\Models\ModelInstantiator;
 use PDGA\DataObjects\Models\ReflectionContainer;
 use PDGA\DataObjects\Models\Test\Member;
+use PDGA\DataObjects\Models\Test\ModelInstantiatorTestDBModel;
 use PDGA\DataObjects\Models\Test\ModelInstantiatorTestObject;
 use PDGA\DataObjects\Models\Test\PhoneNumber;
 
@@ -249,6 +251,18 @@ class ModelInstantiatorTest extends TestCase
 
         $data_object             = new ModelInstantiatorTestObject();
         $data_object->pdgaNumber = 4297;
+
+        $this->assertEquals(
+            $data_object,
+            $this->model_instantiator->databaseModelToDataObject($db_model, ModelInstantiatorTestObject::class)
+        );
+    }
+
+    public function testDatabaseModelToDataObjectWithAttributesGetter(): void
+    {
+        $db_model                = new ModelInstantiatorTestDBModel();
+        $data_object             = new ModelInstantiatorTestObject();
+        $data_object->pdgaNumber = $db_model->getAttributes()['PDGANum'];
 
         $this->assertEquals(
             $data_object,
