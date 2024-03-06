@@ -28,13 +28,13 @@ class ReflectionContainer
         array $props
     ): array
     {
-        $class = $props[0]->class;
-
         // Empty props should result in an empty array.
         if (!count($props))
         {
-            $this->column_reflection[$class] = [];
+            return [];
         }
+
+        $class = $props[0]->class;
 
         if (array_key_exists($class, $this->column_reflection))
         {
@@ -80,13 +80,13 @@ class ReflectionContainer
         array $props
     ): array
     {
-        $class = $props[0]->class;
-
         // Empty props should result in an empty array.
         if (!count($props))
         {
-            $this->card_reflection[$class] = [];
+            return [];
         }
+
+        $class = $props[0]->class;
 
         if (array_key_exists($class, $this->card_reflection))
         {
