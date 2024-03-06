@@ -7,7 +7,9 @@ use ReflectionClass;
 use PHPUnit\Framework\TestCase;
 
 use PDGA\DataObjects\Models\ReflectionContainer;
+use PDGA\DataObjects\Models\Test\Address;
 use PDGA\DataObjects\Models\Test\Member;
+use PDGA\DataObjects\Models\Test\Members;
 use PDGA\DataObjects\Models\Test\ModelInstantiatorTestObject;
 use PDGA\DataObjects\Attributes\ManyToOne;
 use PDGA\DataObjects\Attributes\OneToMany;
@@ -59,5 +61,27 @@ class ReflectionContainerTest extends TestCase
         // properties of the cardinality objects are protected.
         $this->assertTrue($member_cardinalities['phoneNumbers'] instanceof OneToMany);
         $this->assertTrue($phone_number_cardinalities['member'] instanceof ManyToOne);
+    }
+
+    public function testDataObjectPropertyColumnsReturnsEmptyArray()
+    {
+        $members_proprety_reflection = $this->reflection_container->dataObjectProperties(Members::class);
+
+        $no_columns = $this->reflection_container->dataObjectPropertyColumns($members_proprety_reflection);
+        $no_props   = $this->reflection_container->dataObjectPropertyColumns([]);
+
+        $this->assertTrue($no_columns === []);
+        $this->assertTrue($no_props === []);
+    }
+
+    public function testDataObjectPropertyCardinalitiesReturnsEmptyArray()
+    {
+        $address_proprety_reflection = $this->reflection_container->dataObjectProperties(Address::class);
+
+        $no_cardinalities = $this->reflection_container->dataObjectPropertyCardinalities($address_proprety_reflection);
+        $no_props         = $this->reflection_container->dataObjectPropertyCardinalities([]);
+
+        $this->assertTrue($no_cardinalities === []);
+        $this->assertTrue($no_props === []);
     }
 }
