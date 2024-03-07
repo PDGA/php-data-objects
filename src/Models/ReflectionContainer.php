@@ -28,6 +28,12 @@ class ReflectionContainer
         array $props
     ): array
     {
+        // Return an empty array if there are no props passed in.
+        if (!count($props))
+        {
+            return [];
+        }
+
         $class = $props[0]->class;
 
         if (array_key_exists($class, $this->column_reflection))
@@ -71,6 +77,12 @@ class ReflectionContainer
         array $props
     ): array
     {
+        // Return an empty array if there are no props passed in.
+        if (!count($props))
+        {
+            return [];
+        }
+
         $class = $props[0]->class;
 
         if (array_key_exists($class, $this->card_reflection))
@@ -79,7 +91,7 @@ class ReflectionContainer
         }
 
         // Default the class to an empty array.
-        $this->column_reflection[$class] = [];
+        $this->card_reflection[$class] = [];
 
         foreach ($props as $prop)
         {
