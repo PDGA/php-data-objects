@@ -5,8 +5,6 @@ namespace PDGA\DataObjects\Models\Test;
 use \DateTime;
 
 use PDGA\DataObjects\Attributes\Column;
-use PDGA\DataObjects\Attributes\ManyToOne;
-use PDGA\DataObjects\Attributes\OneToMany;
 use PDGA\DataObjects\Attributes\Table;
 use PDGA\DataObjects\Converters\YesNoConverter;
 use PDGA\DataObjects\Converters\DateTimeConverter;
@@ -61,18 +59,4 @@ class ModelInstantiatorTestObject
      * @var bool
      */
     public bool $testProperty = false;
-
-    // Used to test ManyToOne relations.
-    #[ManyToOne(
-        ModelInstantiatorTestObject::class,
-        'FakeHasOneRelation',
-    )]
-    public ModelInstantiatorTestObject $fakeHasOneRelation;
-
-    // Used to test OneToMany relations.
-    #[OneToMany(
-        ModelInstantiatorTestObject::class,
-        'FakeHasManyRelation',
-    )]
-    public array $fakeHasManyRelation;
 }

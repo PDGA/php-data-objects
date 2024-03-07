@@ -2,36 +2,13 @@
 
 namespace PDGA\DataObjects\Models\Test;
 
-// Mimics an Eloquent model, which has attributes and relations arrays.
+// Mimics an Eloquent model, which has an attributes array.
 class ModelInstantiatorTestDBModel
 {
-    private $attributes = [];
-    private $relations  = [];
-
-    public function __construct(int $pdga_num)
-    {
-        $this->attributes['PDGANum'] = $pdga_num;
-    }
+    private $attributes = ['PDGANum' => 123];
 
     public function getAttributes(): array
     {
         return $this->attributes;
-    }
-
-    // Mimic a ManyToOne relation (object).
-    public function addOneRelation(ModelInstantiatorTestDBModel $relation): void
-    {
-        $this->relations['FakeHasOneRelation'] = $relation;
-    }
-
-    // Mimic a OneToMany relation (array).
-    public function addManyRelation(ModelInstantiatorTestDBModel $relation): void
-    {
-        $this->relations['FakeHasManyRelation'] = [$relation];
-    }
-
-    public function getRelations(): array
-    {
-        return $this->relations;
     }
 }

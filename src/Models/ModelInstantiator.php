@@ -170,16 +170,14 @@ class ModelInstantiator
         // Special case for Eloquent models, which have an "attributes" array.
         // It's significantly faster to use this existing array than for the
         // caller to convert the model using toArray().
-        $model_attributes = $db_model;
-
         if (is_object($db_model) && method_exists($db_model, 'getAttributes'))
         {
-            $model_attributes = $db_model->getAttributes();
-        }
+            $attributes = $db_model->getAttributes();
 
-        if (!is_array($model_attributes))
-        {
-            $model_attributes = (array) $model_attributes;
+            if (is_array($attributes))
+            {
+                $db_model = $attributes;
+            }
         }
 
         // Set all Column-attributed properties to the corresponding database column value.
@@ -187,45 +185,27 @@ class ModelInstantiator
         {
             $col_name = $column->getName();
 
-            if ($enforcer->propIsDefined($model_attributes, $col_name))
+            if ($enforcer->propIsDefined($db_model, $col_name))
             {
                 // Set property; apply value converter when applicable.
                 $data_object->{$property} = $this->convertPropertyOnRetrieve(
                     $column,
-                    $model_attributes[$col_name],
+                    $db_model[$col_name],
                 );
             }
         }
 
-        // Now handle nested relationship data, recursively.
         $cardinality_reflection = $this->reflection_container
             ->dataObjectPropertyCardinalities($property_reflection);
 
-        if (!count($cardinality_reflection))
-        {
-            return $data_object;
-        }
-
-        // Same logic as for attributes above, but applied to relations.
-        $model_relations = $model_attributes;
-
-        if (is_object($db_model) && method_exists($db_model, 'getRelations'))
-        {
-            $model_relations = $db_model->getRelations();
-        }
-
-        if (!is_array($model_relations))
-        {
-            $model_relations = (array) $model_relations;
-        }
-
+        // Now handle nested relationship data.
         foreach ($cardinality_reflection as $property => $card)
         {
             // "alias" is the name of the property on the DB model, which comes
             // from the Cardinality attribute.
             $alias = $card->getAlias();
 
-            if ($enforcer->propIsUndefined($model_relations, $alias))
+            if ($enforcer->propIsUndefined($db_model, $alias))
             {
                 continue;
             }
@@ -237,7 +217,7 @@ class ModelInstantiator
             {
                 $data_object->{$property} = [];
 
-                foreach ($model_relations[$alias] as $relation_db_model)
+                foreach ($db_model[$alias] as $relation_db_model)
                 {
                     $data_object->{$property}[] = $this->databaseModelToDataObject(
                         $relation_db_model,
@@ -249,7 +229,7 @@ class ModelInstantiator
             else
             {
                 $data_object->{$property} = $this->databaseModelToDataObject(
-                    $model_relations[$alias],
+                    $db_model[$alias],
                     $relation_class,
                 );
             }
