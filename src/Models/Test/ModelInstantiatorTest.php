@@ -260,10 +260,17 @@ class ModelInstantiatorTest extends TestCase
 
     public function testDatabaseModelToDataObjectWithAttributesGetter(): void
     {
-        $db_model                = new ModelInstantiatorTestDBModel();
+        // This fake DB model mimics an Eloquent model in that it has a private
+        // array of attributes, only accessible through a getter.  This test
+        // shows that when the supplied DB model has a getAttributes method,
+        // it's used.
+        $pdga_num                = 123;
+        $db_model                = new ModelInstantiatorTestDBModel($pdga_num);
         $data_object             = new ModelInstantiatorTestObject();
-        $data_object->pdgaNumber = $db_model->getAttributes()['PDGANum'];
+        $data_object->pdgaNumber = $pdga_num;
 
+        // Note that PDGANum is private in the DB model, so the only way the
+        // ModelInstantiator can access it is via getAttributes.
         $this->assertEquals(
             $data_object,
             $this->model_instantiator->databaseModelToDataObject($db_model, ModelInstantiatorTestObject::class)
@@ -326,6 +333,44 @@ class ModelInstantiatorTest extends TestCase
             ],
             $phone_arr,
         );
+    }
+
+    public function testDatabaseModelToDataObjectNestedArrayWithRelationsGetter(): void
+    {
+        // A DB model with a fake one-to-many relationship (self-related).  The
+        // DB model has a getRelations method, mimicking an Eloquent model, and
+        // the ModelInstantiator uses this method to pull relationships.
+        $db_model = new ModelInstantiatorTestDBModel(123);
+        $relation = new ModelInstantiatorTestDBModel(456);
+
+        $db_model->addManyRelation($relation);
+
+        $data_object = $this->model_instantiator->databaseModelToDataObject(
+            $db_model,
+            ModelInstantiatorTestObject::class,
+        );
+
+        // The ModelInstaniator finds the relationship via a getRelations call,
+        // and correctly instantiates the array of
+        // ModelInstantiatorTestObjects.
+        $this->assertEquals(count($data_object->fakeHasManyRelation), 1);
+        $this->assertEquals($data_object->fakeHasManyRelation[0]->pdgaNumber, 456);
+    }
+
+    public function testDatabaseModelToDataObjectNestedObjectWithRelationsGetter(): void
+    {
+        // Same as the previous test, but verifies many-to-one relationships.
+        $db_model = new ModelInstantiatorTestDBModel(123);
+        $relation = new ModelInstantiatorTestDBModel(456);
+
+        $db_model->addOneRelation($relation);
+
+        $data_object = $this->model_instantiator->databaseModelToDataObject(
+            $db_model,
+            ModelInstantiatorTestObject::class,
+        );
+
+        $this->assertEquals($data_object->fakeHasOneRelation->pdgaNumber, 456);
     }
 
     public function testDataObjectToArray(): void
