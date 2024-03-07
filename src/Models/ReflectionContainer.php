@@ -28,18 +28,15 @@ class ReflectionContainer
         array $props
     ): array
     {
-        // Empty props should result in an empty array.
-        if (!count($props))
-        {
-            return [];
-        }
-
         $class = $props[0]->class;
 
         if (array_key_exists($class, $this->column_reflection))
         {
             return $this->column_reflection[$class];
         }
+
+        // Default the class to an empty array.
+        $this->column_reflection[$class] = [];
 
         // Loop through all ReflectionProperties.
         foreach ($props as $property)
@@ -54,12 +51,6 @@ class ReflectionContainer
             }
 
             $this->column_reflection[$class][$property->getName()] = $attribute[0]->newInstance();
-        }
-
-        // If the props didn't generate any attributes, set an empty array for this class.
-        if (!array_key_exists($class, $this->column_reflection))
-        {
-            $this->column_reflection[$class] = [];
         }
 
         return $this->column_reflection[$class];
@@ -80,18 +71,15 @@ class ReflectionContainer
         array $props
     ): array
     {
-        // Empty props should result in an empty array.
-        if (!count($props))
-        {
-            return [];
-        }
-
         $class = $props[0]->class;
 
         if (array_key_exists($class, $this->card_reflection))
         {
             return $this->card_reflection[$class];
         }
+
+        // Default the class to an empty array.
+        $this->column_reflection[$class] = [];
 
         foreach ($props as $prop)
         {
@@ -106,12 +94,6 @@ class ReflectionContainer
             }
 
             $this->card_reflection[$class][$prop->getName()] = $attrs[0]->newInstance();
-        }
-
-        // If the props didn't generate any attributes, set an empty array for this class.
-        if (!array_key_exists($class, $this->card_reflection))
-        {
-            $this->card_reflection[$class] = [];
         }
 
         return $this->card_reflection[$class];
