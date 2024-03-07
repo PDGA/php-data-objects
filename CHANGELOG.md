@@ -1,7 +1,5 @@
-### 3.0.0
-* _BREAKING_: Fixes a bug in `ModelInstantiator#databaseModelToDataObject`, introduced in 2.1.0, where nested relationships were skipped.  `databaseModelToDataObject` now calls `getRelations` if available to pull relationship data.  This change is potentially breaking because, by default, Eloquent changes the case of relations to snake case when an Eloquent model is converted to an array.
-
 ### 2.1.0
+
 * Support passing Eloquent models to `ModelInstantiator#dataObjectToDatabaseModel` for efficiency.
 
 ### 2.0.1
