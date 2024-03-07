@@ -35,6 +35,9 @@ class ReflectionContainer
             return $this->column_reflection[$class];
         }
 
+        // Default the class to an empty array.
+        $this->column_reflection[$class] = [];
+
         // Loop through all ReflectionProperties.
         foreach ($props as $property)
         {
@@ -75,6 +78,9 @@ class ReflectionContainer
             return $this->card_reflection[$class];
         }
 
+        // Default the class to an empty array.
+        $this->column_reflection[$class] = [];
+
         foreach ($props as $prop)
         {
             $attrs = $prop->getAttributes(
@@ -90,7 +96,7 @@ class ReflectionContainer
             $this->card_reflection[$class][$prop->getName()] = $attrs[0]->newInstance();
         }
 
-        return $this->card_reflection[$class] ?? [];
+        return $this->card_reflection[$class];
     }
 
     /**
