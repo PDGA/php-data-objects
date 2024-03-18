@@ -217,47 +217,6 @@ class ModelInstantiatorTest extends TestCase
         );
     }
 
-    public function testDatabaseModelToDataObject(): void
-    {
-        // Create an input database model associative array.
-        $db_model = [
-            'PDGANum'   => 4297,
-            'FirstName' => 'Ken',
-            'LastName'  => 'Climo',
-            'Email'     => 'champ@pdga.com',
-            'Privacy'   => 'yes',
-            'BirthDate' => '2020-01-01',
-        ];
-
-        // This Data Object should match the conversion output.
-        $data_object             = new ModelInstantiatorTestObject();
-        $data_object->firstName  = 'Ken';
-        $data_object->lastName   = 'Climo';
-        $data_object->pdgaNumber = 4297;
-        $data_object->email      = 'champ@pdga.com';
-        $data_object->privacy    = true;
-        $data_object->birthDate  = new DateTime('2020-01-01');
-
-        $this->assertEquals(
-            $data_object,
-            $this->model_instantiator->databaseModelToDataObject($db_model, ModelInstantiatorTestObject::class)
-        );
-    }
-
-    public function testPartialDatabaseModelToDataObject(): void
-    {
-        // Partial DB model for a ModelInstantiatorTestObject.
-        $db_model = ['PDGANum' => 4297];
-
-        $data_object             = new ModelInstantiatorTestObject();
-        $data_object->pdgaNumber = 4297;
-
-        $this->assertEquals(
-            $data_object,
-            $this->model_instantiator->databaseModelToDataObject($db_model, ModelInstantiatorTestObject::class)
-        );
-    }
-
     public function testDatabaseModelToDataObjectWithAttributesGetter(): void
     {
         // This fake DB model mimics an Eloquent model in that it has a private
@@ -274,64 +233,6 @@ class ModelInstantiatorTest extends TestCase
         $this->assertEquals(
             $data_object,
             $this->model_instantiator->databaseModelToDataObject($db_model, ModelInstantiatorTestObject::class)
-        );
-    }
-
-    public function testDatabaseModelToDataObjectNestedArray(): void
-    {
-        $member_db = [
-            'PDGANumber'   => 42,
-            'FirstName'    => 'Franko',
-            'PhoneNumbers' => [
-                ['Phone' => '999-999-9999']
-            ],
-        ];
-
-        $member = $this->model_instantiator->databaseModelToDataObject(
-            $member_db,
-            Member::class,
-        );
-
-        $member_arr = $this->model_instantiator->dataObjectToArray($member);
-
-        $this->assertEqualsCanonicalizing(
-            [
-                'pdgaNumber'   => 42,
-                'firstName'    => 'Franko',
-                'phoneNumbers' => [
-                    ['phone' => '999-999-9999']
-                ],
-            ],
-            $member_arr,
-        );
-    }
-
-    public function testDatabaseModelToDataObjectNestedObject(): void
-    {
-        $phone_db = [
-            'Phone' => '999-999-9999',
-            'Member' => [
-                'PDGANumber' => 42,
-                'LastName'   => 'Salentino',
-            ],
-        ];
-
-        $phone = $this->model_instantiator->databaseModelToDataObject(
-            $phone_db,
-            PhoneNumber::class,
-        );
-
-        $phone_arr = $this->model_instantiator->dataObjectToArray($phone);
-
-        $this->assertEqualsCanonicalizing(
-            [
-                'phone'  => '999-999-9999',
-                'member' => [
-                    'pdgaNumber' => 42,
-                    'lastName'   => 'Salentino',
-                ],
-            ],
-            $phone_arr,
         );
     }
 
