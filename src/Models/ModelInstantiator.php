@@ -4,6 +4,7 @@ namespace PDGA\DataObjects\Models;
 
 use PDGA\DataObjects\Attributes\Column;
 use PDGA\DataObjects\Enforcers\ValidationEnforcer;
+use PDGA\DataObjects\Interfaces\IDatabaseModel;
 use PDGA\DataObjects\Models\ReflectionContainer;
 use PDGA\Exception\ValidationException;
 
@@ -148,15 +149,14 @@ class ModelInstantiator
     /**
      * Converts an associative array from a database model to a Data Object instance.
      *
-     * @param array|object $db_model An associative array or Collection-like
-     * object from a database model, such as an Eloquent model.
+     * @param IDatabaseModel $db_model An object which implements the IDatabaseModel interface.
      * @param string $class The class name of the corresponding Data Object.
      *
      * @throws ReflectionException
      * @return object
      */
     public function databaseModelToDataObject(
-        $db_model,
+        IDatabaseModel $db_model,
         string $class
     ): object
     {
