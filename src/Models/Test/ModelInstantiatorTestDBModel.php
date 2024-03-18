@@ -2,8 +2,10 @@
 
 namespace PDGA\DataObjects\Models\Test;
 
+use PDGA\DataObjects\Interfaces\IDatabaseModel;
+
 // Mimics an Eloquent model, which has attributes and relations arrays.
-class ModelInstantiatorTestDBModel
+class ModelInstantiatorTestDBModel implements IDatabaseModel
 {
     private $attributes = [];
     private $relations  = [];
