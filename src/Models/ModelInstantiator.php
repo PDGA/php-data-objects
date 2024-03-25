@@ -167,20 +167,7 @@ class ModelInstantiator
         $column_reflection   = $this->reflection_container
             ->dataObjectPropertyColumns($property_reflection);
 
-        // Special case for Eloquent models, which have an "attributes" array.
-        // It's significantly faster to use this existing array than for the
-        // caller to convert the model using toArray().
-        $model_attributes = $db_model;
-
-        if (is_object($db_model) && method_exists($db_model, 'getAttributes'))
-        {
-            $model_attributes = $db_model->getAttributes();
-        }
-
-        if (!is_array($model_attributes))
-        {
-            $model_attributes = (array) $model_attributes;
-        }
+        $model_attributes = $db_model->getAttributes();
 
         // Set all Column-attributed properties to the corresponding database column value.
         foreach ($column_reflection as $property => $column)
@@ -206,18 +193,7 @@ class ModelInstantiator
             return $data_object;
         }
 
-        // Same logic as for attributes above, but applied to relations.
-        $model_relations = $model_attributes;
-
-        if (is_object($db_model) && method_exists($db_model, 'getRelations'))
-        {
-            $model_relations = $db_model->getRelations();
-        }
-
-        if (!is_array($model_relations))
-        {
-            $model_relations = (array) $model_relations;
-        }
+        $model_relations = $db_model->getRelations();
 
         foreach ($cardinality_reflection as $property => $card)
         {
