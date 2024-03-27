@@ -8,12 +8,12 @@ interface IDatabaseModel {
      *
      * @return array The attributes of the database model.
      */
-    public function getAttributes(): array;
+    public function getAttributes();
 
     /**
      * Get the relations of the database model.
      *
      * @return array The relations of the database model.
      */
-    public function getRelations(): array;
+    public function getRelations();
 }
