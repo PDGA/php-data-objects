@@ -4,6 +4,7 @@ namespace PDGA\DataObjects\Models;
 
 use PDGA\DataObjects\Attributes\Column;
 use PDGA\DataObjects\Enforcers\ValidationEnforcer;
+use PDGA\DataObjects\Interfaces\IDatabaseModel;
 use PDGA\DataObjects\Models\ReflectionContainer;
 use PDGA\Exception\ValidationException;
 
@@ -148,15 +149,14 @@ class ModelInstantiator
     /**
      * Converts an associative array from a database model to a Data Object instance.
      *
-     * @param array|object $db_model An associative array or Collection-like
-     * object from a database model, such as an Eloquent model.
+     * @param IDatabaseModel $db_model An object which implements the IDatabaseModel interface.
      * @param string $class The class name of the corresponding Data Object.
      *
      * @throws ReflectionException
      * @return object
      */
     public function databaseModelToDataObject(
-        $db_model,
+        IDatabaseModel $db_model,
         string $class
     ): object
     {
@@ -167,20 +167,7 @@ class ModelInstantiator
         $column_reflection   = $this->reflection_container
             ->dataObjectPropertyColumns($property_reflection);
 
-        // Special case for Eloquent models, which have an "attributes" array.
-        // It's significantly faster to use this existing array than for the
-        // caller to convert the model using toArray().
-        $model_attributes = $db_model;
-
-        if (is_object($db_model) && method_exists($db_model, 'getAttributes'))
-        {
-            $model_attributes = $db_model->getAttributes();
-        }
-
-        if (!is_array($model_attributes))
-        {
-            $model_attributes = (array) $model_attributes;
-        }
+        $model_attributes = $db_model->getAttributes();
 
         // Set all Column-attributed properties to the corresponding database column value.
         foreach ($column_reflection as $property => $column)
@@ -206,18 +193,7 @@ class ModelInstantiator
             return $data_object;
         }
 
-        // Same logic as for attributes above, but applied to relations.
-        $model_relations = $model_attributes;
-
-        if (is_object($db_model) && method_exists($db_model, 'getRelations'))
-        {
-            $model_relations = $db_model->getRelations();
-        }
-
-        if (!is_array($model_relations))
-        {
-            $model_relations = (array) $model_relations;
-        }
+        $model_relations = $db_model->getRelations();
 
         foreach ($cardinality_reflection as $property => $card)
         {
