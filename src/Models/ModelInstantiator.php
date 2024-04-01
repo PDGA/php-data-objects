@@ -201,7 +201,7 @@ class ModelInstantiator
             // from the Cardinality attribute.
             $alias = $card->getAlias();
 
-            if ($enforcer->propIsUndefined($model_relations, $alias))
+            if ($enforcer->propIsNull($model_relations, $alias))
             {
                 continue;
             }
