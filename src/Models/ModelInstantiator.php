@@ -6,6 +6,7 @@ use PDGA\DataObjects\Attributes\Column;
 use PDGA\DataObjects\Enforcers\ValidationEnforcer;
 use PDGA\DataObjects\Interfaces\IDatabaseModel;
 use PDGA\DataObjects\Models\ReflectionContainer;
+use PDGA\Exception\InvalidRelationshipDataException;
 use PDGA\Exception\ValidationException;
 
 use \Datetime;
@@ -237,7 +238,7 @@ class ModelInstantiator
                     }
 
                     // Null not allowed, throw exception.
-                    throw new ValidationException("{$alias} relationship must not be null.");
+                    throw new InvalidRelationshipDataException("{$alias} relationship must not be null.");
                 }
 
                 $data_object->{$property} = $this->databaseModelToDataObject(
