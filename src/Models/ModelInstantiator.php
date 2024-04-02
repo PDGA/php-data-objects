@@ -224,6 +224,22 @@ class ModelInstantiator
             // Many-to-one relationship (a single nested Data Object).
             else
             {
+                // If the value is null make sure it's allowed to be null.
+                if (is_null($model_relations[$alias]))
+                {
+                    $reflection_index    = array_search($property, array_column($property_reflection, 'name'));
+                    $reflection_property = $property_reflection[$reflection_index];
+
+                    if ($reflection_property->getType()->allowsNull())
+                    {
+                        $data_object->{$property} = null;
+                        continue;
+                    }
+
+                    // Null not allowed, throw exception.
+                    throw new ValidationException("{$alias} relationship must not be null.");
+                }
+
                 $data_object->{$property} = $this->databaseModelToDataObject(
                     $model_relations[$alias],
                     $relation_class,
