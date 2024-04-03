@@ -69,6 +69,13 @@ class ModelInstantiatorTestObject
     )]
     public ModelInstantiatorTestObject $fakeHasOneRelation;
 
+    // Used to test nullable ManyToOne relations.
+    #[ManyToOne(
+        ModelInstantiatorTestObject::class,
+        'NullableFakeHasOneRelation',
+    )]
+    public ?ModelInstantiatorTestObject $nullableFakeHasOneRelation;
+
     // Used to test OneToMany relations.
     #[OneToMany(
         ModelInstantiatorTestObject::class,

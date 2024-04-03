@@ -6,6 +6,7 @@ use \DateTime;
 
 use PHPUnit\Framework\TestCase;
 
+use PDGA\Exception\InvalidRelationshipDataException;
 use PDGA\Exception\ValidationException;
 use PDGA\Exception\ValidationListException;
 
@@ -433,5 +434,59 @@ class ModelInstantiatorTest extends TestCase
                 $db_model['Privacy'],
             )
         );
+    }
+
+    public function testDatabaseModelToDataObjectNullableNestedObjectNotNullWithRelationsGetter(): void
+    {
+        // Verify a nullable many to one relationship works when the data is defined.
+        $db_model = new ModelInstantiatorTestDBModel(123);
+        $relation = new ModelInstantiatorTestDBModel(456);
+
+        $db_model->addNullableOneRelation($relation);
+
+        $data_object = $this->model_instantiator->databaseModelToDataObject(
+            $db_model,
+            ModelInstantiatorTestObject::class,
+        );
+
+        $this->assertEquals($data_object->nullableFakeHasOneRelation->pdgaNumber, 456);
+    }
+
+    public function testDatabaseModelToDataObjectNullableNestedObjectNullWithRelationsGetter(): void
+    {
+        // Verify a nullable many to one relationship works when the data is null.
+        $db_model = new ModelInstantiatorTestDBModel(123);
+        $relation = null;
+
+        $db_model->addNullableOneRelation($relation);
+
+        $data_object = $this->model_instantiator->databaseModelToDataObject(
+            $db_model,
+            ModelInstantiatorTestObject::class,
+        );
+
+        $this->assertEquals($data_object->nullableFakeHasOneRelation, null);
+    }
+
+    public function testDatabaseModelToDataObjectNestedObjectWithRelationsGetterExcepts(): void
+    {
+        // Verify a many to one relationship errors out with the correct exception type when the data is null.
+        $db_model = new ModelInstantiatorTestDBModel(123);
+        $relation = null;
+
+        $db_model->addOneRelation($relation);
+
+        try
+        {
+            $data_object = $this->model_instantiator->databaseModelToDataObject(
+                $db_model,
+                ModelInstantiatorTestObject::class,
+            );
+            $this->assertTrue(false);
+        }
+        catch (InvalidRelationshipDataException $e)
+        {
+            $this->assertEquals('FakeHasOneRelation relationship must not be null.', $e->getMessage());
+        }
     }
 }
