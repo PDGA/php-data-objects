@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1875bac6da0d4711275e058b793a0ddb",
+    "content-hash": "4114848eb57e2f0e6f18b4f3ccc461e2",
     "packages": [
         {
             "name": "pdga/exception",
-            "version": "1.3.0",
+            "version": "1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PDGA/php-exceptions.git",
-                "reference": "36f1184f63a0f3f9130eb37bcd27ade38f472399"
+                "reference": "8ede4ece657c4a748877cccb3afe05fad7537b1c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PDGA/php-exceptions/zipball/36f1184f63a0f3f9130eb37bcd27ade38f472399",
-                "reference": "36f1184f63a0f3f9130eb37bcd27ade38f472399",
+                "url": "https://api.github.com/repos/PDGA/php-exceptions/zipball/8ede4ece657c4a748877cccb3afe05fad7537b1c",
+                "reference": "8ede4ece657c4a748877cccb3afe05fad7537b1c",
                 "shasum": ""
             },
             "require": {
@@ -45,9 +45,9 @@
             "homepage": "https://github.com/PDGA/php-exceptions",
             "support": {
                 "issues": "https://github.com/PDGA/php-exceptions/issues",
-                "source": "https://github.com/PDGA/php-exceptions/tree/1.3.0"
+                "source": "https://github.com/PDGA/php-exceptions/tree/1.4.0"
             },
-            "time": "2023-04-14T19:01:35+00:00"
+            "time": "2024-04-02T20:37:47+00:00"
         }
     ],
     "packages-dev": [

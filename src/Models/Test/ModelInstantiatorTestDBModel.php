@@ -21,9 +21,15 @@ class ModelInstantiatorTestDBModel implements IDatabaseModel
     }
 
     // Mimic a ManyToOne relation (object).
-    public function addOneRelation(ModelInstantiatorTestDBModel $relation): void
+    public function addOneRelation(?ModelInstantiatorTestDBModel $relation): void
     {
         $this->relations['FakeHasOneRelation'] = $relation;
+    }
+
+    // Mimic a nullable ManyToOne relation (object).
+    public function addNullableOneRelation(?ModelInstantiatorTestDBModel $relation): void
+    {
+        $this->relations['NullableFakeHasOneRelation'] = $relation;
     }
 
     // Mimic a OneToMany relation (array).

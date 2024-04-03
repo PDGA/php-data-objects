@@ -1,3 +1,6 @@
+### 4.0.1
+* Fixes the way `ModelInstantiator` handles `ManyToOne` relationships but checking if the data for the relationship is null and if so checking to ensure the relationship data is allowed to be null.  If not it throws an exception of type `InvalidRelationshipDataException`.
+
 ### 4.0.0
 * _BREAKING_: Adds a new interface called `IDatabaseModel` and updates the expected type of `$db_model` argument in `ModelInstantiator#databaseModelToDataObject` to be of that type, removing the ability to continue to supply arrays to that function. This interface is compatible with existing Eloquent models, so any caller already passing Eloquent models will be unaffected.
 
