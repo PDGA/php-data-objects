@@ -154,6 +154,7 @@ class ModelInstantiator
      * @param string $class The class name of the corresponding Data Object.
      *
      * @throws ReflectionException
+     * @throws InvalidRelationshipDataException
      * @return object
      */
     public function databaseModelToDataObject(
