@@ -438,7 +438,7 @@ class ModelInstantiatorTest extends TestCase
 
     public function testDatabaseModelToDataObjectNullableNestedObjectNotNullWithRelationsGetter(): void
     {
-        // Verify a nullable one to many relationship works when the data is defined.
+        // Verify a nullable many to one relationship works when the data is defined.
         $db_model = new ModelInstantiatorTestDBModel(123);
         $relation = new ModelInstantiatorTestDBModel(456);
 
@@ -454,7 +454,7 @@ class ModelInstantiatorTest extends TestCase
 
     public function testDatabaseModelToDataObjectNullableNestedObjectNullWithRelationsGetter(): void
     {
-        // Verify a nullable one to many relationship works when the data is null.
+        // Verify a nullable many to one relationship works when the data is null.
         $db_model = new ModelInstantiatorTestDBModel(123);
         $relation = null;
 
@@ -470,7 +470,7 @@ class ModelInstantiatorTest extends TestCase
 
     public function testDatabaseModelToDataObjectNestedObjectWithRelationsGetterExcepts(): void
     {
-        // Verify a one to many relationship errors out with the correct exception type when the data is null.
+        // Verify a many to one relationship errors out with the correct exception type when the data is null.
         $db_model = new ModelInstantiatorTestDBModel(123);
         $relation = null;
 
@@ -482,6 +482,7 @@ class ModelInstantiatorTest extends TestCase
                 $db_model,
                 ModelInstantiatorTestObject::class,
             );
+            $this->assertTrue(false);
         }
         catch (InvalidRelationshipDataException $e)
         {
