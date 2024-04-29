@@ -28,17 +28,16 @@ class DataObjectRelationshipParser
     }
 
     /**
-     * Parses a comma delimited string that specifies relationships and returns an
-     * array of parsed valid relationship names.
+     * Parses an array of relationship names and returns an array of validated relationship names.
      *
-     * @param string|null $relationships_to_parse
+     * @param array $relationships_to_parse
      * @param string $data_object_class
      * @return array
      * @throws ValidationException
      * @throws \ReflectionException
      */
     public function parseRelationshipsForDataObject(
-        ?string $relationships_to_parse,
+        array $relationships_to_parse,
         string $data_object_class
     ): array
     {
@@ -48,13 +47,16 @@ class DataObjectRelationshipParser
         }
 
         $valid_relationships = $this->getRelationshipAliasesForDataObject($data_object_class);
-        $relationships_to_validate = array_unique(explode(',', $relationships_to_parse));
 
         // This will produce an array of valid relationships keyed by the lowercase name of the relationship which
         // allows us to perform a case-insensitive comparison below.
-        $relationships_keyed_by_lower = array_combine(
+        $valid_relationships_keyed_by_lower = array_combine(
             array_map('strtolower', $valid_relationships),
             $valid_relationships
+        );
+
+        $relationships_to_validate = array_unique(
+            array_map("strtolower", $relationships_to_parse)
         );
 
         $validated_relationships = [];
@@ -64,9 +66,9 @@ class DataObjectRelationshipParser
         {
             $lower_relationship_to_check = trim(strtolower($relationship_to_validate));
 
-            if (key_exists($lower_relationship_to_check, $relationships_keyed_by_lower))
+            if (key_exists($lower_relationship_to_check, $valid_relationships_keyed_by_lower))
             {
-                $validated_relationships[] = $relationships_keyed_by_lower[$lower_relationship_to_check];
+                $validated_relationships[] = $valid_relationships_keyed_by_lower[$lower_relationship_to_check];
             }
             else
             {

@@ -18,17 +18,7 @@ class DataObjectRelationshipParserTest extends TestCase
     public function testEmptyRelationshipReturnsEmptyArray()
     {
         $valid_relationships = $this->relationship_parser->parseRelationshipsForDataObject(
-            '',
-            ModelInstantiatorTestObject::class
-        );
-
-        $this->assertEquals([], $valid_relationships);
-    }
-
-    public function testNullRelationshipReturnsEmptyArray()
-    {
-        $valid_relationships = $this->relationship_parser->parseRelationshipsForDataObject(
-            null,
+            [],
             ModelInstantiatorTestObject::class
         );
 
@@ -37,71 +27,91 @@ class DataObjectRelationshipParserTest extends TestCase
 
     public function testValidRelationshipIsReturned()
     {
-        $relationship = "FakeHasOneRelation";
+        $name = 'FakeHasOneRelation';
+        $relationships = [$name];
         $valid_relationships = $this->relationship_parser->parseRelationshipsForDataObject(
-            $relationship,
+            $relationships,
             ModelInstantiatorTestObject::class
         );
 
         $this->assertEquals(1, count($valid_relationships));
-        $this->assertEquals($relationship, $valid_relationships[0]);
+        $this->assertEquals($name, $valid_relationships[0]);
     }
 
     public function testMultipleValidRelationshipsAreReturned()
     {
-        $relationships = "FakeHasOneRelation,NullableFakeHasOneRelation,FakeHasManyRelation";
+        $relationships = ['FakeHasOneRelation', 'NullableFakeHasOneRelation', 'FakeHasManyRelation'];
         $valid_relationships = $this->relationship_parser->parseRelationshipsForDataObject(
             $relationships,
             ModelInstantiatorTestObject::class
         );
 
         $this->assertEquals(3, count($valid_relationships));
-        $this->assertEquals(explode(',', $relationships), $valid_relationships);
+        $this->assertEquals($relationships, $valid_relationships);
     }
 
     public function testValidRelationshipWithLeadingWhitespaceIsReturned()
     {
-        $relationship = " FakeHasOneRelation";
+        $name = ' FakeHasOneRelation';
+        $relationships = [$name];
         $valid_relationships = $this->relationship_parser->parseRelationshipsForDataObject(
-            $relationship,
+            $relationships,
             ModelInstantiatorTestObject::class
         );
 
         $this->assertEquals(1, count($valid_relationships));
-        $this->assertEquals(trim($relationship), $valid_relationships[0]);
+        $this->assertEquals(trim($name), $valid_relationships[0]);
     }
 
     public function testValidRelationshipWithTrailingWhitespaceIsReturned()
     {
-        $relationship = "FakeHasOneRelation ";
+        $name = 'FakeHasOneRelation ';
+        $relationships = [$name];
         $valid_relationships = $this->relationship_parser->parseRelationshipsForDataObject(
-            $relationship,
+            $relationships,
             ModelInstantiatorTestObject::class
         );
 
         $this->assertEquals(1, count($valid_relationships));
-        $this->assertEquals(trim($relationship), $valid_relationships[0]);
+        $this->assertEquals(trim($name), $valid_relationships[0]);
     }
 
     public function testDuplicateValidRelationshipsIgnoresDuplicate()
     {
-        $valid = "FakeHasOneRelation";
-        $relationship = "{$valid},{$valid}";
+        $name = 'FakeHasOneRelation';
+        $relationships = [$name, $name];
         $valid_relationships = $this->relationship_parser->parseRelationshipsForDataObject(
-            $relationship,
+            $relationships,
             ModelInstantiatorTestObject::class
         );
 
         $this->assertEquals(1, count($valid_relationships));
-        $this->assertEquals($valid, $valid_relationships[0]);
+        $this->assertEquals($name, $valid_relationships[0]);
     }
 
     public function testValidRelationshipWithIncorrectCasingIsReturnedAsCorrectCasing()
     {
         $expected_correct_casing = "FakeHasOneRelation";
-        $relationship = "fAKEhASoNErELATION";
+        $relationships = ['fAKEhASoNErELATION'];
         $valid_relationships = $this->relationship_parser->parseRelationshipsForDataObject(
-            $relationship,
+            $relationships,
+            ModelInstantiatorTestObject::class
+        );
+
+        $this->assertEquals(1, count($valid_relationships));
+        $this->assertEquals($expected_correct_casing, $valid_relationships[0]);
+    }
+
+    public function testDuplicateValidRelationshipsWithDifferentCasingReturnsSingleRelationship()
+    {
+        $expected_correct_casing = "FakeHasOneRelation";
+        $relationships = [
+            $expected_correct_casing,
+            strtolower($expected_correct_casing),
+            strtoupper($expected_correct_casing)
+        ];
+        $valid_relationships = $this->relationship_parser->parseRelationshipsForDataObject(
+            $relationships,
             ModelInstantiatorTestObject::class
         );
 
@@ -111,30 +121,33 @@ class DataObjectRelationshipParserTest extends TestCase
 
     public function testInvalidRelationshipThrowsException()
     {
-        $relationship = "invalid";
+        $name = 'invalid';
+        $relationships = [$name];
 
         try
         {
             $this->relationship_parser->parseRelationshipsForDataObject(
-                $relationship,
+                $relationships,
                 ModelInstantiatorTestObject::class
             );
             $this->assertTrue(false, "Expected exception not thrown.");
         }
         catch(ValidationException $exception)
         {
-            $this->assertEquals("Unknown relationships - {$relationship}", $exception->getMessage());
+            $this->assertEquals("Unknown relationships - {$name}", $exception->getMessage());
         }
     }
 
     public function testMultipleInvalidRelationshipsAreIncludedInExceptionMessage()
     {
-        $relationship = "invalid1, invalid2";
+        $name_1 = 'invalid1';
+        $name_2 = 'invalid2';
+        $relationships = [$name_1, $name_2];
 
         try
         {
             $this->relationship_parser->parseRelationshipsForDataObject(
-                $relationship,
+                $relationships,
                 ModelInstantiatorTestObject::class
             );
 
@@ -142,14 +155,14 @@ class DataObjectRelationshipParserTest extends TestCase
         }
         catch(ValidationException $exception)
         {
-            $this->assertEquals("Unknown relationships - {$relationship}", $exception->getMessage());
+            $this->assertEquals("Unknown relationships - {$name_1},{$name_2}", $exception->getMessage());
         }
     }
 
     public function testOnlyInvalidRelationshipsAreIncludedInExceptionMessage()
     {
-        $invalid = " invalid";
-        $relationships = "FakeHasOneRelation,{$invalid}";
+        $invalid = ' invalid';
+        $relationships = ['FakeHasOneRelation', $invalid];
 
         try
         {
