@@ -38,6 +38,33 @@ class DataObjectRelationshipParserTest extends TestCase
         $this->assertEquals($name, $valid_relationships[0]);
     }
 
+    public function testValidNestedRelationshipIsReturned()
+    {
+        $name = 'FakeHasOneRelation.NullableFakeHasOneRelation';
+        $relationships = [$name];
+        $valid_relationships = $this->relationship_parser->parseRelationshipsForDataObject(
+            $relationships,
+            ModelInstantiatorTestObject::class
+        );
+
+        $this->assertEquals(1, count($valid_relationships));
+        $this->assertEquals($name, $valid_relationships[0]);
+    }
+
+    public function testValidNestedRelationshipWithSpacesIsReturned()
+    {
+        $expected = 'FakeHasOneRelation.NullableFakeHasOneRelation';
+        $name = ' FakeHasOneRelation . NullableFakeHasOneRelation ';
+        $relationships = [$name];
+        $valid_relationships = $this->relationship_parser->parseRelationshipsForDataObject(
+            $relationships,
+            ModelInstantiatorTestObject::class
+        );
+
+        $this->assertEquals(1, count($valid_relationships));
+        $this->assertEquals($expected, $valid_relationships[0]);
+    }
+
     public function testMultipleValidRelationshipsAreReturned()
     {
         $relationships = ['FakeHasOneRelation', 'NullableFakeHasOneRelation', 'FakeHasManyRelation'];
@@ -138,9 +165,28 @@ class DataObjectRelationshipParserTest extends TestCase
         }
     }
 
+    public function testInvalidNestedRelationshipThrowsException()
+    {
+        $name = "FakeHasOneRelation.invalid";
+        $relationships = [$name];
+
+        try
+        {
+            $this->relationship_parser->parseRelationshipsForDataObject(
+                $relationships,
+                ModelInstantiatorTestObject::class
+            );
+            $this->assertTrue(false, "Expected exception not thrown.");
+        }
+        catch(ValidationException $exception)
+        {
+            $this->assertEquals("Unknown relationships - {$name}", $exception->getMessage());
+        }
+    }
+
     public function testMultipleInvalidRelationshipsAreIncludedInExceptionMessage()
     {
-        $name_1 = 'invalid1';
+        $name_1 = 'Invalid1';
         $name_2 = 'invalid2';
         $relationships = [$name_1, $name_2];
 
