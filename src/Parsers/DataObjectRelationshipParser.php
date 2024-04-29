@@ -49,13 +49,16 @@ class DataObjectRelationshipParser
 
         $valid_relationships = $this->getRelationshipAliasesForDataObject($data_object_class);
         $includes = array_unique(explode(',', $relationships_to_parse));
+
+        // This will produce an array of valid relationships keyed by the lowercase name of the relationship which
+        // allows us to perform a case-insensitive comparison below.
         $relationships_keyed_by_lower = array_combine(
             array_map('strtolower', $valid_relationships),
             $valid_relationships
         );
 
-        $relationships_to_include = [];
-        $invalid_includes = [];
+        $validated_relationships = [];
+        $invalid_relationships = [];
 
         foreach ($includes as $relationship_to_check)
         {
@@ -63,21 +66,21 @@ class DataObjectRelationshipParser
 
             if (key_exists($lower_relationship_to_check, $relationships_keyed_by_lower))
             {
-                $relationships_to_include[] = $relationships_keyed_by_lower[$lower_relationship_to_check];
+                $validated_relationships[] = $relationships_keyed_by_lower[$lower_relationship_to_check];
             }
             else
             {
-                $invalid_includes[] = $relationship_to_check;
+                $invalid_relationships[] = $relationship_to_check;
             }
         }
 
-        if (!empty($invalid_includes))
+        if (!empty($invalid_relationships))
         {
-            $includes_error = implode(',', $invalid_includes);
+            $includes_error = implode(',', $invalid_relationships);
 
             throw new ValidationException("Unknown relationships - {$includes_error}");
         }
 
-        return $relationships_to_include;
+        return $validated_relationships;
     }
 }
