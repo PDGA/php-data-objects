@@ -48,7 +48,7 @@ class DataObjectRelationshipParser
         }
 
         $valid_relationships = $this->getRelationshipAliasesForDataObject($data_object_class);
-        $includes = array_unique(explode(',', $relationships_to_parse));
+        $relationships_to_validate = array_unique(explode(',', $relationships_to_parse));
 
         // This will produce an array of valid relationships keyed by the lowercase name of the relationship which
         // allows us to perform a case-insensitive comparison below.
@@ -60,9 +60,9 @@ class DataObjectRelationshipParser
         $validated_relationships = [];
         $invalid_relationships = [];
 
-        foreach ($includes as $relationship_to_check)
+        foreach ($relationships_to_validate as $relationship_to_validate)
         {
-            $lower_relationship_to_check = trim(strtolower($relationship_to_check));
+            $lower_relationship_to_check = trim(strtolower($relationship_to_validate));
 
             if (key_exists($lower_relationship_to_check, $relationships_keyed_by_lower))
             {
@@ -70,15 +70,15 @@ class DataObjectRelationshipParser
             }
             else
             {
-                $invalid_relationships[] = $relationship_to_check;
+                $invalid_relationships[] = $relationship_to_validate;
             }
         }
 
         if (!empty($invalid_relationships))
         {
-            $includes_error = implode(',', $invalid_relationships);
+            $unknown_relationships = implode(',', $invalid_relationships);
 
-            throw new ValidationException("Unknown relationships - {$includes_error}");
+            throw new ValidationException("Unknown relationships - {$unknown_relationships}");
         }
 
         return $validated_relationships;
