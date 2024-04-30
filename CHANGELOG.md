@@ -1,3 +1,6 @@
+### 4.1.0
+* Added `DataObjectRelationshipParser` to support validating the existence of specified relationships for a data object. 
+
 ### 4.0.1
 * Fixes the way `ModelInstantiator` handles `ManyToOne` relationships but checking if the data for the relationship is null and if so checking to ensure the relationship data is allowed to be null.  If not it throws an exception of type `InvalidRelationshipDataException`.
 
