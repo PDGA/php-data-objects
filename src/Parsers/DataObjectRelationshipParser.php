@@ -13,22 +13,9 @@ class DataObjectRelationshipParser
     {}
 
     /**
-     * For a given Data Object class, this will provide the names of the Cardinality relationships that are defined.
-     *
-     * @param string $data_object_class
-     * @return array
-     * @throws \ReflectionException
-     */
-    public function getRelationshipAliasesForDataObject(string $data_object_class): array
-    {
-        $properties = $this->reflection_container->dataObjectProperties($data_object_class);
-        $cardinalities = $this->reflection_container->dataObjectPropertyCardinalities($properties);
-
-        return array_map(fn($cardinality) => $cardinality->getAlias(), $cardinalities);
-    }
-
-    /**
      * Parses an array of relationship names and returns an array of validated relationship names.
+     * The specified relationships are validated to exist against the aliases of their cardinalities.
+     * The expected convention is that this alias matches the name of the relationship defined on the data Model.
      *
      * @param array $relationships_to_parse
      * @param string $data_object_class
@@ -46,33 +33,23 @@ class DataObjectRelationshipParser
             return [];
         }
 
-        $valid_relationships = $this->getRelationshipAliasesForDataObject($data_object_class);
-
-        // This will produce an array of valid relationships keyed by the lowercase name of the relationship which
-        // allows us to perform a case-insensitive comparison below.
-        $valid_relationships_keyed_by_lower = array_combine(
-            array_map('strtolower', $valid_relationships),
-            $valid_relationships
-        );
-
-        $relationships_to_validate = array_unique(
-            array_map("strtolower", $relationships_to_parse)
-        );
-
+        $relationships_to_validate_by_original = $this->getUniqueRelationshipsByOriginal($relationships_to_parse);
         $validated_relationships = [];
         $invalid_relationships = [];
 
-        foreach ($relationships_to_validate as $relationship_to_validate)
+        foreach ($relationships_to_validate_by_original as $relationship_to_validate_original => $relationship_to_validate_lower)
         {
-            $lower_relationship_to_check = trim(strtolower($relationship_to_validate));
-
-            if (key_exists($lower_relationship_to_check, $valid_relationships_keyed_by_lower))
+            try
             {
-                $validated_relationships[] = $valid_relationships_keyed_by_lower[$lower_relationship_to_check];
+                $validated_relationships[] = $this->getValidatedRelationship(
+                    $relationship_to_validate_lower,
+                    $data_object_class
+                );
             }
-            else
+            catch (ValidationException)
             {
-                $invalid_relationships[] = $relationship_to_validate;
+                // Capture all invalid relationships to produce a more useful error message
+                $invalid_relationships[] = $relationship_to_validate_original;
             }
         }
 
@@ -84,5 +61,100 @@ class DataObjectRelationshipParser
         }
 
         return $validated_relationships;
+    }
+
+    /**
+     * Returns the validated name of the relationship.
+     * The specified relationship is validated to exist against the alias of the cardinality. The expected convention
+     * is that this alias matches the name of the relationship defined on the data Model.
+     *
+     * Supports nested relationships using dot syntax - For example: parent.child.grandchild
+     *
+     * @param string $relationship_to_validate_lower Name of the relationship as lowercase
+     * @param string $data_object_class
+     * @return string
+     * @throws ValidationException
+     * @throws \ReflectionException
+     */
+    private function getValidatedRelationship(
+        string $relationship_to_validate_lower,
+        string $data_object_class
+    ): string
+    {
+        // Separate the parent relationship from the descendants
+        $aliases_to_validate = explode('.', $relationship_to_validate_lower, 2);
+        $alias_to_validate_lower = trim($aliases_to_validate[0]);
+
+        $valid_cardinalities_by_alias_lower = $this->getValidCardinalitiesKeyedByAliasLower($data_object_class);
+
+        // The specified alias does not exist as a known relationship alias
+        if (!key_exists($alias_to_validate_lower, $valid_cardinalities_by_alias_lower))
+        {
+            throw new ValidationException();
+        }
+
+        if (count($aliases_to_validate) > 1)
+        {
+            $relation_class = $valid_cardinalities_by_alias_lower[$alias_to_validate_lower]->getRelationClass();
+
+            // Build the validated nested relationship name using recursive call
+            return $valid_cardinalities_by_alias_lower[$alias_to_validate_lower]->getAlias()
+                   . '.'
+                   . $this->getValidatedRelationship($aliases_to_validate[1], $relation_class);
+        }
+
+        return $valid_cardinalities_by_alias_lower[$alias_to_validate_lower]->getAlias();
+    }
+
+    /**
+     * @param string $data_object_class
+     * @return array
+     * @throws \ReflectionException
+     */
+    private function getValidCardinalitiesKeyedByAliasLower(string $data_object_class): array
+    {
+        $valid_relationship_cardinalities = $this->getRelationshipCardinalitiesForDataObject($data_object_class);
+        $cardinality_aliases = array_map(
+            fn($cardinality) => $cardinality->getAlias(),
+            $valid_relationship_cardinalities
+        );
+
+        // Produces an array of valid relationships keyed by the lowercase name of the relationship.
+        // This allows us to ignore differences in casing.
+        return array_combine(
+            array_map(fn($alias) => strtolower($alias), $cardinality_aliases),
+            $valid_relationship_cardinalities
+        );
+    }
+
+    /**
+     * For a given Data Object class, this will provide the names of the Cardinality relationships that are defined.
+     *
+     * @param string $data_object_class
+     * @return array
+     * @throws \ReflectionException
+     */
+    private function getRelationshipCardinalitiesForDataObject(string $data_object_class): array
+    {
+        $properties = $this->reflection_container->dataObjectProperties($data_object_class);
+
+        return $this->reflection_container->dataObjectPropertyCardinalities($properties);
+    }
+
+    /**
+     * Generates an array of lowercase relationship names keys by the original name
+     * Duplicate values are removed.
+     *
+     * @param array $relationships_to_parse
+     * @return array
+     */
+    private function getUniqueRelationshipsByOriginal(array $relationships_to_parse): array
+    {
+        return array_unique(
+            array_combine(
+                $relationships_to_parse,
+                array_map("strtolower", $relationships_to_parse)
+            )
+        );
     }
 }
