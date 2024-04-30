@@ -157,6 +157,7 @@ class DataObjectRelationshipParserTest extends TestCase
                 $relationships,
                 ModelInstantiatorTestObject::class
             );
+
             $this->assertTrue(false, "Expected exception not thrown.");
         }
         catch(ValidationException $exception)
@@ -176,6 +177,7 @@ class DataObjectRelationshipParserTest extends TestCase
                 $relationships,
                 ModelInstantiatorTestObject::class
             );
+
             $this->assertTrue(false, "Expected exception not thrown.");
         }
         catch(ValidationException $exception)
