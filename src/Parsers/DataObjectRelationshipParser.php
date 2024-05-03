@@ -55,9 +55,7 @@ class DataObjectRelationshipParser
 
         if (!empty($invalid_relationships))
         {
-            $invalid_relationships_message = "Invalid relationships - " . implode(',', $invalid_relationships);
-
-            throw new ValidationException($invalid_relationships_message);
+            throw new ValidationException("Invalid relationships - " . implode(',', $invalid_relationships));
         }
 
         return $validated_relationships;
