@@ -39,13 +39,6 @@ class DataObjectRelationshipParser
 
         foreach ($relationships_to_validate_by_original as $relationship_to_validate_original => $relationship_to_validate_lower)
         {
-            // Add nested relationships with circular references to the list of invalid relationships
-            if ($this->containsCircularRelationship($relationship_to_validate_lower))
-            {
-                $invalid_relationships[] = $relationship_to_validate_original;
-                continue;
-            }
-
             try
             {
                 $validated_relationships[] = $this->getValidatedRelationship(
@@ -85,7 +78,8 @@ class DataObjectRelationshipParser
      */
     private function getValidatedRelationship(
         string $relationship_to_validate_lower,
-        string $data_object_class
+        string $data_object_class,
+        array $applied_cardinalities = []
     ): string
     {
         // Separate the parent relationship from the descendants
@@ -95,10 +89,14 @@ class DataObjectRelationshipParser
         $valid_cardinalities_by_alias_lower = $this->getValidCardinalitiesKeyedByAliasLower($data_object_class);
 
         // The specified alias does not exist as a known relationship alias
-        if (!key_exists($alias_to_validate_lower, $valid_cardinalities_by_alias_lower))
+        // or an equivalent cardinality has already been used making it a duplicate and invalid
+        if (!key_exists($alias_to_validate_lower, $valid_cardinalities_by_alias_lower)
+            || in_array($valid_cardinalities_by_alias_lower[$alias_to_validate_lower], $applied_cardinalities))
         {
             throw new ValidationException();
         }
+
+        $applied_cardinalities[] = $valid_cardinalities_by_alias_lower[$alias_to_validate_lower];
 
         if (count($aliases_to_validate) > 1)
         {
@@ -107,7 +105,10 @@ class DataObjectRelationshipParser
             // Build the validated nested relationship name using recursive call
             return $valid_cardinalities_by_alias_lower[$alias_to_validate_lower]->getAlias()
                    . '.'
-                   . $this->getValidatedRelationship($aliases_to_validate[1], $relation_class);
+                   . $this->getValidatedRelationship(
+                       $aliases_to_validate[1],
+                       $relation_class,
+                       $applied_cardinalities);
         }
 
         return $valid_cardinalities_by_alias_lower[$alias_to_validate_lower]->getAlias();
@@ -163,18 +164,5 @@ class DataObjectRelationshipParser
                 array_map("strtolower", $relationships_to_parse)
             )
         );
-    }
-
-    /**
-     * Detects nested relationships that specify the same relationship more than once
-     *
-     * @param string $relationship_to_validate_lower
-     * @return bool
-     */
-    private function containsCircularRelationship(string $relationship_to_validate_lower): bool
-    {
-        $relationship_parts = array_map('trim', explode('.', $relationship_to_validate_lower));
-
-        return count($relationship_parts) !== count(array_unique($relationship_parts));
     }
 }
