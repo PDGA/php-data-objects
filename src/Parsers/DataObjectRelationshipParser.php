@@ -39,6 +39,13 @@ class DataObjectRelationshipParser
 
         foreach ($relationships_to_validate_by_original as $relationship_to_validate_original => $relationship_to_validate_lower)
         {
+            // Add nested relationships with circular references to the list of invalid relationships
+            if ($this->containsCircularRelationship($relationship_to_validate_lower))
+            {
+                $invalid_relationships[] = $relationship_to_validate_original;
+                continue;
+            }
+
             try
             {
                 $validated_relationships[] = $this->getValidatedRelationship(
@@ -55,9 +62,9 @@ class DataObjectRelationshipParser
 
         if (!empty($invalid_relationships))
         {
-            $unknown_relationships = implode(',', $invalid_relationships);
+            $invalid_relationships_message = "Invalid relationships - " . implode(',', $invalid_relationships);
 
-            throw new ValidationException("Unknown relationships - {$unknown_relationships}");
+            throw new ValidationException($invalid_relationships_message);
         }
 
         return $validated_relationships;
@@ -156,5 +163,18 @@ class DataObjectRelationshipParser
                 array_map("strtolower", $relationships_to_parse)
             )
         );
+    }
+
+    /**
+     * Detects nested relationships that specify the same relationship more than once
+     *
+     * @param string $relationship_to_validate_lower
+     * @return bool
+     */
+    private function containsCircularRelationship(string $relationship_to_validate_lower): bool
+    {
+        $relationship_parts = array_map('trim', explode('.', $relationship_to_validate_lower));
+
+        return count($relationship_parts) !== count(array_unique($relationship_parts));
     }
 }
