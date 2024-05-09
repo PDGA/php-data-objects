@@ -1,3 +1,6 @@
+### 5.0.0
+* _BREAKING_: `DataObjectRelationshipParser` no longer supports nested circular relationships. These will now be considered invalid and will throw a `ValidationException`.
+
 ### 4.1.0
 * Added `DataObjectRelationshipParser` to support validating the existence of specified relationships for a data object. 
 
