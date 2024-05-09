@@ -162,7 +162,7 @@ class DataObjectRelationshipParserTest extends TestCase
         }
         catch(ValidationException $exception)
         {
-            $this->assertEquals("Unknown relationships - {$name}", $exception->getMessage());
+            $this->assertEquals("Invalid relationships - {$name}", $exception->getMessage());
         }
     }
 
@@ -182,7 +182,47 @@ class DataObjectRelationshipParserTest extends TestCase
         }
         catch(ValidationException $exception)
         {
-            $this->assertEquals("Unknown relationships - {$name}", $exception->getMessage());
+            $this->assertEquals("Invalid relationships - {$name}", $exception->getMessage());
+        }
+    }
+
+    public function testCircularNestedRelationshipThrowsException()
+    {
+        $name = "FakeHasOneRelation.NullableFakeHasOneRelation.FakeHasOneRelation";
+        $relationships = [$name];
+
+        try
+        {
+            $this->relationship_parser->parseRelationshipsForDataObject(
+                $relationships,
+                ModelInstantiatorTestObject::class
+            );
+
+            $this->assertTrue(false, "Expected exception not thrown.");
+        }
+        catch(ValidationException $exception)
+        {
+            $this->assertEquals("Invalid relationships - {$name}", $exception->getMessage());
+        }
+    }
+
+    public function testCircularNestedRelationshipIsCaseInsensitiveAndThrowsException()
+    {
+        $name = "FakeHasOneRelation.NullableFakeHasOneRelation.fakehasonerelation";
+        $relationships = [$name];
+
+        try
+        {
+            $this->relationship_parser->parseRelationshipsForDataObject(
+                $relationships,
+                ModelInstantiatorTestObject::class
+            );
+
+            $this->assertTrue(false, "Expected exception not thrown.");
+        }
+        catch(ValidationException $exception)
+        {
+            $this->assertEquals("Invalid relationships - {$name}", $exception->getMessage());
         }
     }
 
@@ -203,7 +243,7 @@ class DataObjectRelationshipParserTest extends TestCase
         }
         catch(ValidationException $exception)
         {
-            $this->assertEquals("Unknown relationships - {$name_1},{$name_2}", $exception->getMessage());
+            $this->assertEquals("Invalid relationships - {$name_1},{$name_2}", $exception->getMessage());
         }
     }
 
@@ -223,7 +263,7 @@ class DataObjectRelationshipParserTest extends TestCase
         }
         catch(ValidationException $exception)
         {
-            $this->assertEquals("Unknown relationships - {$invalid}", $exception->getMessage());
+            $this->assertEquals("Invalid relationships - {$invalid}", $exception->getMessage());
         }
     }
 }

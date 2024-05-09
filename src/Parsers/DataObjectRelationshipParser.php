@@ -55,9 +55,7 @@ class DataObjectRelationshipParser
 
         if (!empty($invalid_relationships))
         {
-            $unknown_relationships = implode(',', $invalid_relationships);
-
-            throw new ValidationException("Unknown relationships - {$unknown_relationships}");
+            throw new ValidationException("Invalid relationships - " . implode(',', $invalid_relationships));
         }
 
         return $validated_relationships;
@@ -78,7 +76,8 @@ class DataObjectRelationshipParser
      */
     private function getValidatedRelationship(
         string $relationship_to_validate_lower,
-        string $data_object_class
+        string $data_object_class,
+        array $applied_cardinalities = []
     ): string
     {
         // Separate the parent relationship from the descendants
@@ -88,10 +87,14 @@ class DataObjectRelationshipParser
         $valid_cardinalities_by_alias_lower = $this->getValidCardinalitiesKeyedByAliasLower($data_object_class);
 
         // The specified alias does not exist as a known relationship alias
-        if (!key_exists($alias_to_validate_lower, $valid_cardinalities_by_alias_lower))
+        // or an equivalent cardinality has already been used making it a duplicate and invalid
+        if (!key_exists($alias_to_validate_lower, $valid_cardinalities_by_alias_lower)
+            || in_array($valid_cardinalities_by_alias_lower[$alias_to_validate_lower], $applied_cardinalities))
         {
             throw new ValidationException();
         }
+
+        $applied_cardinalities[] = $valid_cardinalities_by_alias_lower[$alias_to_validate_lower];
 
         if (count($aliases_to_validate) > 1)
         {
@@ -100,7 +103,10 @@ class DataObjectRelationshipParser
             // Build the validated nested relationship name using recursive call
             return $valid_cardinalities_by_alias_lower[$alias_to_validate_lower]->getAlias()
                    . '.'
-                   . $this->getValidatedRelationship($aliases_to_validate[1], $relation_class);
+                   . $this->getValidatedRelationship(
+                       $aliases_to_validate[1],
+                       $relation_class,
+                       $applied_cardinalities);
         }
 
         return $valid_cardinalities_by_alias_lower[$alias_to_validate_lower]->getAlias();
