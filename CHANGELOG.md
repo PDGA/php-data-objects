@@ -1,8 +1,11 @@
+### 5.1.0
+* Adds `JsonConverter` for database columns storying json data to have it automatically converted to php arrays.
+
 ### 5.0.0
 * _BREAKING_: `DataObjectRelationshipParser` no longer supports nested circular relationships. These will now be considered invalid and will throw a `ValidationException`.
 
 ### 4.1.0
-* Added `DataObjectRelationshipParser` to support validating the existence of specified relationships for a data object. 
+* Added `DataObjectRelationshipParser` to support validating the existence of specified relationships for a data object.
 
 ### 4.0.1
 * Fixes the way `ModelInstantiator` handles `ManyToOne` relationships but checking if the data for the relationship is null and if so checking to ensure the relationship data is allowed to be null.  If not it throws an exception of type `InvalidRelationshipDataException`.
