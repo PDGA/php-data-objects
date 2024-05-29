@@ -16,10 +16,6 @@ Data object related code for the PDGA's back-end PHP API systems.
 
 ### Require this Library as a Dependency in another Application
 
-```
-composer require pdga/data-objects
-```
-
 To add the package to an application's Composer dependencies, use the following Composer command:
 
 ```composer require pdga/data-objects```
@@ -131,12 +127,7 @@ git tag -a 2.1.0 -m "Support passing Eloquent models to `ModelInstantiator#dataO
 git push 2.1.0
 ```
 
-## Using the package in other applications
-
-This package can be used in other PHP applications via Composer. It is available for inclusion
-via Composer from Packagist.
-
-### Pushing a new version of the package to Packagist
+## Pushing a new version of the package to Packagist
 
 This package is already set up on Packagist, which watches the repository for new tag and automatically
 creates a new release version for use via Composer (The Packagist page can be found at [https://packagist.org/packages/pdga/data-objects](https://packagist.org/packages/pdga/data-objects)).
