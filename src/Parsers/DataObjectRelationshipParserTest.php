@@ -151,17 +151,14 @@ class DataObjectRelationshipParserTest extends TestCase
         $name = 'invalid';
         $relationships = [$name];
 
-        try
-        {
+        try {
             $this->relationship_parser->parseRelationshipsForDataObject(
                 $relationships,
                 ModelInstantiatorTestObject::class
             );
 
             $this->assertTrue(false, "Expected exception not thrown.");
-        }
-        catch(ValidationException $exception)
-        {
+        } catch (ValidationException $exception) {
             $this->assertEquals("Invalid relationships - {$name}", $exception->getMessage());
         }
     }
@@ -171,17 +168,14 @@ class DataObjectRelationshipParserTest extends TestCase
         $name = "FakeHasOneRelation.invalid";
         $relationships = [$name];
 
-        try
-        {
+        try {
             $this->relationship_parser->parseRelationshipsForDataObject(
                 $relationships,
                 ModelInstantiatorTestObject::class
             );
 
             $this->assertTrue(false, "Expected exception not thrown.");
-        }
-        catch(ValidationException $exception)
-        {
+        } catch (ValidationException $exception) {
             $this->assertEquals("Invalid relationships - {$name}", $exception->getMessage());
         }
     }
@@ -191,17 +185,14 @@ class DataObjectRelationshipParserTest extends TestCase
         $name = "FakeHasOneRelation.NullableFakeHasOneRelation.FakeHasOneRelation";
         $relationships = [$name];
 
-        try
-        {
+        try {
             $this->relationship_parser->parseRelationshipsForDataObject(
                 $relationships,
                 ModelInstantiatorTestObject::class
             );
 
             $this->assertTrue(false, "Expected exception not thrown.");
-        }
-        catch(ValidationException $exception)
-        {
+        } catch (ValidationException $exception) {
             $this->assertEquals("Invalid relationships - {$name}", $exception->getMessage());
         }
     }
@@ -211,17 +202,14 @@ class DataObjectRelationshipParserTest extends TestCase
         $name = "FakeHasOneRelation.NullableFakeHasOneRelation.fakehasonerelation";
         $relationships = [$name];
 
-        try
-        {
+        try {
             $this->relationship_parser->parseRelationshipsForDataObject(
                 $relationships,
                 ModelInstantiatorTestObject::class
             );
 
             $this->assertTrue(false, "Expected exception not thrown.");
-        }
-        catch(ValidationException $exception)
-        {
+        } catch (ValidationException $exception) {
             $this->assertEquals("Invalid relationships - {$name}", $exception->getMessage());
         }
     }
@@ -232,17 +220,14 @@ class DataObjectRelationshipParserTest extends TestCase
         $name_2 = 'invalid2';
         $relationships = [$name_1, $name_2];
 
-        try
-        {
+        try {
             $this->relationship_parser->parseRelationshipsForDataObject(
                 $relationships,
                 ModelInstantiatorTestObject::class
             );
 
             $this->assertTrue(false, "Expected exception not thrown.");
-        }
-        catch(ValidationException $exception)
-        {
+        } catch (ValidationException $exception) {
             $this->assertEquals("Invalid relationships - {$name_1},{$name_2}", $exception->getMessage());
         }
     }
@@ -252,17 +237,14 @@ class DataObjectRelationshipParserTest extends TestCase
         $invalid = ' invalid';
         $relationships = ['FakeHasOneRelation', $invalid];
 
-        try
-        {
+        try {
             $this->relationship_parser->parseRelationshipsForDataObject(
                 $relationships,
                 ModelInstantiatorTestObject::class
             );
 
             $this->assertTrue(false, "Expected exception not thrown.");
-        }
-        catch(ValidationException $exception)
-        {
+        } catch (ValidationException $exception) {
             $this->assertEquals("Invalid relationships - {$invalid}", $exception->getMessage());
         }
     }

@@ -45,8 +45,7 @@ class NotBlankValidatorTest extends TestCase
             ' ',
         ];
 
-        foreach ($invalid_values as $value)
-        {
+        foreach ($invalid_values as $value) {
             $this->assertFalse($this->not_blank_validator->validate($value));
         }
     }
@@ -64,8 +63,7 @@ class NotBlankValidatorTest extends TestCase
             false,
         ];
 
-        foreach ($valid_values as $value)
-        {
+        foreach ($valid_values as $value) {
             $this->assertTrue($this->not_blank_validator->validate($value));
         }
     }

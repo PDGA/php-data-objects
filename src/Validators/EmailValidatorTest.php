@@ -40,8 +40,7 @@ class EmailValidatorTest extends TestCase
             'pdga-dev@gmail.com',
         ];
 
-        foreach ($valid_email_addresses as $email_address)
-        {
+        foreach ($valid_email_addresses as $email_address) {
             $this->assertTrue($this->validator->validate($email_address));
         }
     }
@@ -56,8 +55,7 @@ class EmailValidatorTest extends TestCase
             '',
         ];
 
-        foreach ($invalid_email_addresses as $email_address)
-        {
+        foreach ($invalid_email_addresses as $email_address) {
             $this->assertFalse($this->validator->validate($email_address));
         }
     }

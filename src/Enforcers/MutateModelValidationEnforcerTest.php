@@ -42,13 +42,10 @@ class MutateModelValidationEnforcerTest extends TestCase
     public function testValidatesInstancesCorrectly(): void
     {
         $person = ['email' => 'foo@bar.com', 'name' => 'Joe', 'id' => 42];
-        try
-        {
+        try {
             $this->enforcer->enforce($person, MutatedPerson::class);
             $this->assertTrue(true);
-        }
-        catch (ValidationListException $e)
-        {
+        } catch (ValidationListException $e) {
             $this->assertTrue(false, "Failed to validate types. " . json_encode($e->getErrors()));
         }
     }
@@ -56,13 +53,10 @@ class MutateModelValidationEnforcerTest extends TestCase
     public function testNullValueThrowsAnError(): void
     {
         $person = ['email' => 'foo@bar.com', 'id' => null, 'name' => 'Joe'];
-        try
-        {
+        try {
             $this->enforcer->enforce($person, MutatedPerson::class);
             $this->assertTrue(false, "Failed to validate generated fields correctly.");
-        }
-        catch (ValidationListException $e)
-        {
+        } catch (ValidationListException $e) {
             $expectedError = "Primary key columns are required and should not be null.";
             $result = $e->getErrors();
             $result = $result['id'][1]['message'];
@@ -73,13 +67,10 @@ class MutateModelValidationEnforcerTest extends TestCase
     public function testMissingValueThrowsAnError(): void
     {
         $person = ['email' => 'foo@bar.com', 'name' => 'Joe'];
-        try
-        {
+        try {
             $this->enforcer->enforce($person, MutatedPerson::class);
             $this->assertTrue(false, "Failed to validate generated fields correctly.");
-        }
-        catch (ValidationListException $e)
-        {
+        } catch (ValidationListException $e) {
             $expectedError = "Primary key columns are required and should not be null.";
             $result = $e->getErrors();
             $result = $result['id'][0]['message'];

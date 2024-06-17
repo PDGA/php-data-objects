@@ -48,5 +48,4 @@ class ModelValidationEnforcerTest extends TestCase
         //(from the column), and not null
         $this->assertEquals(count($result['name']['validators']), 5);
     }
-
 }

@@ -38,13 +38,10 @@ class ValidationEnforcerTest extends TestCase
     public function testValidatesInstancesCorrectly(): void
     {
         $person = ['email' => 'foo@bar.com', 'id' => 42];
-        try
-        {
+        try {
             $this->enforcer->enforce($person, Person::class);
             $this->assertTrue(true);
-        }
-        catch (ValidationListException $e)
-        {
+        } catch (ValidationListException $e) {
             $this->assertTrue(false, "Failed to validate types. " . json_encode($e->getErrors()));
         }
     }
@@ -52,13 +49,10 @@ class ValidationEnforcerTest extends TestCase
     public function testTypeValidatesCorrectly(): void
     {
         $person = ['email' => 1234, 'id' => 42];
-        try
-        {
+        try {
             $this->enforcer->enforce($person, Person::class);
             $this->assertTrue(false, "Failed to validate types correctly.");
-        }
-        catch (ValidationListException $e)
-        {
+        } catch (ValidationListException $e) {
             $expectedError = "email must be a string.";
             $result = $e->getErrors();
             $result = $result['email'][0]['message'];
@@ -69,13 +63,10 @@ class ValidationEnforcerTest extends TestCase
     public function testMissingParametersAreSkipped(): void
     {
         $person = ['email' => 'foo@bar.com'];
-        try
-        {
+        try {
             $this->enforcer->enforce($person, Person::class);
             $this->assertTrue(true);
-        }
-        catch (ValidationListException $e)
-        {
+        } catch (ValidationListException $e) {
             $this->assertTrue(false, "Failed to validate types. " . json_encode($e->getErrors()));
         }
     }
@@ -83,13 +74,10 @@ class ValidationEnforcerTest extends TestCase
     public function testAttributesValidateCorrectly(): void
     {
         $person = ['email' => 'test a bad string', 'id' => 42];
-        try
-        {
+        try {
             $this->enforcer->enforce($person, Person::class);
             $this->assertTrue(false, "Failed to validate attributes correctly.");
-        }
-        catch (ValidationListException $e)
-        {
+        } catch (ValidationListException $e) {
             $expectedError1 = "Maximum length of email is 15 characters.";
             $expectedError2 = "email must be an email address.";
             $result = $e->getErrors();
@@ -103,13 +91,10 @@ class ValidationEnforcerTest extends TestCase
     public function testAllowedNullValuesAreValidatedCorrectly(): void
     {
         $person = ['email' => null, 'id' => 42];
-        try
-        {
+        try {
             $this->enforcer->enforce($person, Person::class);
             $this->assertTrue(true);
-        }
-        catch (ValidationListException $e)
-        {
+        } catch (ValidationListException $e) {
             $this->assertTrue(false, "Failed to validate types. " . json_encode($e->getErrors()));
         }
     }
@@ -117,13 +102,10 @@ class ValidationEnforcerTest extends TestCase
     public function testNotAllowedNullsValidateCorrectly(): void
     {
         $person = ['email' => 'foo@bar.com', 'id' => null];
-        try
-        {
+        try {
             $this->enforcer->enforce($person, Person::class);
             $this->assertTrue(false, "Failed to validate attributes correctly.");
-        }
-        catch (ValidationListException $e)
-        {
+        } catch (ValidationListException $e) {
             $expectedError1 = "The id field must not be null.";
             $result = $e->getErrors();
             $result1 = $result['id'][0]['message'];
@@ -182,13 +164,10 @@ class ValidationEnforcerTest extends TestCase
     public function testNoBlankStrings(): void
     {
         $person = ['name' => '', 'id' => 42];
-        try
-        {
+        try {
             $this->enforcer->enforce($person, Person::class);
             $this->assertTrue(false, 'Blank string validation failed.');
-        }
-        catch (ValidationListException $e)
-        {
+        } catch (ValidationListException $e) {
             $this->assertEquals(1, count($e->getErrors()));
             $this->assertEquals('The name field must not be blank.', $e->getErrors()['name'][0]['message']);
         }
@@ -197,28 +176,22 @@ class ValidationEnforcerTest extends TestCase
     public function testNestedArray(): void
     {
         $person = ['id' => 42, 'widgets' => [1, 2, 3]];
-        try
-        {
+        try {
             $this->enforcer->enforce($person, Person::class);
             $this->assertTrue(true);
-        }
-        catch (ValidationListException $e)
-        {
+        } catch (ValidationListException $e) {
             $this->assertTrue(false, 'Array validation failed.');
         }
 
         $person = ['id' => 42, 'widgets' => ['a' => 'b']];
-        try
-        {
+        try {
             $this->enforcer->enforce($person, Person::class);
             $this->assertTrue(false, 'Array validation failed (assoc)');
-        }
-        catch (ValidationListException $e)
-        {
+        } catch (ValidationListException $e) {
             $this->assertEquals(1, count($e->getErrors()));
             $this->assertEquals(
                 'The widgets field must be a sequential (non-associative) zero-indexed array.',
-                 $e->getErrors()['widgets'][0]['message'],
+                $e->getErrors()['widgets'][0]['message'],
             );
         }
     }

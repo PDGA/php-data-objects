@@ -21,13 +21,11 @@ class ISO8601Validator implements Validator
      */
     public function validate(mixed $val): bool
     {
-        if (is_null($val))
-        {
+        if (is_null($val)) {
             return true;
         }
 
-        if (!is_string($val))
-        {
+        if (!is_string($val)) {
             return false;
         }
 
@@ -35,27 +33,23 @@ class ISO8601Validator implements Validator
             '(\d{4}-\d{2}-\d{2})(?:T'. // YYYY-MM-DDT ex: 2014-01-01T
             '\d{2}:\d{2}:\d{2}'.  // HH:MM:SS  ex: 17:00:00
             '(?:Z|(?:[-|\+]\d{2}:\d{2})))?'.  // Z or +01:00 or -01:00
-            '$/', $val, $matches))
-        {
+            '$/', $val, $matches)) {
             return false;
         }
 
-        try
-        {
+        try {
             $format = 'Y-m-d';
             $date_check = new DateTime($val);
             // If the date created by DateTime doesn't match the date part of the value
             // passed in then the value date is not valid.
-            if ($date_check->format($format) == $matches[1])
-            {
+            if ($date_check->format($format) == $matches[1]) {
                 return true;
             }
 
             return false;
         }
         // Invalid dates (ie month of 15+ or day of 32+ etc) will result in en exception.
-        catch (Exception $e)
-        {
+        catch (Exception $e) {
             return false;
         }
     }

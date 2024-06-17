@@ -55,8 +55,7 @@ class ZipValidatorTest extends TestCase
             123456789101112131415,
         ];
 
-        foreach ($invalid_values as $value)
-        {
+        foreach ($invalid_values as $value) {
             $this->assertFalse($this->zip_validator->validate($value));
         }
     }
@@ -74,8 +73,7 @@ class ZipValidatorTest extends TestCase
             false,
         ];
 
-        foreach ($valid_values as $value)
-        {
+        foreach ($valid_values as $value) {
             $this->assertTrue($this->zip_validator->validate($value));
         }
     }

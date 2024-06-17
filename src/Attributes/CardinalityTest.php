@@ -6,7 +6,9 @@ use PHPUnit\Framework\TestCase;
 
 use PDGA\DataObjects\Attributes\OneToMany;
 
-class TestPhoneNumber {}
+class TestPhoneNumber
+{
+}
 
 class CardinalityTest extends TestCase
 {

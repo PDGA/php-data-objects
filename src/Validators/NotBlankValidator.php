@@ -17,18 +17,15 @@ class NotBlankValidator implements Validator
      */
     public function validate(mixed $val): bool
     {
-        if (is_null($val))
-        {
+        if (is_null($val)) {
             return true;
         }
 
-        if (is_string($val) && empty(trim($val)))
-        {
+        if (is_string($val) && empty(trim($val))) {
             return false;
         }
 
-        if (isset($val))
-        {
+        if (isset($val)) {
             return true;
         }
 

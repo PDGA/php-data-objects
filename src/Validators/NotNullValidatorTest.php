@@ -50,8 +50,7 @@ class NotNullValidatorTest extends TestCase
             ' ',
         ];
 
-        foreach ($valid_values as $value)
-        {
+        foreach ($valid_values as $value) {
             $this->assertTrue($this->not_null_validator->validate($value));
         }
     }

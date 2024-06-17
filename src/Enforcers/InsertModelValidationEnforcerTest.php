@@ -41,13 +41,10 @@ class InsertModelValidationEnforcerTest extends TestCase
     public function testValidatesInstancesCorrectly(): void
     {
         $person = ['email' => 'foo@bar.com', 'name' => 'Joe'];
-        try
-        {
+        try {
             $this->enforcer->enforce($person, InsertedPerson::class);
             $this->assertTrue(true);
-        }
-        catch (ValidationListException $e)
-        {
+        } catch (ValidationListException $e) {
             $this->assertTrue(false, "Failed to validate types. " . json_encode($e->getErrors()));
         }
     }
@@ -55,13 +52,10 @@ class InsertModelValidationEnforcerTest extends TestCase
     public function testGeneratedFieldsThrowErrors(): void
     {
         $person = ['email' => 'foo@bar.com', 'id' => 42, 'name' => 'Joe'];
-        try
-        {
+        try {
             $this->enforcer->enforce($person, InsertedPerson::class);
             $this->assertTrue(false, "Failed to validate generated fields correctly.");
-        }
-        catch (ValidationListException $e)
-        {
+        } catch (ValidationListException $e) {
             $expectedError = "id should not be defined for an insert.";
             $result = $e->getErrors();
             $result = $result['id'][0]['message'];
@@ -72,13 +66,10 @@ class InsertModelValidationEnforcerTest extends TestCase
     public function testNonNullableFieldsWithNoDefaultThrowErrors(): void
     {
         $person = ['email' => 'foo@bar.com'];
-        try
-        {
+        try {
             $this->enforcer->enforce($person, InsertedPerson::class);
             $this->assertTrue(false, "Failed to validate non nullable value with no default values correctly.");
-        }
-        catch (ValidationListException $e)
-        {
+        } catch (ValidationListException $e) {
             $expectedError = "Non-nullable properties with no default value are required.";
             $result = $e->getErrors();
             $result = $result['name'][0]['message'];
@@ -86,13 +77,10 @@ class InsertModelValidationEnforcerTest extends TestCase
         }
 
         $person2 = ['email' => 'foo@bar.com', 'name' => null];
-        try
-        {
+        try {
             $this->enforcer->enforce($person2, InsertedPerson::class);
             $this->assertTrue(false, "Failed to validate non nullable value with no default values correctly.");
-        }
-        catch (ValidationListException $e)
-        {
+        } catch (ValidationListException $e) {
             $expectedError2 = "Non-nullable properties with no default value are required.";
             $result2 = $e->getErrors();
             $result2 = $result2['name'][1]['message'];
