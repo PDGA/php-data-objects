@@ -14,6 +14,12 @@ Data object related code for the PDGA's back-end PHP API systems.
 ./bin/phpunit
 ```
 
+### Format to PDGA Coding Standards
+
+```
+composer run format
+```
+
 ### Require this Library as a Dependency in another Application
 
 To add the package to an application's Composer dependencies, use the following Composer command:
