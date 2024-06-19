@@ -14,7 +14,9 @@
     }
   ],
   "scripts": {
-    "format": "vendor/bin/phpcbf --standard=vendor/pdga/coding-standards/src/ruleset.xml ./"
+    "sniff": "vendor/bin/phpcs --standard=vendor/pdga/coding-standards/src/ruleset.xml ./src",
+    "format": "vendor/bin/phpcbf --standard=vendor/pdga/coding-standards/src/ruleset.xml ./src",
+    "format-verbose": "vendor/bin/phpcbf --standard=vendor/pdga/coding-standards/src/ruleset.xml ./src -v"
   },
   "require": {
     "php": ">=8.2",
