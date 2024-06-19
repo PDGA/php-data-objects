@@ -14,7 +14,7 @@
     }
   ],
   "scripts": {
-    "sniff": "bin/codesniffer phpcs",
+    "sniff": "bin/codesniffer phpcs --report=summary",
     "format": "bin/codesniffer phpcbf",
     "format-verbose": "bin/codesniffer phpcbf -v"
   },

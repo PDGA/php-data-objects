@@ -26,7 +26,8 @@ class ModelValidationEnforcer extends ValidationEnforcer
 
         //For each property defined on the class.
         foreach ($metadata as $propName => $propMeta) {
-            $propAttrs = $propMeta['reflectionProperty']->getAttributes(Column::class, ReflectionAttribute::IS_INSTANCEOF);
+            $propAttrs = $propMeta['reflectionProperty']
+                ->getAttributes(Column::class, ReflectionAttribute::IS_INSTANCEOF);
 
             //If the property has a column attribute add the max length validator if
             //max length is not null on the column.

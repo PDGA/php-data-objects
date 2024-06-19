@@ -25,7 +25,8 @@ class MutateModelValidationEnforcer extends ModelValidationEnforcer
         }
 
         foreach ($metadata as $propName => $propMeta) {
-            $propAttrs = $propMeta['reflectionProperty']->getAttributes(Column::class, ReflectionAttribute::IS_INSTANCEOF);
+            $propAttrs = $propMeta['reflectionProperty']
+                ->getAttributes(Column::class, ReflectionAttribute::IS_INSTANCEOF);
 
             foreach ($propAttrs as $attr) {
                 $column  = $attr->newInstance();

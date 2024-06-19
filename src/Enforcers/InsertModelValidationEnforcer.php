@@ -38,8 +38,11 @@ class InsertModelValidationEnforcer extends ModelValidationEnforcer
         }
 
         foreach ($metadata as $propName => $propMeta) {
-            $propCanNull = $propMeta['reflectionProperty']->getType()->allowsNull();
-            $propAttrs   = $propMeta['reflectionProperty']->getAttributes(Column::class, ReflectionAttribute::IS_INSTANCEOF);
+            $propCanNull = $propMeta['reflectionProperty']
+                ->getType()
+                ->allowsNull();
+            $propAttrs   = $propMeta['reflectionProperty']
+                ->getAttributes(Column::class, ReflectionAttribute::IS_INSTANCEOF);
 
             foreach ($propAttrs as $attr) {
                 $column    = $attr->newInstance();
@@ -61,7 +64,10 @@ class InsertModelValidationEnforcer extends ModelValidationEnforcer
                         $this->propIsNull($arr, $propName)
                     )
                 ) {
-                    $validationErrors->addError("Non-nullable properties with no default value are required.", $propName);
+                    $validationErrors->addError(
+                        "Non-nullable properties with no default value are required.",
+                        $propName
+                    );
                 }
             }
         }

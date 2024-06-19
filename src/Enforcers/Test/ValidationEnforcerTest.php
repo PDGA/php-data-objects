@@ -1,20 +1,10 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
+namespace PDGA\DataObjects\Enforcers\Test;
 
 use PDGA\DataObjects\Enforcers\ValidationEnforcer;
-use PDGA\DataObjects\Validators\EmailValidator;
-use PDGA\DataObjects\Validators\MaxLengthValidator;
 use PDGA\Exception\ValidationListException;
-
-class Person
-{
-    #[MaxLengthValidator(15), EmailValidator]
-    public ?string $email;
-    public int $id;
-    public ?string $name;
-    public array $widgets;
-}
+use PHPUnit\Framework\TestCase;
 
 class ValidationEnforcerTest extends TestCase
 {
