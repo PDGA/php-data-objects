@@ -35,15 +35,15 @@ class DataObjectRelationshipParser
         $validated_relationships = [];
         $invalid_relationships = [];
 
-        foreach ($relationships_to_validate_by_original as $relationship_to_validate_original => $relationship_to_validate_lower) {
+        foreach ($relationships_to_validate_by_original as $relationship => $relationship_lower) {
             try {
                 $validated_relationships[] = $this->getValidatedRelationship(
-                    $relationship_to_validate_lower,
+                    $relationship_lower,
                     $data_object_class
                 );
             } catch (ValidationException) {
                 // Capture all invalid relationships to produce a more useful error message
-                $invalid_relationships[] = $relationship_to_validate_original;
+                $invalid_relationships[] = $relationship;
             }
         }
 
