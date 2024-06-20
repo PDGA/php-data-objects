@@ -1,10 +1,9 @@
 <?php
 
-namespace PDGA\DataObjects\Attributes;
-
-use PHPUnit\Framework\TestCase;
+namespace PDGA\DataObjects\Attributes\Test;
 
 use PDGA\DataObjects\Attributes\ManyToOne;
+use PHPUnit\Framework\TestCase;
 
 class ManyToOneTest extends TestCase
 {

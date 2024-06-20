@@ -1,10 +1,9 @@
 <?php
 
-namespace PDGA\DataObjects\Attributes;
-
-use PHPUnit\Framework\TestCase;
+namespace PDGA\DataObjects\Attributes\Test;
 
 use PDGA\DataObjects\Attributes\OneToMany;
+use PHPUnit\Framework\TestCase;
 
 class OneToManyTest extends TestCase
 {

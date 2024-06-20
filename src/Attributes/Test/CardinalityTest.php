@@ -1,14 +1,9 @@
 <?php
 
-namespace PDGA\DataObjects\Attributes;
-
-use PHPUnit\Framework\TestCase;
+namespace PDGA\DataObjects\Attributes\Test;
 
 use PDGA\DataObjects\Attributes\OneToMany;
-
-class TestPhoneNumber
-{
-}
+use PHPUnit\Framework\TestCase;
 
 class CardinalityTest extends TestCase
 {
@@ -17,7 +12,7 @@ class CardinalityTest extends TestCase
         $card = new OneToMany(TestPhoneNumber::class, 'PhoneNumbers');
 
         $this->assertEquals(
-            'PDGA\DataObjects\Attributes\TestPhoneNumber',
+            'PDGA\DataObjects\Attributes\Test\TestPhoneNumber',
             $card->getRelationClass(),
         );
     }
