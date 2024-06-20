@@ -1,7 +1,8 @@
 <?php
 
-namespace PDGA\DataObjects\Converters;
+namespace PDGA\DataObjects\Converters\Test;
 
+use PDGA\DataObjects\Converters\YesNoConverter;
 use PHPUnit\Framework\TestCase;
 
 class YesNoConverterTest extends TestCase

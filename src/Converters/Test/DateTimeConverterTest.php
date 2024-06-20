@@ -1,9 +1,10 @@
 <?php
 
-namespace PDGA\DataObjects\Converters;
+namespace PDGA\DataObjects\Converters\Test;
 
-use \DateTime;
-use \Exception;
+use DateTime;
+use Exception;
+use PDGA\DataObjects\Converters\DateTimeConverter;
 use PHPUnit\Framework\TestCase;
 
 class DateTimeConverterTest extends TestCase
