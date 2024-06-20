@@ -81,9 +81,8 @@ class ModelInstantiator
                 }
 
                 $instance->{$property} = $instances;
-            }
-            // ManyToOne: Map to a single nested Data Object.
-            else {
+            } else {
+                // ManyToOne: Map to a single nested Data Object.
                 if (!is_array($arr[$property])) {
                     throw new ValidationException("{$property} must be an associative array.");
                 }
@@ -203,9 +202,8 @@ class ModelInstantiator
                         $relation_class,
                     );
                 }
-            }
-            // Many-to-one relationship (a single nested Data Object).
-            else {
+            } else {
+                // Many-to-one relationship (a single nested Data Object).
                 // If the value is null make sure it's allowed to be null.
                 if (is_null($model_relations[$alias])) {
                     $reflection_index    = array_search($property, array_column($property_reflection, 'name'));
