@@ -1,8 +1,9 @@
 <?php
 
-namespace PDGA\DataObjects\Parsers;
+namespace PDGA\DataObjects\Parsers\Test;
 
 use PDGA\DataObjects\Models\Test\ModelInstantiatorTestObject;
+use PDGA\DataObjects\Parsers\DataObjectRelationshipParser;
 use PDGA\Exception\ValidationException;
 use PHPUnit\Framework\TestCase;
 
