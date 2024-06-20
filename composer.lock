@@ -168,16 +168,16 @@
         },
         {
             "name": "pdga/coding-standards",
-            "version": "1.0.1",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PDGA/coding-standards.git",
-                "reference": "2ddcf6fa894794c791dfd905d769e6ec79e11c33"
+                "reference": "c0ba4ed5944ab2a55750c1e34889b7515d729c9a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PDGA/coding-standards/zipball/2ddcf6fa894794c791dfd905d769e6ec79e11c33",
-                "reference": "2ddcf6fa894794c791dfd905d769e6ec79e11c33",
+                "url": "https://api.github.com/repos/PDGA/coding-standards/zipball/c0ba4ed5944ab2a55750c1e34889b7515d729c9a",
+                "reference": "c0ba4ed5944ab2a55750c1e34889b7515d729c9a",
                 "shasum": ""
             },
             "require": {
@@ -188,6 +188,17 @@
                 "psr-4": {
                     "Pdga\\CodingStandards\\": "src/"
                 }
+            },
+            "scripts": {
+                "sniff": [
+                    "bin/codesniffer phpcs"
+                ],
+                "format": [
+                    "bin/codesniffer phpcbf"
+                ],
+                "format-verbose": [
+                    "bin/codesniffer phpcbf -v"
+                ]
             },
             "license": [
                 "MIT"
@@ -204,10 +215,10 @@
             ],
             "description": "Coding standard rulesets to be used to assist in styling code at the PDGA.",
             "support": {
-                "source": "https://github.com/PDGA/coding-standards/tree/1.0.1",
+                "source": "https://github.com/PDGA/coding-standards/tree/1.0.2",
                 "issues": "https://github.com/PDGA/coding-standards/issues"
             },
-            "time": "2024-06-13T17:40:04+00:00"
+            "time": "2024-06-19T21:55:58+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -1790,5 +1801,5 @@
         "php": ">=8.2"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }
