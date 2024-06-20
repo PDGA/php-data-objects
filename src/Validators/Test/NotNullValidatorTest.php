@@ -1,8 +1,9 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
+namespace PDGA\DataObjects\Validators\Test;
 
 use PDGA\DataObjects\Validators\NotNullValidator;
+use PHPUnit\Framework\TestCase;
 
 class NotNullValidatorTest extends TestCase
 {

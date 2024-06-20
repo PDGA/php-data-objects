@@ -1,8 +1,9 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
+namespace PDGA\DataObjects\Validators\Test;
 
 use PDGA\DataObjects\Validators\NotBlankValidator;
+use PHPUnit\Framework\TestCase;
 
 class NotBlankValidatorTest extends TestCase
 {

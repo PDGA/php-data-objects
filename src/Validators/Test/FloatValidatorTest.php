@@ -1,16 +1,17 @@
 <?php
 
-namespace PDGA\DataObjects\Validators;
+namespace PDGA\DataObjects\Validators\Test;
 
+use PDGA\DataObjects\Validators\FloatValidator;
 use PHPUnit\Framework\TestCase;
 
-class IntValidatorTest extends TestCase
+class FloatValidatorTest extends TestCase
 {
-    private IntValidator $validator;
+    private FloatValidator $validator;
 
     public function setUp(): void
     {
-        $this->validator = new IntValidator();
+        $this->validator = new FloatValidator();
     }
 
     public function testGetErrorMessage()
@@ -18,7 +19,7 @@ class IntValidatorTest extends TestCase
         $propName = 'Property';
 
         $this->assertEquals(
-            "$propName must be an integer.",
+            "$propName must be a float.",
             $this->validator->getErrorMessage($propName)
         );
     }
@@ -31,33 +32,33 @@ class IntValidatorTest extends TestCase
         $this->assertTrue($this->validator->validate($value));
     }
 
+    public function testFloatValidates()
+    {
+        $value = 3.14;
+
+        // A float should validate.
+        $this->assertTrue($this->validator->validate($value));
+    }
+
+    public function testNegativeFloatValidates()
+    {
+        $value = -3.14;
+
+        // A negative float should validate.
+        $this->assertTrue($this->validator->validate($value));
+    }
+
     public function testIntValidates()
     {
-        $value = 24472;
+        $value = 9;
 
-        // An integer should validate.
+        // An integer value should validate.
         $this->assertTrue($this->validator->validate($value));
-    }
-
-    public function testNegativeIntValidates()
-    {
-        $value = -9000;
-
-        // A negative integer should validate.
-        $this->assertTrue($this->validator->validate($value));
-    }
-
-    public function testDecimalFails()
-    {
-        $value = 9.2;
-
-        // A decimal value should not validate.
-        $this->assertFalse($this->validator->validate($value));
     }
 
     public function testNumericStringValidates()
     {
-        $value = "10";
+        $value = "3.14";
 
         // A numeric string should validate.
         $this->assertTrue($this->validator->validate($value));
@@ -65,7 +66,7 @@ class IntValidatorTest extends TestCase
 
     public function testNumericStringWithWhitespaceValidates()
     {
-        $value = " 10 ";
+        $value = " 3.14 ";
 
         // A numeric string with leading/trailing whitespace should validate.
         $this->assertTrue($this->validator->validate($value));
@@ -73,7 +74,7 @@ class IntValidatorTest extends TestCase
 
     public function testNumericStringWithInvalidWhitespaceFails()
     {
-        $value = "1 0";
+        $value = "3. 1 4 ";
 
         // A numeric string with interior whitespace should not validate.
         $this->assertFalse($this->validator->validate($value));

@@ -1,8 +1,9 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
+namespace PDGA\DataObjects\Validators\Test;
 
 use PDGA\DataObjects\Validators\SequentialArrayValidator;
+use PHPUnit\Framework\TestCase;
 
 class SequentialArrayValidatorTest extends TestCase
 {

@@ -1,8 +1,9 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
+namespace PDGA\DataObjects\Validators\Test;
 
 use PDGA\DataObjects\Validators\DateValidator;
+use PHPUnit\Framework\TestCase;
 
 class DateValidatorTest extends TestCase
 {

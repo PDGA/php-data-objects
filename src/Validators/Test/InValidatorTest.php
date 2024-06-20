@@ -1,7 +1,8 @@
 <?php
 
-namespace PDGA\DataObjects\Validators;
+namespace PDGA\DataObjects\Validators\Test;
 
+use PDGA\DataObjects\Validators\InValidator;
 use PHPUnit\Framework\TestCase;
 
 class InValidatorTest extends TestCase

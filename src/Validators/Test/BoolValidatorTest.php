@@ -1,8 +1,9 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
+namespace PDGA\DataObjects\Validators\Test;
 
 use PDGA\DataObjects\Validators\BoolValidator;
+use PHPUnit\Framework\TestCase;
 
 class BoolValidatorTest extends TestCase
 {

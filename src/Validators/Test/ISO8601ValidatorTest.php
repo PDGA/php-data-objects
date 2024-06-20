@@ -1,8 +1,9 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
+namespace PDGA\DataObjects\Validators\Test;
 
 use PDGA\DataObjects\Validators\ISO8601Validator;
+use PHPUnit\Framework\TestCase;
 
 class ISO8601ValidatorTest extends TestCase
 {

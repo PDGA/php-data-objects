@@ -1,18 +1,17 @@
 <?php
 
-namespace PDGA\DataObjects\Validators;
+namespace PDGA\DataObjects\Validators\Test;
 
-use PDGA\DataObjects\Validators\FloatValidator;
-
+use PDGA\DataObjects\Validators\IntValidator;
 use PHPUnit\Framework\TestCase;
 
-class FloatValidatorTest extends TestCase
+class IntValidatorTest extends TestCase
 {
-    private FloatValidator $validator;
+    private IntValidator $validator;
 
     public function setUp(): void
     {
-        $this->validator = new FloatValidator();
+        $this->validator = new IntValidator();
     }
 
     public function testGetErrorMessage()
@@ -20,7 +19,7 @@ class FloatValidatorTest extends TestCase
         $propName = 'Property';
 
         $this->assertEquals(
-            "$propName must be a float.",
+            "$propName must be an integer.",
             $this->validator->getErrorMessage($propName)
         );
     }
@@ -33,33 +32,33 @@ class FloatValidatorTest extends TestCase
         $this->assertTrue($this->validator->validate($value));
     }
 
-    public function testFloatValidates()
-    {
-        $value = 3.14;
-
-        // A float should validate.
-        $this->assertTrue($this->validator->validate($value));
-    }
-
-    public function testNegativeFloatValidates()
-    {
-        $value = -3.14;
-
-        // A negative float should validate.
-        $this->assertTrue($this->validator->validate($value));
-    }
-
     public function testIntValidates()
     {
-        $value = 9;
+        $value = 24472;
 
-        // An integer value should validate.
+        // An integer should validate.
         $this->assertTrue($this->validator->validate($value));
+    }
+
+    public function testNegativeIntValidates()
+    {
+        $value = -9000;
+
+        // A negative integer should validate.
+        $this->assertTrue($this->validator->validate($value));
+    }
+
+    public function testDecimalFails()
+    {
+        $value = 9.2;
+
+        // A decimal value should not validate.
+        $this->assertFalse($this->validator->validate($value));
     }
 
     public function testNumericStringValidates()
     {
-        $value = "3.14";
+        $value = "10";
 
         // A numeric string should validate.
         $this->assertTrue($this->validator->validate($value));
@@ -67,7 +66,7 @@ class FloatValidatorTest extends TestCase
 
     public function testNumericStringWithWhitespaceValidates()
     {
-        $value = " 3.14 ";
+        $value = " 10 ";
 
         // A numeric string with leading/trailing whitespace should validate.
         $this->assertTrue($this->validator->validate($value));
@@ -75,7 +74,7 @@ class FloatValidatorTest extends TestCase
 
     public function testNumericStringWithInvalidWhitespaceFails()
     {
-        $value = "3. 1 4 ";
+        $value = "1 0";
 
         // A numeric string with interior whitespace should not validate.
         $this->assertFalse($this->validator->validate($value));

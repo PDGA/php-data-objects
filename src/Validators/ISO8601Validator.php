@@ -47,9 +47,8 @@ class ISO8601Validator implements Validator
             }
 
             return false;
-        }
-        // Invalid dates (ie month of 15+ or day of 32+ etc) will result in en exception.
-        catch (Exception $e) {
+        } catch (Exception $e) {
+            // Invalid dates (ie month of 15+ or day of 32+ etc) will result in en exception.
             return false;
         }
     }

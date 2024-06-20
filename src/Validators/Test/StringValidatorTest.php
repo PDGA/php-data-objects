@@ -1,7 +1,8 @@
 <?php
 
-namespace PDGA\DataObjects\Validators;
+namespace PDGA\DataObjects\Validators\Test;
 
+use PDGA\DataObjects\Validators\StringValidator;
 use PHPUnit\Framework\TestCase;
 
 class StringValidatorTest extends TestCase
