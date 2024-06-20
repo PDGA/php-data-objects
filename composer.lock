@@ -168,16 +168,16 @@
         },
         {
             "name": "pdga/coding-standards",
-            "version": "1.0.2",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PDGA/coding-standards.git",
-                "reference": "c0ba4ed5944ab2a55750c1e34889b7515d729c9a"
+                "reference": "cf48c6dc689e708fd35b4732153e1daecc74097e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PDGA/coding-standards/zipball/c0ba4ed5944ab2a55750c1e34889b7515d729c9a",
-                "reference": "c0ba4ed5944ab2a55750c1e34889b7515d729c9a",
+                "url": "https://api.github.com/repos/PDGA/coding-standards/zipball/cf48c6dc689e708fd35b4732153e1daecc74097e",
+                "reference": "cf48c6dc689e708fd35b4732153e1daecc74097e",
                 "shasum": ""
             },
             "require": {
@@ -188,17 +188,6 @@
                 "psr-4": {
                     "Pdga\\CodingStandards\\": "src/"
                 }
-            },
-            "scripts": {
-                "sniff": [
-                    "bin/codesniffer phpcs"
-                ],
-                "format": [
-                    "bin/codesniffer phpcbf"
-                ],
-                "format-verbose": [
-                    "bin/codesniffer phpcbf -v"
-                ]
             },
             "license": [
                 "MIT"
@@ -215,10 +204,10 @@
             ],
             "description": "Coding standard rulesets to be used to assist in styling code at the PDGA.",
             "support": {
-                "source": "https://github.com/PDGA/coding-standards/tree/1.0.2",
+                "source": "https://github.com/PDGA/coding-standards/tree/1.0.3",
                 "issues": "https://github.com/PDGA/coding-standards/issues"
             },
-            "time": "2024-06-19T21:55:58+00:00"
+            "time": "2024-06-20T16:34:18+00:00"
         },
         {
             "name": "phar-io/manifest",
