@@ -15,13 +15,19 @@ Data object related code for the PDGA's back-end PHP API systems.
 ```
 
 ### Code Formatting Standards
+#### Run PHP_CodeSniffer to see the existing styling issues.
+```
+composer sniff
+```
 
-`composer sniff` - Run PHP_CodeSniffer to see the existing styling issues.
-
-`composer format` - Run the formatter to automatically fix the styling issues that can be fixed.
-
-`composer format-verbose` - Fix styling issues with verbose output.
-
+#### Run the formatter to automatically fix the styling issues that can be fixed.
+```
+composer format
+```
+or 
+```
+composer format-verbose
+```
 ### Require this Library as a Dependency in another Application
 
 To add the package to an application's Composer dependencies, use the following Composer command:
