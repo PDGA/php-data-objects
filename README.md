@@ -14,11 +14,13 @@ Data object related code for the PDGA's back-end PHP API systems.
 ./bin/phpunit
 ```
 
-### Format to PDGA Coding Standards
+### Code Formatting Standards
 
-```
-composer run format
-```
+`composer sniff` - Run PHP_CodeSniffer to see the existing styling issues.
+
+`composer format` - Run the formatter to automatically fix the styling issues that can be fixed.
+
+`composer format-verbose` - Fix styling issues with verbose output.
 
 ### Require this Library as a Dependency in another Application
 
