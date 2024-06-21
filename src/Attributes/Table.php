@@ -13,8 +13,7 @@ class Table
      * @param string $name - The name of the table.
      */
     public function __construct(private string $name)
-    {
-    }
+    {}
 
     /**
      * Returns the name of the table.
