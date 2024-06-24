@@ -20,19 +20,16 @@ class DateValidator implements Validator
      */
     public function validate(mixed $val): bool
     {
-        if (is_null($val))
-        {
+        if (is_null($val)) {
             return true;
         }
 
-        if (is_string($val))
-        {
+        if (is_string($val)) {
             $iso_validator = new ISO8601Validator();
             return $iso_validator->validate($val);
         }
 
-        if (is_a($val, 'DateTime'))
-        {
+        if (is_a($val, 'DateTime')) {
             return true;
         }
 

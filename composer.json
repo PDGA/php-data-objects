@@ -13,6 +13,11 @@
       "role": "Developer"
     }
   ],
+  "scripts": {
+    "sniff": "bin/codesniffer phpcs",
+    "format": "bin/codesniffer phpcbf",
+    "format-verbose": "bin/codesniffer phpcbf -v"
+  },
   "require": {
     "php": ">=8.2",
     "pdga/exception": "^1.4"
@@ -22,7 +27,14 @@
       "PDGA\\DataObjects\\": "src/"
     }
   },
+    "repositories":[
+        {
+            "type": "vcs",
+            "url": "https://github.com/PDGA/coding-standards.git"
+        }
+    ],
   "require-dev": {
-    "phpunit/phpunit": "^10.0"
+    "phpunit/phpunit": "^10.0",
+    "pdga/coding-standards": "^1.0"
   }
 }

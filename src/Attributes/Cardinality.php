@@ -21,7 +21,8 @@ abstract class Cardinality
     public function __construct(
         protected string $relation,
         protected string $alias,
-    ) {}
+    ) {
+    }
 
    /**
     * Get the fully-qualified path of the relation.

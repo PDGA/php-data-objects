@@ -9,8 +9,8 @@ class DataObjectRelationshipParser
 {
     public function __construct(
         private readonly ReflectionContainer $reflection_container = new ReflectionContainer()
-    )
-    {}
+    ) {
+    }
 
     /**
      * Parses an array of relationship names and returns an array of validated relationship names.
@@ -26,10 +26,8 @@ class DataObjectRelationshipParser
     public function parseRelationshipsForDataObject(
         array $relationships_to_parse,
         string $data_object_class
-    ): array
-    {
-        if (empty($relationships_to_parse))
-        {
+    ): array {
+        if (empty($relationships_to_parse)) {
             return [];
         }
 
@@ -37,24 +35,19 @@ class DataObjectRelationshipParser
         $validated_relationships = [];
         $invalid_relationships = [];
 
-        foreach ($relationships_to_validate_by_original as $relationship_to_validate_original => $relationship_to_validate_lower)
-        {
-            try
-            {
+        foreach ($relationships_to_validate_by_original as $relationship => $relationship_lower) {
+            try {
                 $validated_relationships[] = $this->getValidatedRelationship(
-                    $relationship_to_validate_lower,
+                    $relationship_lower,
                     $data_object_class
                 );
-            }
-            catch (ValidationException)
-            {
+            } catch (ValidationException) {
                 // Capture all invalid relationships to produce a more useful error message
-                $invalid_relationships[] = $relationship_to_validate_original;
+                $invalid_relationships[] = $relationship;
             }
         }
 
-        if (!empty($invalid_relationships))
-        {
+        if (!empty($invalid_relationships)) {
             throw new ValidationException("Invalid relationships - " . implode(',', $invalid_relationships));
         }
 
@@ -78,8 +71,7 @@ class DataObjectRelationshipParser
         string $relationship_to_validate_lower,
         string $data_object_class,
         array $applied_cardinalities = []
-    ): string
-    {
+    ): string {
         // Separate the parent relationship from the descendants
         $aliases_to_validate = explode('.', $relationship_to_validate_lower, 2);
         $alias_to_validate_lower = trim($aliases_to_validate[0]);
@@ -89,15 +81,13 @@ class DataObjectRelationshipParser
         // The specified alias does not exist as a known relationship alias
         // or an equivalent cardinality has already been used making it a duplicate and invalid
         if (!key_exists($alias_to_validate_lower, $valid_cardinalities_by_alias_lower)
-            || in_array($valid_cardinalities_by_alias_lower[$alias_to_validate_lower], $applied_cardinalities))
-        {
+            || in_array($valid_cardinalities_by_alias_lower[$alias_to_validate_lower], $applied_cardinalities)) {
             throw new ValidationException();
         }
 
         $applied_cardinalities[] = $valid_cardinalities_by_alias_lower[$alias_to_validate_lower];
 
-        if (count($aliases_to_validate) > 1)
-        {
+        if (count($aliases_to_validate) > 1) {
             $relation_class = $valid_cardinalities_by_alias_lower[$alias_to_validate_lower]->getRelationClass();
 
             // Build the validated nested relationship name using recursive call
@@ -106,7 +96,8 @@ class DataObjectRelationshipParser
                    . $this->getValidatedRelationship(
                        $aliases_to_validate[1],
                        $relation_class,
-                       $applied_cardinalities);
+                       $applied_cardinalities
+                   );
         }
 
         return $valid_cardinalities_by_alias_lower[$alias_to_validate_lower]->getAlias();
