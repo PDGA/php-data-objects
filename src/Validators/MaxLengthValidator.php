@@ -14,19 +14,22 @@ class MaxLengthValidator implements Validator
 
     public function __construct(
         int $max_length
-    ) {
+    )
+    {
         $this->max_length = $max_length;
     }
 
     public function validate(mixed $val): bool
     {
         // Null values validate.
-        if (is_null($val)) {
+        if (is_null($val))
+        {
             return true;
         }
 
         // Arrays must not exceed $max_length keys/indices at the first dimension.
-        if (is_array($val)) {
+        if (is_array($val))
+        {
             return count($val) <= $this->max_length;
         }
 

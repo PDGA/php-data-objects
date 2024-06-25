@@ -17,7 +17,8 @@ class NotNullValidator implements Validator
      */
     public function validate(mixed $val): bool
     {
-        if (is_null($val)) {
+        if (is_null($val))
+        {
             return false;
         }
 

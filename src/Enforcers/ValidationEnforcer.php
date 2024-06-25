@@ -35,15 +35,19 @@ class ValidationEnforcer
         $metadata = $this->getValidationMetadata($className);
 
         //For each property defined on the class.
-        foreach ($metadata as $propName => $propMeta) {
+        foreach ($metadata as $propName => $propMeta)
+        {
             //If the property is not included on the object skip it.
-            if ($this->propIsUndefined($arr, $propName)) {
+            if ($this->propIsUndefined($arr, $propName))
+            {
                 continue;
             }
 
             //Attempt to validate each property that is on the object.
-            foreach ($propMeta['validators'] as $validator) {
-                if (!$validator->validate($arr[$propName])) {
+            foreach ($propMeta['validators'] as $validator)
+            {
+                if (!$validator->validate($arr[$propName]))
+                {
                     $validationErrors->addError(
                         $validator->getErrorMessage($propName),
                         $propName,
@@ -54,7 +58,8 @@ class ValidationEnforcer
             }
         }
 
-        if (count($validationErrors->getErrors())) {
+        if (count($validationErrors->getErrors()))
+        {
             throw $validationErrors;
         }
     }
@@ -90,7 +95,8 @@ class ValidationEnforcer
         $props = $ref->getProperties();
 
         //For each property defined on the class.
-        foreach ($props as $prop) {
+        foreach($props as $prop)
+        {
             $propName    = $prop->getName();
             $propType    = $prop->getType()->getName();
             $propAttrs   = $prop->getAttributes(Validator::class, ReflectionAttribute::IS_INSTANCEOF);
@@ -99,21 +105,25 @@ class ValidationEnforcer
             $metadata[$propName] = ['reflectionProperty' => $prop, 'validators' => []];
             $validator = array_key_exists($propType, $validators) ? $validators[$propType] : null;
 
-            if (!is_null($validator)) {
+            if (!is_null($validator))
+            {
                 $metadata[$propName]['validators'][] = $validator;
             }
 
-            if (!$propCanNull) {
+            if (!$propCanNull)
+            {
                 $metadata[$propName]['validators'][] = $validators['notNull'];
             }
 
             //String-type properties cannot be blank.
-            if ($propType === 'string') {
+            if ($propType === 'string')
+            {
                 $metadata[$propName]['validators'][] = new NotBlankValidator();
             }
 
             //If the property has any validation attributes make sure they are included.
-            foreach ($propAttrs as $attr) {
+            foreach($propAttrs as $attr)
+            {
                 $metadata[$propName]['validators'][] = $attr->newInstance();
             }
         }

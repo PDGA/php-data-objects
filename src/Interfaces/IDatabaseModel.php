@@ -2,8 +2,7 @@
 
 namespace PDGA\DataObjects\Interfaces;
 
-interface IDatabaseModel
-{
+interface IDatabaseModel {
     /**
      * Get the attributes of the database model.
      *

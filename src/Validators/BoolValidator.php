@@ -19,11 +19,13 @@ class BoolValidator implements Validator
      */
     public function validate(mixed $val): bool
     {
-        if (is_null($val)) {
+        if (is_null($val))
+        {
             return true;
         }
 
-        if (!is_bool($val)) {
+        if (!is_bool($val))
+        {
             return false;
         }
 

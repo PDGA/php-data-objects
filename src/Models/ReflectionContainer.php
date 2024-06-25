@@ -26,15 +26,18 @@ class ReflectionContainer
      */
     public function dataObjectPropertyColumns(
         array $props
-    ): array {
+    ): array
+    {
         // Return an empty array if there are no props passed in.
-        if (!count($props)) {
+        if (!count($props))
+        {
             return [];
         }
 
         $class = $props[0]->class;
 
-        if (array_key_exists($class, $this->column_reflection)) {
+        if (array_key_exists($class, $this->column_reflection))
+        {
             return $this->column_reflection[$class];
         }
 
@@ -42,12 +45,14 @@ class ReflectionContainer
         $this->column_reflection[$class] = [];
 
         // Loop through all ReflectionProperties.
-        foreach ($props as $property) {
+        foreach ($props as $property)
+        {
             // Find the Column attribute for the property.
             $attribute = $property->getAttributes(Column::class);
 
             // If there is no Column attribute, skip this property.
-            if (!$attribute) {
+            if (!$attribute)
+            {
                 continue;
             }
 
@@ -70,28 +75,33 @@ class ReflectionContainer
      */
     public function dataObjectPropertyCardinalities(
         array $props
-    ): array {
+    ): array
+    {
         // Return an empty array if there are no props passed in.
-        if (!count($props)) {
+        if (!count($props))
+        {
             return [];
         }
 
         $class = $props[0]->class;
 
-        if (array_key_exists($class, $this->card_reflection)) {
+        if (array_key_exists($class, $this->card_reflection))
+        {
             return $this->card_reflection[$class];
         }
 
         // Default the class to an empty array.
         $this->card_reflection[$class] = [];
 
-        foreach ($props as $prop) {
+        foreach ($props as $prop)
+        {
             $attrs = $prop->getAttributes(
                 Cardinality::class,
                 ReflectionAttribute::IS_INSTANCEOF,
             );
 
-            if (!$attrs) {
+            if (!$attrs)
+            {
                 continue;
             }
 
@@ -110,8 +120,10 @@ class ReflectionContainer
      */
     public function dataObjectProperties(
         string $class
-    ): array {
-        if (array_key_exists($class, $this->class_reflection)) {
+    ): array
+    {
+        if (array_key_exists($class, $this->class_reflection))
+        {
             return $this->class_reflection[$class];
         }
 
@@ -119,3 +131,4 @@ class ReflectionContainer
         return $this->class_reflection[$class] = (new ReflectionClass($class))->getProperties();
     }
 }
+

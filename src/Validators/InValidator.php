@@ -14,14 +14,16 @@ class InValidator implements Validator
 
     public function __construct(
         array $valid_values
-    ) {
+    )
+    {
         $this->valid_values = $valid_values;
     }
 
     public function validate(mixed $val): bool
     {
         // Null values validate.
-        if (is_null($val)) {
+        if (is_null($val))
+        {
             return true;
         }
 

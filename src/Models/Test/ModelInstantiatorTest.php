@@ -41,13 +41,16 @@ class ModelInstantiatorTest extends TestCase
             'fakeProperty' => 'faker',
         ];
 
-        try {
+        try
+        {
             // Convert the array to a Data Object.
             $data_object = $this->model_instantiator->arrayToDataObject(
                 $array,
                 ModelInstantiatorTestObject::class
             );
-        } catch (ValidationListException $e) {
+        }
+        catch (ValidationListException $e)
+        {
             $this->assertTrue(false, "Failed to validate parameters. " . json_encode($e->getErrors()));
         }
 
@@ -144,13 +147,16 @@ class ModelInstantiatorTest extends TestCase
             'member' => 'I am not an array.',
         ];
 
-        try {
+        try
+        {
             $this->model_instantiator->arrayToDataObject(
                 $pn_arr,
                 PhoneNumber::class,
             );
             $this->assertTrue(false);
-        } catch (ValidationException $e) {
+        }
+        catch (ValidationException $e)
+        {
             $this->assertEquals('member must be an associative array.', $e->getMessage());
         }
     }
@@ -195,6 +201,7 @@ class ModelInstantiatorTest extends TestCase
             ],
             $this->model_instantiator->dataObjectToDatabaseModel($data_object)
         );
+
     }
 
     public function testDataObjectToDatabaseModelConvertsNulls(): void
@@ -469,13 +476,16 @@ class ModelInstantiatorTest extends TestCase
 
         $db_model->addOneRelation($relation);
 
-        try {
+        try
+        {
             $data_object = $this->model_instantiator->databaseModelToDataObject(
                 $db_model,
                 ModelInstantiatorTestObject::class,
             );
             $this->assertTrue(false);
-        } catch (InvalidRelationshipDataException $e) {
+        }
+        catch (InvalidRelationshipDataException $e)
+        {
             $this->assertEquals('FakeHasOneRelation relationship must not be null.', $e->getMessage());
         }
     }

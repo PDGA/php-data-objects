@@ -15,8 +15,7 @@ use ReflectionException;
 class ModelInstantiator
 {
     public function __construct(private ReflectionContainer $reflection_container = new ReflectionContainer())
-    {
-    }
+    {}
 
     /**
      * Converts an associative array to a validated instance of a Data Object class.
@@ -29,9 +28,10 @@ class ModelInstantiator
      * @return object
      */
     public function arrayToDataObject(
-        array $arr,
+        array  $arr,
         string $class
-    ): object {
+    ): object
+    {
         // Validate the array, throws ValidationListException if something is invalid.
         $enforcer = new ValidationEnforcer();
         $enforcer->enforce($arr, $class);
@@ -46,7 +46,8 @@ class ModelInstantiator
             ->dataObjectPropertyCardinalities($property_reflection);
 
         // Assign public properties.
-        foreach ($property_reflection as $reflection) {
+        foreach ($property_reflection as $reflection)
+        {
             $property = $reflection->getName();
             $type     = $reflection->getType()->getName();
             $not_null = $enforcer->propIsNotNull($arr, $property);
@@ -56,7 +57,8 @@ class ModelInstantiator
             if (
                 $enforcer->propIsDefined($arr, $property) &&
                 !array_key_exists($property, $cardinalities)
-            ) {
+            )
+            {
                 $instance->{$property} = $not_null && $type === 'DateTime'
                     ? new DateTime($arr[$property])
                     : $arr[$property];
@@ -64,16 +66,20 @@ class ModelInstantiator
         }
 
         // Assign related Data Objects based on Cardinality attributes.
-        foreach ($cardinalities as $property => $card) {
-            if ($enforcer->propIsUndefined($arr, $property)) {
+        foreach ($cardinalities as $property => $card)
+        {
+            if ($enforcer->propIsUndefined($arr, $property))
+            {
                 continue;
             }
 
             // Map to an nested array of Data Objects.
-            if ($card->getDescription() === 'OneToMany') {
+            if ($card->getDescription() === 'OneToMany')
+            {
                 $instances = [];
 
-                foreach ($arr[$property] as $relation) {
+                foreach ($arr[$property] as $relation)
+                {
                     $instances[] = $this->arrayToDataObject(
                         $relation,
                         $card->getRelationClass(),
@@ -81,9 +87,12 @@ class ModelInstantiator
                 }
 
                 $instance->{$property} = $instances;
-            } else {
-                // ManyToOne: Map to a single nested Data Object.
-                if (!is_array($arr[$property])) {
+            }
+            // ManyToOne: Map to a single nested Data Object.
+            else
+            {
+                if (!is_array($arr[$property]))
+                {
                     throw new ValidationException("{$property} must be an associative array.");
                 }
 
@@ -108,7 +117,8 @@ class ModelInstantiator
      */
     public function dataObjectToDatabaseModel(
         object $data_object
-    ): array {
+    ): array
+    {
         $model_array = [];
         $enforcer    = new ValidationEnforcer();
 
@@ -119,9 +129,11 @@ class ModelInstantiator
             ->dataObjectPropertyColumns($property_reflection);
 
         // Loop through all Column-attributed properties of the object.
-        foreach ($column_reflection as $property => $column) {
+        foreach ($column_reflection as $property => $column)
+        {
             // Ignore undefined properties.
-            if ($enforcer->propIsUndefined($data_object, $property)) {
+            if ($enforcer->propIsUndefined($data_object, $property))
+            {
                 continue;
             }
 
@@ -148,7 +160,8 @@ class ModelInstantiator
     public function databaseModelToDataObject(
         IDatabaseModel $db_model,
         string $class
-    ): object {
+    ): object
+    {
         $data_object         = new $class();
         $enforcer            = new ValidationEnforcer();
         $property_reflection = $this->reflection_container
@@ -159,10 +172,12 @@ class ModelInstantiator
         $model_attributes = $db_model->getAttributes();
 
         // Set all Column-attributed properties to the corresponding database column value.
-        foreach ($column_reflection as $property => $column) {
+        foreach ($column_reflection as $property => $column)
+        {
             $col_name = $column->getName();
 
-            if ($enforcer->propIsDefined($model_attributes, $col_name)) {
+            if ($enforcer->propIsDefined($model_attributes, $col_name))
+            {
                 // Set property; apply value converter when applicable.
                 $data_object->{$property} = $this->convertPropertyOnRetrieve(
                     $column,
@@ -175,41 +190,50 @@ class ModelInstantiator
         $cardinality_reflection = $this->reflection_container
             ->dataObjectPropertyCardinalities($property_reflection);
 
-        if (!count($cardinality_reflection)) {
+        if (!count($cardinality_reflection))
+        {
             return $data_object;
         }
 
         $model_relations = $db_model->getRelations();
 
-        foreach ($cardinality_reflection as $property => $card) {
+        foreach ($cardinality_reflection as $property => $card)
+        {
             // "alias" is the name of the property on the DB model, which comes
             // from the Cardinality attribute.
             $alias = $card->getAlias();
 
-            if ($enforcer->propIsUndefined($model_relations, $alias)) {
+            if ($enforcer->propIsUndefined($model_relations, $alias))
+            {
                 continue;
             }
 
             // Related Data Object class.
             $relation_class = $card->getRelationClass();
 
-            if ($card->getDescription() === 'OneToMany') {
+            if ($card->getDescription() === 'OneToMany')
+            {
                 $data_object->{$property} = [];
 
-                foreach ($model_relations[$alias] as $relation_db_model) {
+                foreach ($model_relations[$alias] as $relation_db_model)
+                {
                     $data_object->{$property}[] = $this->databaseModelToDataObject(
                         $relation_db_model,
                         $relation_class,
                     );
                 }
-            } else {
-                // Many-to-one relationship (a single nested Data Object).
+            }
+            // Many-to-one relationship (a single nested Data Object).
+            else
+            {
                 // If the value is null make sure it's allowed to be null.
-                if (is_null($model_relations[$alias])) {
+                if (is_null($model_relations[$alias]))
+                {
                     $reflection_index    = array_search($property, array_column($property_reflection, 'name'));
                     $reflection_property = $property_reflection[$reflection_index];
 
-                    if ($reflection_property->getType()->allowsNull()) {
+                    if ($reflection_property->getType()->allowsNull())
+                    {
                         $data_object->{$property} = null;
                         continue;
                     }
@@ -237,15 +261,19 @@ class ModelInstantiator
      */
     public function dataObjectToArray(
         object $data_object
-    ): array {
+    ): array
+    {
         // Internal driver function that recursively converts an object to an
         // array and accepts a mixed-type argument.
-        $to_array = function (mixed $data_obj) use (&$to_array) {
-            if (is_null($data_obj) || is_scalar($data_obj)) {
+        $to_array = function(mixed $data_obj) use (&$to_array)
+        {
+            if (is_null($data_obj) || is_scalar($data_obj))
+            {
                 return $data_obj;
             }
 
-            if ($data_obj instanceof DateTime) {
+            if ($data_obj instanceof DateTime)
+            {
                 return $data_obj->format(DateTime::ATOM);
             }
 
@@ -253,7 +281,8 @@ class ModelInstantiator
             // element recursively.
             $arr = (array) $data_obj;
 
-            foreach ($arr as &$ele) {
+            foreach ($arr as &$ele)
+            {
                 $ele = $to_array($ele);
             }
 
@@ -274,15 +303,18 @@ class ModelInstantiator
      */
     public function convertPropertyOnSave(
         Column $column,
-        mixed $property,
-    ): mixed {
+        mixed  $property,
+    ): mixed
+    {
         // No Converter for this Column; return the original value.
-        if (!$column->getConverter()) {
+        if (!$column->getConverter())
+        {
             return $property;
         }
 
         // If the property is null, then return null.
-        if ($property === null) {
+        if ($property === null)
+        {
             return $property;
         }
 
@@ -301,15 +333,18 @@ class ModelInstantiator
      */
     public function convertPropertyOnRetrieve(
         Column $column,
-        mixed $property,
-    ): mixed {
+        mixed  $property,
+    ): mixed
+    {
         // No Converter for this Column; return the original value.
-        if (!$column->getConverter()) {
+        if (!$column->getConverter())
+        {
             return $property;
         }
 
         // If the property is null, then return null.
-        if ($property === null) {
+        if ($property === null)
+        {
             return $property;
         }
 

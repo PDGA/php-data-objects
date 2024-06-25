@@ -27,8 +27,8 @@ class Column
         private bool $isGenerated = false,
         private bool $hasDefault = false,
         private ?Converter $converter = null,
-    ) {
-    }
+    )
+    {}
 
     /**
      * Returns the name of the column.

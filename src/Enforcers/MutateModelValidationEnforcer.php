@@ -17,18 +17,22 @@ class MutateModelValidationEnforcer extends ModelValidationEnforcer
         $metadata = $this->getValidationMetadata($className);
 
         //Do the type and attribute validations first.
-        try {
+        try
+        {
             parent::enforce($arr, $className);
-        } catch (ValidationListException $e) {
+        }
+        catch (ValidationListException $e)
+        {
             //Keep any validation errors and throw them later, with possible additions.
             $validationErrors = $e;
         }
 
-        foreach ($metadata as $propName => $propMeta) {
-            $propAttrs = $propMeta['reflectionProperty']
-                ->getAttributes(Column::class, ReflectionAttribute::IS_INSTANCEOF);
+        foreach ($metadata as $propName => $propMeta)
+        {
+            $propAttrs = $propMeta['reflectionProperty']->getAttributes(Column::class, ReflectionAttribute::IS_INSTANCEOF);
 
-            foreach ($propAttrs as $attr) {
+            foreach($propAttrs as $attr)
+            {
                 $column  = $attr->newInstance();
                 $isPrimary = $column->getIsPrimary();
 
@@ -38,13 +42,15 @@ class MutateModelValidationEnforcer extends ModelValidationEnforcer
                         $this->propIsUndefined($arr, $propName) ||
                         $this->propIsNull($arr, $propName)
                     )
-                ) {
+                )
+                {
                     $validationErrors->addError("Primary key columns are required and should not be null.", $propName);
                 }
             }
         }
 
-        if (count($validationErrors->getErrors())) {
+        if (count($validationErrors->getErrors()))
+        {
             throw $validationErrors;
         }
     }

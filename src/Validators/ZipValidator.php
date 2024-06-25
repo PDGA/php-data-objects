@@ -17,15 +17,18 @@ class ZipValidator implements Validator
      */
     public function validate(mixed $val): bool
     {
-        if (is_null($val)) {
+        if (is_null($val))
+        {
             return true;
         }
 
-        if (is_array($val)) {
+        if (is_array($val))
+        {
             return false;
         }
 
-        if (strlen($val) <= 15) {
+        if (strlen($val) <= 15)
+        {
             return true;
         }
 

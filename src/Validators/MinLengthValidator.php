@@ -14,19 +14,22 @@ class MinLengthValidator implements Validator
 
     public function __construct(
         int $min_length
-    ) {
+    )
+    {
         $this->min_length = $min_length;
     }
 
     public function validate(mixed $val): bool
     {
         // Null values validate.
-        if (is_null($val)) {
+        if (is_null($val))
+        {
             return true;
         }
 
         // Arrays must contain at least $min_length keys/indices at the first dimension.
-        if (is_array($val)) {
+        if (is_array($val))
+        {
             return count($val) >= $this->min_length;
         }
 
