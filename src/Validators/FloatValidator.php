@@ -15,8 +15,7 @@ class FloatValidator implements Validator
     public function validate(mixed $val): bool
     {
         // Null values validate.
-        if (is_null($val))
-        {
+        if (is_null($val)) {
             return true;
         }
 

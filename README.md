@@ -14,6 +14,20 @@ Data object related code for the PDGA's back-end PHP API systems.
 ./bin/phpunit
 ```
 
+### Code Formatting Standards
+#### Run PHP_CodeSniffer to see the existing styling issues.
+```
+composer sniff
+```
+
+#### Run the formatter to automatically fix the styling issues that can be fixed.
+```
+composer format
+```
+or 
+```
+composer format-verbose
+```
 ### Require this Library as a Dependency in another Application
 
 To add the package to an application's Composer dependencies, use the following Composer command:

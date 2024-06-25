@@ -5,7 +5,8 @@ namespace PDGA\DataObjects\Validators;
 /**
  * All concrete validators should implement this interface.
  */
-interface Validator {
+interface Validator
+{
 
     /**
      * This returns true if $val is valid; else false.

@@ -13,8 +13,7 @@ class StringValidator implements Validator
     public function validate(mixed $val): bool
     {
         // Null validates.
-        if (is_null($val))
-        {
+        if (is_null($val)) {
             return true;
         }
 

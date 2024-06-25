@@ -1,3 +1,6 @@
+### 5.2.0
+* Code styling fixes.
+
 ### 5.1.0
 * Adds `JsonConverter` for database columns storying json data to have it automatically converted to php arrays.
 

@@ -54,8 +54,10 @@ class ReflectionContainerTest extends TestCase
         $member_property_reflection = $this->reflection_container->dataObjectProperties(Member::class);
         $phone_number_property_reflection = $this->reflection_container->dataObjectProperties(PhoneNumber::class);
 
-        $member_cardinalities = $this->reflection_container->dataObjectPropertyCardinalities($member_property_reflection);
-        $phone_number_cardinalities = $this->reflection_container->dataObjectPropertyCardinalities($phone_number_property_reflection);
+        $member_cardinalities = $this->reflection_container
+            ->dataObjectPropertyCardinalities($member_property_reflection);
+        $phone_number_cardinalities = $this->reflection_container
+            ->dataObjectPropertyCardinalities($phone_number_property_reflection);
 
         // This tests that the cardinalities are correct. Deeper testing is difficult as the
         // properties of the cardinality objects are protected.
