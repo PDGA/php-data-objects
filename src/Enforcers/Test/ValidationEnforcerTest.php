@@ -36,6 +36,25 @@ class ValidationEnforcerTest extends TestCase
         }
     }
 
+    public function testValidatesNonExistentPropertiesCorrectly(): void
+    {
+        $person = [
+            'email' => 'foo@bar.com',
+            'id' => 42,
+            'nonExistentProperty' => false
+        ];
+
+        try {
+            $this->enforcer->enforce($person, Person::class);
+            $this->assertTrue(true);
+        } catch (ValidationListException $e) {
+            $errors = json_encode($e->getErrors());
+            $this->assertStringContainsString('properties do not exist', $errors);
+            $this->assertStringContainsString('nonExistentProperty', $errors);
+        }
+    }
+
+
     public function testTypeValidatesCorrectly(): void
     {
         $person = ['email' => 1234, 'id' => 42];
