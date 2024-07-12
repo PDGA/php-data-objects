@@ -49,7 +49,7 @@ class ValidationEnforcerTest extends TestCase
             $this->assertTrue(true);
         } catch (ValidationListException $e) {
             $errors = json_encode($e->getErrors());
-            $this->assertStringContainsString('properties do not exist', $errors);
+            $this->assertStringContainsString('does not exist', $errors);
             $this->assertStringContainsString('nonExistentProperty', $errors);
         }
     }

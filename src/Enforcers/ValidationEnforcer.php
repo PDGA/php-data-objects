@@ -208,6 +208,6 @@ class ValidationEnforcer
      */
     private function getErrorMessage(string $propName): string
     {
-        return "These properties do not exist on the data object: '{$propName}'.";
+        return "'{$propName}' does not exist on the data-object.";
     }
 }

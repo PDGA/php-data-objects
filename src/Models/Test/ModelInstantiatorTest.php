@@ -100,7 +100,7 @@ class ModelInstantiatorTest extends TestCase
 
             $this->assertTrue(true);
         } catch (ValidationListException $e) {
-            $this->assertStringContainsString('properties do not exist', json_encode($e->getErrors()));
+            $this->assertStringContainsString('does not exist', json_encode($e->getErrors()));
         }
     }
 
