@@ -47,7 +47,8 @@ class ValidationEnforcer
 
         //For each property defined on the class.
         foreach ($metadata as $propName => $propMeta) {
-            // If the property is not included on the object, skip it.
+            // If the propName from the data-object is not included
+            // on the incoming object, don't attempt to validate it.
             if ($this->propIsUndefined($arr, $propName)) {
                 continue;
             }
