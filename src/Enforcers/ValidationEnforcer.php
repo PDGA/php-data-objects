@@ -36,9 +36,9 @@ class ValidationEnforcer
 
         // If an incoming property is not included on the
         // object, throw an error for stricter enforcement.
-        $nonExistantProperties = $this->checkForPropertiesNotOnDataObject($metadata, $arr);
+        $nonExistentProperties = $this->checkForPropertiesNotOnDataObject($metadata, $arr);
 
-        foreach ($nonExistantProperties as $badProperty) {
+        foreach ($nonExistentProperties as $badProperty) {
             $validationErrors->addError(
                 $this->getErrorMessage($badProperty),
                 $badProperty,
