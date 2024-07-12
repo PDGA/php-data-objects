@@ -36,9 +36,6 @@ class ModelInstantiatorTest extends TestCase
 
             // testProperty exists in the class but does not have a Column attribute.
             'testProperty' => true,
-
-            // fakeProperty does not exist in the class.
-            'fakeProperty' => 'faker',
         ];
 
         try {
@@ -64,10 +61,47 @@ class ModelInstantiatorTest extends TestCase
         // The property without a Column attribute should be set to the array value.
         $this->assertTrue(property_exists($data_object, 'testProperty'));
         $this->assertEquals($array['testProperty'], $data_object->testProperty);
+    }
 
-        // The extraneous array key should not exist as a property or be set on the Data Object.
-        $this->assertFalse(property_exists($data_object, 'fakeProperty'));
-        $this->assertFalse(isset($data_object->fakeProperty));
+    public function testArrayToDataObjectThrowsExceptionIfUnknownProperties(): void
+    {
+        // Create an input associative array.
+        $array = [
+            'pdgaNumber'   => 24472,
+            'firstName'    => 'Peter',
+            'birthDate'    => '2020-01-01',
+            // fakeProperty does not exist in the class.
+            // This should trigger the exception
+            'fakeProperty' => 'faker',
+        ];
+
+        $this->expectException(ValidationListException::class);
+
+        $data_object = $this->model_instantiator->arrayToDataObject(
+            $array,
+            ModelInstantiatorTestObject::class
+        );
+    }
+
+    public function testArrayToDataObjectExceptionHasProperErrorMessageIfUnknownProperties(): void
+    {
+        $array = [
+            // fakeProperty does not exist in the class.
+            // This should trigger the exception, so we
+            // can examine the errors array on the exception
+            'fakeProperty' => 'faker',
+        ];
+
+        try {
+            $data_object = $this->model_instantiator->arrayToDataObject(
+                $array,
+                ModelInstantiatorTestObject::class
+            );
+
+            $this->assertTrue(true);
+        } catch (ValidationListException $e) {
+            $this->assertStringContainsString('properties do not exist', json_encode($e->getErrors()));
+        }
     }
 
     /**

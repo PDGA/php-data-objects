@@ -34,9 +34,20 @@ class ValidationEnforcer
         $validationErrors = new ValidationListException();
         $metadata = $this->getValidationMetadata($className);
 
+        // If an incoming property is not included on the
+        // object, throw an error for stricter enforcement.
+        $nonExistantProperties = $this->checkForPropertiesNotOnDataObject($metadata, $arr);
+
+        foreach ($nonExistantProperties as $badProperty) {
+            $validationErrors->addError(
+                $this->getErrorMessage($badProperty),
+                $badProperty,
+            );
+        }
+
         //For each property defined on the class.
         foreach ($metadata as $propName => $propMeta) {
-            //If the property is not included on the object skip it.
+            // If the property is not included on the object, skip it.
             if ($this->propIsUndefined($arr, $propName)) {
                 continue;
             }
@@ -177,5 +188,25 @@ class ValidationEnforcer
         $arr = is_array($object) ? $object : (array) $object;
 
         return $this->propIsDefined($arr, $property) && !is_null($arr[$property]);
+    }
+
+    private function checkForPropertiesNotOnDataObject(array $metadata, array $arr): array
+    {
+        $validationMetadataPropertyKeys = array_keys($metadata);
+        $incomingObjectPropertyKeys = array_keys($arr);
+
+        return array_diff($incomingObjectPropertyKeys, $validationMetadataPropertyKeys);
+    }
+
+    /**
+     * Formatted error message when a property name
+     * is passed in but not part of the data-object.
+     *
+     * @param string $propName
+     * @return string
+     */
+    private function getErrorMessage(string $propName): string
+    {
+        return "These properties do not exist on the data object: '{$propName}'.";
     }
 }
