@@ -304,6 +304,9 @@ class ModelInstantiatorTest extends TestCase
         // Create an input Privacy Protected Data Object instance.
         $data_object = $this->getPrivacyProtectedTestDataObject();
 
+        // Assert that the privacy protected properties are set prior to array conversion.
+        $this->assertPrivacyProtectedPropertiesAreSet($data_object);
+
         // The output array should reflect the Data Object properties.
         // The values for the privacy protected fields should be removed.
         $result = $this->model_instantiator->dataObjectToArray($data_object);
@@ -335,6 +338,12 @@ class ModelInstantiatorTest extends TestCase
         $data_object->fakeHasOneRelation = $fake_has_one_data_object;
         $data_object->nullableFakeHasOneRelation = $nullable_fake_has_one_data_object;
         $data_object->fakeHasManyRelation = $fake_has_many_data_object;
+
+        // Assert that the privacy protected properties are set prior to array conversion.
+        $this->assertPrivacyProtectedPropertiesAreSet($data_object);
+        $this->assertPrivacyProtectedPropertiesAreSet($fake_has_one_data_object);
+        $this->assertPrivacyProtectedPropertiesAreSet($nullable_fake_has_one_data_object);
+        $this->assertPrivacyProtectedPropertiesAreSet($fake_has_many_data_object[0]);
 
         // The output array should reflect the Data Object properties.
         // The values for the privacy protected fields should be removed.
@@ -569,5 +578,12 @@ class ModelInstantiatorTest extends TestCase
         $data_object->birthDate = new DateTime('2020-01-01');
 
         return $data_object;
+    }
+
+    private function assertPrivacyProtectedPropertiesAreSet(PrivacyProtectedTestDataObject $data_object): void
+    {
+        foreach (PrivacyProtectedTestDataObject::PRIVACY_PROTECTED_PROPERTIES as $property) {
+            $this->assertTrue(isset($data_object->$property));
+        }
     }
 }
