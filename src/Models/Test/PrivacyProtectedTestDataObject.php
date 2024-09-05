@@ -21,6 +21,7 @@ class PrivacyProtectedTestDataObject implements IPrivacyProtectedDataObject
     const PRIVACY_PROTECTED_PROPERTIES = [
         'email',
         'birthDate',
+        'privacy',
     ];
 
     #[Column(

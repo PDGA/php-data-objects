@@ -299,7 +299,7 @@ class ModelInstantiatorTest extends TestCase
         );
     }
 
-    public function testPrivacyProtectedDataObjectToArray(): void
+    public function testDataObjectToArrayWithPrivacyProtectedDataObject(): void
     {
         // Create an input Privacy Protected Data Object instance.
         $data_object = $this->getPrivacyProtectedTestDataObject();
@@ -313,7 +313,6 @@ class ModelInstantiatorTest extends TestCase
                 'pdgaNumber'   => 4297,
                 'firstName'    => 'Ken',
                 'lastName'     => 'Climo',
-                'privacy'      => true,
                 'testProperty' => true,
             ],
             $result
@@ -324,7 +323,7 @@ class ModelInstantiatorTest extends TestCase
         }
     }
 
-    public function testPrivacyProtectedNestedDataObjectToArray(): void
+    public function testNestedDataObjectToArrayWithPrivacyProtectedDataObject(): void
     {
         // Create a related Privacy Protected Data Object instance.
         $fake_has_one_data_object = $this->getPrivacyProtectedTestDataObject();
@@ -346,27 +345,23 @@ class ModelInstantiatorTest extends TestCase
                 'pdgaNumber'   => 4297,
                 'firstName'    => 'Ken',
                 'lastName'     => 'Climo',
-                'privacy'      => true,
                 'testProperty' => true,
                 'fakeHasOneRelation' => [
                     'pdgaNumber'   => 4297,
                     'firstName'    => 'Ken',
                     'lastName'     => 'Climo',
-                    'privacy'      => true,
                     'testProperty' => true,
                 ],
                 'nullableFakeHasOneRelation' => [
                     'pdgaNumber'   => 4297,
                     'firstName'    => 'Ken',
                     'lastName'     => 'Climo',
-                    'privacy'      => true,
                     'testProperty' => true,
                 ],
                 'fakeHasManyRelation' => [[
                     'pdgaNumber'   => 4297,
                     'firstName'    => 'Ken',
                     'lastName'     => 'Climo',
-                    'privacy'      => true,
                     'testProperty' => true,
                 ]],
             ],
