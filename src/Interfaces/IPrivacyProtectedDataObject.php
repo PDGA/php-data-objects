@@ -12,5 +12,5 @@ interface IPrivacyProtectedDataObject
      *
      * @return void
      */
-    public function cleansePrivacyProtectedFields();
+    public function cleansePrivacyProtectedFields(): void;
 }
