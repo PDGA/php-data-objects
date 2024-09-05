@@ -4,6 +4,8 @@ namespace PDGA\DataObjects\Models\Test;
 
 use \DateTime;
 
+use PDGA\DataObjects\Models\Test\ModelInstantiatorTestObject;
+use PDGA\DataObjects\Models\Test\PrivacyProtectedTestDataObject;
 use PHPUnit\Framework\TestCase;
 
 use PDGA\Exception\InvalidRelationshipDataException;
@@ -14,7 +16,6 @@ use PDGA\DataObjects\Models\ModelInstantiator;
 use PDGA\DataObjects\Models\ReflectionContainer;
 use PDGA\DataObjects\Models\Test\Member;
 use PDGA\DataObjects\Models\Test\ModelInstantiatorTestDBModel;
-use PDGA\DataObjects\Models\Test\ModelInstantiatorTestObject;
 use PDGA\DataObjects\Models\Test\PhoneNumber;
 
 class ModelInstantiatorTest extends TestCase
@@ -282,6 +283,8 @@ class ModelInstantiatorTest extends TestCase
 
         // The output array should reflect the Data Object properties.
         // Note that the order of the array keys matters and must match the class definition.
+        $result = $this->model_instantiator->dataObjectToArray($data_object);
+
         $this->assertSame(
             [
                 'pdgaNumber'   => 4297,
@@ -292,7 +295,82 @@ class ModelInstantiatorTest extends TestCase
                 'birthDate'    => '2020-01-01T00:00:00+00:00',
                 'testProperty' => true,
             ],
-            $this->model_instantiator->dataObjectToArray($data_object)
+            $result
+        );
+    }
+
+    public function testPrivacyProtectedDataObjectToArray(): void
+    {
+        // Create an input Privacy Protected Data Object instance.
+        $data_object = $this->getPrivacyProtectedTestDataObject();
+
+        // The output array should reflect the Data Object properties.
+        // The values for the privacy protected fields should be removed.
+        $result = $this->model_instantiator->dataObjectToArray($data_object);
+
+        $this->assertSame(
+            [
+                'pdgaNumber'   => 4297,
+                'firstName'    => 'Ken',
+                'lastName'     => 'Climo',
+                'privacy'      => true,
+                'testProperty' => true,
+            ],
+            $result
+        );
+
+        foreach (PrivacyProtectedTestDataObject::PRIVACY_PROTECTED_PROPERTIES as $property) {
+            $this->assertFalse(isset($result[$property]));
+        }
+    }
+
+    public function testPrivacyProtectedNestedDataObjectToArray(): void
+    {
+        // Create a related Privacy Protected Data Object instance.
+        $fake_has_one_data_object = $this->getPrivacyProtectedTestDataObject();
+        $nullable_fake_has_one_data_object = $this->getPrivacyProtectedTestDataObject();
+        $fake_has_many_data_object = [$this->getPrivacyProtectedTestDataObject()];
+
+        // Create the primary data object and set relationship values.
+        $data_object = $this->getPrivacyProtectedTestDataObject();
+        $data_object->fakeHasOneRelation = $fake_has_one_data_object;
+        $data_object->nullableFakeHasOneRelation = $nullable_fake_has_one_data_object;
+        $data_object->fakeHasManyRelation = $fake_has_many_data_object;
+
+        // The output array should reflect the Data Object properties.
+        // The values for the privacy protected fields should be removed.
+        $result = $this->model_instantiator->dataObjectToArray($data_object);
+
+        $this->assertSame(
+            [
+                'pdgaNumber'   => 4297,
+                'firstName'    => 'Ken',
+                'lastName'     => 'Climo',
+                'privacy'      => true,
+                'testProperty' => true,
+                'fakeHasOneRelation' => [
+                    'pdgaNumber'   => 4297,
+                    'firstName'    => 'Ken',
+                    'lastName'     => 'Climo',
+                    'privacy'      => true,
+                    'testProperty' => true,
+                ],
+                'nullableFakeHasOneRelation' => [
+                    'pdgaNumber'   => 4297,
+                    'firstName'    => 'Ken',
+                    'lastName'     => 'Climo',
+                    'privacy'      => true,
+                    'testProperty' => true,
+                ],
+                'fakeHasManyRelation' => [[
+                    'pdgaNumber'   => 4297,
+                    'firstName'    => 'Ken',
+                    'lastName'     => 'Climo',
+                    'privacy'      => true,
+                    'testProperty' => true,
+                ]],
+            ],
+            $result
         );
     }
 
@@ -478,5 +556,23 @@ class ModelInstantiatorTest extends TestCase
         } catch (InvalidRelationshipDataException $e) {
             $this->assertEquals('FakeHasOneRelation relationship must not be null.', $e->getMessage());
         }
+    }
+
+    /**
+     * @return PrivacyProtectedTestDataObject
+     */
+    private function getPrivacyProtectedTestDataObject(): PrivacyProtectedTestDataObject
+    {
+        // Create an input Privacy Protected Data Object instance.
+        $data_object = new PrivacyProtectedTestDataObject();
+        $data_object->firstName = 'Ken';
+        $data_object->lastName = 'Climo';
+        $data_object->pdgaNumber = 4297;
+        $data_object->email = 'champ@pdga.com';
+        $data_object->privacy = true;
+        $data_object->testProperty = true;
+        $data_object->birthDate = new DateTime('2020-01-01');
+
+        return $data_object;
     }
 }
