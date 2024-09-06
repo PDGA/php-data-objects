@@ -5,6 +5,7 @@ namespace PDGA\DataObjects\Models;
 use PDGA\DataObjects\Attributes\Column;
 use PDGA\DataObjects\Enforcers\ValidationEnforcer;
 use PDGA\DataObjects\Interfaces\IDatabaseModel;
+use PDGA\DataObjects\Interfaces\IPrivacyProtectedDataObject;
 use PDGA\DataObjects\Models\ReflectionContainer;
 use PDGA\Exception\InvalidRelationshipDataException;
 use PDGA\Exception\ValidationException;
@@ -230,9 +231,10 @@ class ModelInstantiator
 
     /**
      * Converts a Data Object instance to an array.
+     * If a data object is an instance of IPrivacyProtectedDataObject,
+     * the method to cleanse the privacy related fields will be called on that object.
      *
      * @param object $data_object An instance of a hydrated Data Object.
-     *
      * @return array
      */
     public function dataObjectToArray(
@@ -247,6 +249,11 @@ class ModelInstantiator
 
             if ($data_obj instanceof DateTime) {
                 return $data_obj->format(DateTime::ATOM);
+            }
+
+            // This will cleanse any private data from the data object if necessary.
+            if ($data_obj instanceof IPrivacyProtectedDataObject) {
+                $data_obj->cleansePrivacyProtectedFields();
             }
 
             // $data_obj is an array or object.  Cast to array, then cast each
