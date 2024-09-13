@@ -326,6 +326,37 @@ class ModelInstantiatorTest extends TestCase
         }
     }
 
+    public function testDataObjectToArrayWithPrivacyProtectedDataObjectButAlsoOverridden(): void
+    {
+        // Create an input Data Object instance.
+        $data_object               = new ModelInstantiatorTestObject();
+        $data_object->firstName    = 'Ken';
+        $data_object->lastName     = 'Climo';
+        $data_object->pdgaNumber   = 4297;
+        $data_object->email        = 'champ@pdga.com';
+        $data_object->privacy      = true;
+        $data_object->testProperty = true;
+        $data_object->birthDate    = new DateTime('2020-01-01');
+
+        // The output array should reflect the Data Object properties.
+        // Note that the order of the array keys matters and must match the class definition.
+        $cleanse_privacy = false;
+        $result = $this->model_instantiator->dataObjectToArray($data_object, $cleanse_privacy);
+
+        $this->assertSame(
+            [
+                'pdgaNumber'   => 4297,
+                'firstName'    => 'Ken',
+                'lastName'     => 'Climo',
+                'email'        => 'champ@pdga.com',
+                'privacy'      => true,
+                'birthDate'    => '2020-01-01T00:00:00+00:00',
+                'testProperty' => true,
+            ],
+            $result
+        );
+    }
+
     public function testNestedDataObjectToArrayWithPrivacyProtectedDataObject(): void
     {
         // Create a related Privacy Protected Data Object instance.
