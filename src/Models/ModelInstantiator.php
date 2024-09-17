@@ -5,10 +5,10 @@ namespace PDGA\DataObjects\Models;
 use PDGA\DataObjects\Attributes\Column;
 use PDGA\DataObjects\Enforcers\ValidationEnforcer;
 use PDGA\DataObjects\Interfaces\IDatabaseModel;
+use PDGA\DataObjects\Interfaces\IPrivacyProtectedDataObject;
 use PDGA\DataObjects\Models\ReflectionContainer;
 use PDGA\Exception\InvalidRelationshipDataException;
 use PDGA\Exception\ValidationException;
-
 use \Datetime;
 use ReflectionException;
 
@@ -230,23 +230,33 @@ class ModelInstantiator
 
     /**
      * Converts a Data Object instance to an array.
+     * If a data object is an instance of IPrivacyProtectedDataObject,
+     * the method to cleanse the privacy related fields will be called on that object.
      *
      * @param object $data_object An instance of a hydrated Data Object.
-     *
+     * @param bool $cleanse_privacy Defaults to allowing if data object
+     *                              implements contract, but can be overridden
+     *                              so no cleansing is done, eg for internal use.
      * @return array
      */
     public function dataObjectToArray(
-        object $data_object
+        object $data_object,
+        bool $cleanse_privacy = true,
     ): array {
         // Internal driver function that recursively converts an object to an
         // array and accepts a mixed-type argument.
-        $to_array = function (mixed $data_obj) use (&$to_array) {
+        $to_array = function (mixed $data_obj) use (&$to_array, $cleanse_privacy) {
             if (is_null($data_obj) || is_scalar($data_obj)) {
                 return $data_obj;
             }
 
             if ($data_obj instanceof DateTime) {
                 return $data_obj->format(DateTime::ATOM);
+            }
+
+            // This will cleanse any private data from the data object if necessary.
+            if ($data_obj instanceof IPrivacyProtectedDataObject && $cleanse_privacy === true) {
+                $data_obj->cleansePrivacyProtectedFields();
             }
 
             // $data_obj is an array or object.  Cast to array, then cast each

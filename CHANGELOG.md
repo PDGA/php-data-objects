@@ -1,8 +1,14 @@
+### 5.4.0
+* Permits a boolean to be passed in to `dataObjectToArray()` to turn off privacy cleansing, in the case that the method will be used internally and not want to remove privacy fields.
+
+### 5.3.0
+* Created the IPrivacyProtectedDataObjectInterface. This interface will be implemented by data objects that need to have privacy protected data cleansed when the data object is converted to an array.
+
 ### 5.2.0
 * Code styling fixes.
 
 ### 5.1.0
-* Adds `JsonConverter` for database columns storying json data to have it automatically converted to php arrays.
+* Adds `JsonConverter` for database columns storing json data to have it automatically converted to php arrays.
 
 ### 5.0.0
 * _BREAKING_: `DataObjectRelationshipParser` no longer supports nested circular relationships. These will now be considered invalid and will throw a `ValidationException`.
