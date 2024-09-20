@@ -1,3 +1,6 @@
+### 5.4.0
+* Permits a boolean to be passed in to `dataObjectToArray()` to turn off privacy cleansing, in the case that the method will be used internally and not want to remove privacy fields.
+
 ### 5.3.0
 * Created the IPrivacyProtectedDataObjectInterface. This interface will be implemented by data objects that need to have privacy protected data cleansed when the data object is converted to an array.
 
