@@ -156,6 +156,55 @@ class ModelInstantiatorTest extends TestCase
         }
     }
 
+    /**
+     * Validates that relationships can be null if defined that way
+     * in the data object.
+     * @throws ValidationException
+     */
+    public function testArrayToDataObjectPermitsNullableRelationsWhenDefinedNullable(): void
+    {
+        $fake_has_one_data_object = $this->getTestDataObject();
+        $fake_has_many_data_object = [$this->getTestDataObject()];
+
+        $data_object = $this->getTestDataObject();
+        $data_object->fakeHasOneRelation = $fake_has_one_data_object;
+        $data_object->nullableFakeHasOneRelation = null;
+        $data_object->fakeHasManyRelation = $fake_has_many_data_object;
+
+        $fake_relationship_array = [
+            'pdgaNumber' => 4297,
+            'firstName' => 'Ken',
+            'lastName' => 'Climo',
+            'testProperty' => true,
+            'email' => 'champ@pdga.com',
+            'privacy' => true,
+            'birthDate' => '2020-01-01T00:00:00+00:00',
+        ];
+
+        $array = [
+            'pdgaNumber' => 4297,
+            'firstName' => 'Ken',
+            'lastName' => 'Climo',
+            'testProperty' => true,
+            'email' => 'champ@pdga.com',
+            'privacy' => true,
+            'birthDate' => '2020-01-01T00:00:00+00:00',
+            'fakeHasOneRelation' => $fake_relationship_array,
+            'nullableFakeHasOneRelation' => null,
+            'fakeHasManyRelation' => [$fake_relationship_array],
+        ];
+
+        $actual = $this->model_instantiator->arrayToDataObject(
+            $array,
+            ModelInstantiatorTestObject::class,
+        );
+
+        $this->assertEquals(
+            $data_object,
+            $actual
+        );
+    }
+
     public function testDataObjectToDatabaseModel(): void
     {
         // Create an input Data Object with all Column properties set.
@@ -600,6 +649,20 @@ class ModelInstantiatorTest extends TestCase
     {
         // Create an input Privacy Protected Data Object instance.
         $data_object = new PrivacyProtectedTestDataObject();
+        $data_object->firstName = 'Ken';
+        $data_object->lastName = 'Climo';
+        $data_object->pdgaNumber = 4297;
+        $data_object->email = 'champ@pdga.com';
+        $data_object->privacy = true;
+        $data_object->testProperty = true;
+        $data_object->birthDate = new DateTime('2020-01-01');
+
+        return $data_object;
+    }
+
+    private function getTestDataObject(): ModelInstantiatorTestObject
+    {
+        $data_object = new ModelInstantiatorTestObject();
         $data_object->firstName = 'Ken';
         $data_object->lastName = 'Climo';
         $data_object->pdgaNumber = 4297;

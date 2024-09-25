@@ -6,7 +6,6 @@ use PDGA\DataObjects\Attributes\Column;
 use PDGA\DataObjects\Enforcers\ValidationEnforcer;
 use PDGA\DataObjects\Interfaces\IDatabaseModel;
 use PDGA\DataObjects\Interfaces\IPrivacyProtectedDataObject;
-use PDGA\DataObjects\Models\ReflectionContainer;
 use PDGA\Exception\InvalidRelationshipDataException;
 use PDGA\Exception\ValidationException;
 use \Datetime;
@@ -83,6 +82,12 @@ class ModelInstantiator
                 $instance->{$property} = $instances;
             } else {
                 // ManyToOne: Map to a single nested Data Object.
+
+                if (is_null($arr[$property]) && $this->propertyAllowsNull($property, $property_reflection)) {
+                    $instance->{$property} = null;
+                    continue;
+                }
+
                 if (!is_array($arr[$property])) {
                     throw new ValidationException("{$property} must be an associative array.");
                 }
@@ -206,8 +211,7 @@ class ModelInstantiator
                 // Many-to-one relationship (a single nested Data Object).
                 // If the value is null make sure it's allowed to be null.
                 if (is_null($model_relations[$alias])) {
-                    $reflection_index    = array_search($property, array_column($property_reflection, 'name'));
-                    $reflection_property = $property_reflection[$reflection_index];
+                    $reflection_property = $this->getReflectionProperty($property, $property_reflection);
 
                     if ($reflection_property->getType()->allowsNull()) {
                         $data_object->{$property} = null;
@@ -324,5 +328,29 @@ class ModelInstantiator
         }
 
         return $column->getConverter()->onRetrieve($property);
+    }
+
+    /**
+     * @param mixed $property
+     * @param array $property_reflection
+     * @return mixed
+     */
+    private function getReflectionProperty(mixed $property, array $property_reflection): mixed
+    {
+        $reflection_index = array_search($property, array_column($property_reflection, 'name'));
+
+        return $property_reflection[$reflection_index];
+    }
+
+    /**
+     * @param mixed $property
+     * @param array $property_reflection
+     * @return bool
+     */
+    private function propertyAllowsNull(mixed $property, array $property_reflection): bool
+    {
+        $reflection_property = $this->getReflectionProperty($property, $property_reflection);
+
+        return $reflection_property->getType()->allowsNull();
     }
 }
