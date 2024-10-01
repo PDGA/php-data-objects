@@ -17,6 +17,7 @@ use PDGA\DataObjects\Models\ReflectionContainer;
 use PDGA\DataObjects\Models\Test\Member;
 use PDGA\DataObjects\Models\Test\ModelInstantiatorTestDBModel;
 use PDGA\DataObjects\Models\Test\PhoneNumber;
+use ReflectionClass;
 
 class ModelInstantiatorTest extends TestCase
 {
@@ -202,6 +203,32 @@ class ModelInstantiatorTest extends TestCase
         $this->assertEquals(
             $data_object,
             $actual
+        );
+    }
+
+    /**
+     * Validates a relationship not defined as nullable will be enforced that way if
+     * null in the incoming array.
+     * @throws ValidationException
+     */
+    public function testArrayToDataObjectEnforcesThatNotNullRelationshipCannotBeNull(): void
+    {
+        $array = [
+            'pdgaNumber' => 4297,
+            'firstName' => 'Ken',
+            'lastName' => 'Climo',
+            'testProperty' => true,
+            'email' => 'champ@pdga.com',
+            'privacy' => true,
+            'birthDate' => '2020-01-01T00:00:00+00:00',
+            'fakeHasOneRelation' => null,
+        ];
+
+        $this->expectException(ValidationListException::class);
+
+        $this->model_instantiator->arrayToDataObject(
+            $array,
+            ModelInstantiatorTestObject::class,
         );
     }
 
@@ -640,6 +667,68 @@ class ModelInstantiatorTest extends TestCase
         } catch (InvalidRelationshipDataException $e) {
             $this->assertEquals('FakeHasOneRelation relationship must not be null.', $e->getMessage());
         }
+    }
+
+    /**
+     * When given a property that is defined as nullable, `propertyAllowsNull` should
+     * return true
+     * @return void
+     */
+    public function testPropertyAllowsNullCorrectlyReturnsWhenPropertyIsNullable()
+    {
+        $reflection_class = new ReflectionClass(ModelInstantiatorTestObject::class);
+        $property_reflection = $reflection_class->getProperties();
+        $property = 'nullableFakeHasOneRelation'; // this is defined as being nullable
+
+        // Search to make sure the property exists in the data object or we'll get a false
+        // positive for this test.
+        $found = array_search($property, array_column($property_reflection, 'name'));
+        $result = $this->model_instantiator->propertyAllowsNull($property, $property_reflection);
+
+        $this->assertTrue($result);
+        $this->assertGreaterThan(0, $found);
+    }
+
+    /**
+     * When given a property that is not defined as nullable, `propertyAllowsNull` should
+     * return false
+     * @return void
+     */
+    public function testPropertyAllowsNullCorrectlyReturnsWhenPropertyIsNotNullable()
+    {
+        $reflection_class = new ReflectionClass(ModelInstantiatorTestObject::class);
+        $property_reflection = $reflection_class->getProperties();
+        $property = 'fakeHasOneRelation'; // this is defined as not being nullable
+
+        // Search to make sure the property exists in the data object or we'll get a false
+        // positive for this test.
+        $found = array_search($property, array_column($property_reflection, 'name'), true);
+        $result = $this->model_instantiator->propertyAllowsNull($property, $property_reflection);
+
+        $this->assertFalse($result);
+        $this->assertGreaterThan(0, $found);
+    }
+
+    public function testGetReflectionPropertyCorrectlyReturnsReflectionPropertyObject()
+    {
+        $reflection_class = new ReflectionClass(ModelInstantiatorTestObject::class);
+        $property_reflection = $reflection_class->getProperties();
+        $property = 'fakeHasOneRelation'; // this property should exist on the test data object
+
+        $result = $this->model_instantiator->getReflectionProperty($property, $property_reflection);
+
+        $this->assertInstanceOf(\ReflectionProperty::class, $result);
+    }
+
+    public function testGetReflectionPropertyCorrectlyReturnsFalseIfNotFound()
+    {
+        $reflection_class = new ReflectionClass(ModelInstantiatorTestObject::class);
+        $property_reflection = $reflection_class->getProperties();
+        $property = 'zzz__does_not_exist'; // this property should not exist on the test data object
+
+        $this->expectException(\TypeError::class);
+
+        $this->model_instantiator->getReflectionProperty($property, $property_reflection);
     }
 
     /**

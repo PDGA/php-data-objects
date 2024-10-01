@@ -83,7 +83,7 @@ class ModelInstantiator
             } else {
                 // ManyToOne: Map to a single nested Data Object.
 
-                if (is_null($arr[$property]) && $this->propertyAllowsNull($property, $property_reflection)) {
+                if ($enforcer->propIsNull($arr, $property) && $this->propertyAllowsNull($property, $property_reflection)) {
                     $instance->{$property} = null;
                     continue;
                 }
@@ -331,23 +331,30 @@ class ModelInstantiator
     }
 
     /**
-     * @param mixed $property
+     * Public for testability.
+     * @param string $property ReflectionProperties->getName() always returns a string which is the key of the array that handles this property
      * @param array $property_reflection
-     * @return mixed
+     * @return \ReflectionProperty
+     * @throws \TypeError
      */
-    private function getReflectionProperty(mixed $property, array $property_reflection): mixed
+    public function getReflectionProperty(string $property, array $property_reflection): \ReflectionProperty
     {
-        $reflection_index = array_search($property, array_column($property_reflection, 'name'));
+        $reflection_index = array_search($property, array_column($property_reflection, 'name'), true);
+
+        if (false === $reflection_index || !isset($property_reflection[$reflection_index])) {
+            throw new \TypeError();
+        }
 
         return $property_reflection[$reflection_index];
     }
 
     /**
-     * @param mixed $property
+     * Public for testability.
+     * @param string $property ReflectionProperties->getName() always returns a string which is the key of the array that handles this property
      * @param array $property_reflection
      * @return bool
      */
-    private function propertyAllowsNull(mixed $property, array $property_reflection): bool
+    public function propertyAllowsNull(string $property, array $property_reflection): bool
     {
         $reflection_property = $this->getReflectionProperty($property, $property_reflection);
 
