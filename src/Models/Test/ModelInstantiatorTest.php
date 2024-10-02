@@ -156,16 +156,39 @@ class ModelInstantiatorTest extends TestCase
         }
     }
 
+    public function testArrayToDataObjectFailsWithEmptyString(): void
+    {
+        // Create an input associative array.
+        $array = [
+            'displayName' => '',
+        ];
+
+        try {
+            // Convert the array to a Data Object.
+            $data_object = $this->model_instantiator->arrayToDataObject(
+                $array,
+                ModelInstantiatorTestObject::class
+            );
+
+            $this->fail("Expected exception not thrown.");
+        } catch (ValidationListException $e) {
+            $expectedError = "The displayName field must not be blank.";
+            $result = $e->getErrors()['displayName'][0]['message'];
+            $this->assertEquals($expectedError, $result);
+        }
+    }
+
     public function testDataObjectToDatabaseModel(): void
     {
         // Create an input Data Object with all Column properties set.
-        $data_object             = new ModelInstantiatorTestObject();
-        $data_object->firstName  = 'Ken';
-        $data_object->lastName   = 'Climo';
-        $data_object->pdgaNumber = 4297;
-        $data_object->email      = 'champ@pdga.com';
-        $data_object->privacy    = true;
-        $data_object->birthDate  = new DateTime('2020-01-01');
+        $data_object              = new ModelInstantiatorTestObject();
+        $data_object->firstName   = 'Ken';
+        $data_object->lastName    = 'Climo';
+        $data_object->displayName = ''; // This will get converted to null
+        $data_object->pdgaNumber  = 4297;
+        $data_object->email       = 'champ@pdga.com';
+        $data_object->privacy     = true; // This will get converted to 'yes'
+        $data_object->birthDate   = new DateTime('2020-01-01');
 
         // We should get a valid database model associative array on conversion.
         $this->assertSame(
@@ -173,6 +196,7 @@ class ModelInstantiatorTest extends TestCase
                 'PDGANum'   => 4297,
                 'FirstName' => 'Ken',
                 'LastName'  => 'Climo',
+                'DisplayName' => null,
                 'Email'     => 'champ@pdga.com',
                 'Privacy'   => 'yes',
                 'BirthDate' => '2020-01-01T00:00:00+00:00',
@@ -218,10 +242,12 @@ class ModelInstantiatorTest extends TestCase
         // array of attributes, only accessible through a getter.  This test
         // shows that when the supplied DB model has a getAttributes method,
         // it's used.
-        $pdga_num                = 123;
-        $db_model                = new ModelInstantiatorTestDBModel($pdga_num);
-        $data_object             = new ModelInstantiatorTestObject();
-        $data_object->pdgaNumber = $pdga_num;
+        $pdga_num                 = 123;
+        $display_name             = null;
+        $db_model                 = new ModelInstantiatorTestDBModel($pdga_num, $display_name);
+        $data_object              = new ModelInstantiatorTestObject();
+        $data_object->pdgaNumber  = $pdga_num;
+        $data_object->displayName = $display_name;
 
         // Note that PDGANum is private in the DB model, so the only way the
         // ModelInstantiator can access it is via getAttributes.
@@ -229,6 +255,32 @@ class ModelInstantiatorTest extends TestCase
             $data_object,
             $this->model_instantiator->databaseModelToDataObject($db_model, ModelInstantiatorTestObject::class)
         );
+    }
+
+    public function testDatabaseModelToDataObjectWithEmptyStringToNullConversion(): void
+    {
+        // This fake DB model mimics an Eloquent model in that it has a private
+        // array of attributes, only accessible through a getter.  This test
+        // shows that when the supplied DB model has a getAttributes method,
+        // it's used.
+        $pdga_num = 123;
+        $display_name = '';
+        $db_model = new ModelInstantiatorTestDBModel($pdga_num, $display_name);
+
+        $expected_data_object = new ModelInstantiatorTestObject();
+        $expected_data_object->pdgaNumber = $pdga_num;
+        $expected_data_object->displayName = null;
+
+        $result = $this->model_instantiator->databaseModelToDataObject(
+            $db_model,
+            ModelInstantiatorTestObject::class
+        );
+
+        // Note that PDGANum is private in the DB model, so the only way the
+        // ModelInstantiator can access it is via getAttributes.
+        $this->assertSame($expected_data_object->pdgaNumber, $result->pdgaNumber);
+        $this->assertNull($result->displayName);
+        $this->assertSame($expected_data_object->displayName, $result->displayName);
     }
 
     public function testDatabaseModelToDataObjectNestedArrayWithRelationsGetter(): void
@@ -460,6 +512,19 @@ class ModelInstantiatorTest extends TestCase
         );
     }
 
+    public function testDataObjectToArrayDoesNotConvertValues(): void
+    {
+        // This tests that the property converters are not used when converting a data object to an array.
+        $member = new ModelInstantiatorTestObject();
+        $member->pdgaNumber = 42;
+        $member->displayName  = '';
+
+        $result = $this->model_instantiator->dataObjectToArray($member);
+
+        $this->assertSame($member->pdgaNumber, $result['pdgaNumber']);
+        $this->assertSame($member->displayName, $result['displayName']);
+    }
+
     public function testConvertPropertyOnSave()
     {
         $reflection_container = new ReflectionContainer();
@@ -467,6 +532,7 @@ class ModelInstantiatorTest extends TestCase
         // Create a Data Object with a property that uses the YesNoConverter.
         $data_object = new ModelInstantiatorTestObject();
         $data_object->privacy = true;
+        $data_object->displayName = '';
         $property_reflection = $reflection_container->dataObjectProperties(ModelInstantiatorTestObject::class);
 
         $columns = $reflection_container->dataObjectPropertyColumns($property_reflection);
@@ -479,6 +545,15 @@ class ModelInstantiatorTest extends TestCase
                 $data_object->privacy,
             )
         );
+
+        // This uses the empty string to null conversion
+        $this->assertSame(
+            null,
+            $this->model_instantiator->convertPropertyOnSave(
+                $columns['displayName'],
+                $data_object->displayName,
+            )
+        );
     }
 
     public function testDontConvertNullPropertyOnSave()
@@ -489,6 +564,7 @@ class ModelInstantiatorTest extends TestCase
         // converted.
         $data_object = new ModelInstantiatorTestObject();
         $data_object->privacy = null;
+        $data_object->displayName = null;
         $property_reflection = $reflection_container->dataObjectProperties(ModelInstantiatorTestObject::class);
 
         $columns = $reflection_container->dataObjectPropertyColumns($property_reflection);
@@ -497,6 +573,13 @@ class ModelInstantiatorTest extends TestCase
             $this->model_instantiator->convertPropertyOnSave(
                 $columns['privacy'],
                 $data_object->privacy,
+            )
+        );
+
+        $this->assertNull(
+            $this->model_instantiator->convertPropertyOnSave(
+                $columns['displayName'],
+                $data_object->displayName,
             )
         );
     }
@@ -508,6 +591,7 @@ class ModelInstantiatorTest extends TestCase
         // Create a db model with a property that uses the YesNoConverter.
         $db_model = [
             'Privacy' => 'no',
+            'DisplayName' => '',
         ];
 
         $property_reflection = $reflection_container->dataObjectProperties(ModelInstantiatorTestObject::class);
@@ -521,6 +605,15 @@ class ModelInstantiatorTest extends TestCase
                 $db_model['Privacy'],
             )
         );
+
+        // This uses the empty string to null conversion
+        $this->assertSame(
+            null,
+            $this->model_instantiator->convertPropertyOnRetrieve(
+                $columns['displayName'],
+                $db_model['DisplayName'],
+            )
+        );
     }
 
     public function testDontConvertNullPropertyOnRetrieve()
@@ -529,6 +622,7 @@ class ModelInstantiatorTest extends TestCase
 
         $db_model = [
             'Privacy' => null,
+            'DisplayName' => '',
         ];
 
         $property_reflection = $reflection_container->dataObjectProperties(ModelInstantiatorTestObject::class);
@@ -538,6 +632,13 @@ class ModelInstantiatorTest extends TestCase
             $this->model_instantiator->convertPropertyOnRetrieve(
                 $columns['privacy'],
                 $db_model['Privacy'],
+            )
+        );
+
+        $this->assertNull(
+            $this->model_instantiator->convertPropertyOnRetrieve(
+                $columns['displayName'],
+                $db_model['DisplayName'],
             )
         );
     }

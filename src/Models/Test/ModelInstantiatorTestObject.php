@@ -8,6 +8,7 @@ use PDGA\DataObjects\Attributes\Column;
 use PDGA\DataObjects\Attributes\ManyToOne;
 use PDGA\DataObjects\Attributes\OneToMany;
 use PDGA\DataObjects\Attributes\Table;
+use PDGA\DataObjects\Converters\EmptyStringToNullConverter;
 use PDGA\DataObjects\Converters\YesNoConverter;
 use PDGA\DataObjects\Converters\DateTimeConverter;
 
@@ -34,6 +35,13 @@ class ModelInstantiatorTestObject
         sqlDataType: 'varchar',
     )]
     public ?string $lastName;
+
+    #[Column(
+        name: 'DisplayName',
+        sqlDataType: 'varchar',
+        converter: new EmptyStringToNullConverter()
+    )]
+    public ?string $displayName;
 
     #[Column(
         name: 'Email',

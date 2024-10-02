@@ -32,6 +32,7 @@ class ReflectionContainerTest extends TestCase
                 'pdgaNumber',
                 'firstName',
                 'lastName',
+                'displayName',
                 'email',
                 'privacy',
                 'birthDate',

@@ -10,9 +10,10 @@ class ModelInstantiatorTestDBModel implements IDatabaseModel
     private $attributes = [];
     private $relations  = [];
 
-    public function __construct(int $pdga_num)
+    public function __construct(int $pdga_num, ?string $display_name = null)
     {
         $this->attributes['PDGANum'] = $pdga_num;
+        $this->attributes['DisplayName'] = $display_name;
     }
 
     public function getAttributes(): array
