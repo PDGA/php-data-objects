@@ -547,8 +547,7 @@ class ModelInstantiatorTest extends TestCase
         );
 
         // This uses the empty string to null conversion
-        $this->assertSame(
-            null,
+        $this->assertNull(
             $this->model_instantiator->convertPropertyOnSave(
                 $columns['displayName'],
                 $data_object->displayName,
@@ -607,8 +606,7 @@ class ModelInstantiatorTest extends TestCase
         );
 
         // This uses the empty string to null conversion
-        $this->assertSame(
-            null,
+        $this->assertNull(
             $this->model_instantiator->convertPropertyOnRetrieve(
                 $columns['displayName'],
                 $db_model['DisplayName'],
