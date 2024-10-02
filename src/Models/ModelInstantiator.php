@@ -83,7 +83,8 @@ class ModelInstantiator
             } else {
                 // ManyToOne: Map to a single nested Data Object.
 
-                if ($enforcer->propIsNull($arr, $property) && $this->propertyAllowsNull($property, $property_reflection)) {
+                if ($enforcer->propIsNull($arr, $property) &&
+                    $this->propertyAllowsNull($property, $property_reflection)) {
                     $instance->{$property} = null;
                     continue;
                 }
@@ -332,7 +333,9 @@ class ModelInstantiator
 
     /**
      * Public for testability.
-     * @param string $property ReflectionProperties->getName() always returns a string which is the key of the array that handles this property
+     * @param string $property ReflectionProperties->getName() always returns
+     *                         a string which is the key of the array that
+     *                         handles this property.
      * @param array $property_reflection
      * @return \ReflectionProperty
      * @throws \TypeError
@@ -350,7 +353,9 @@ class ModelInstantiator
 
     /**
      * Public for testability.
-     * @param string $property ReflectionProperties->getName() always returns a string which is the key of the array that handles this property
+     * @param string $property ReflectionProperties->getName() always returns
+     * *                         a string which is the key of the array that
+     * *                         handles this property.
      * @param array $property_reflection
      * @return bool
      */
