@@ -4,6 +4,7 @@ namespace PDGA\DataObjects\Models\Test;
 
 use \DateTime;
 
+use OutOfBoundsException;
 use PDGA\DataObjects\Models\Test\ModelInstantiatorTestObject;
 use PDGA\DataObjects\Models\Test\PrivacyProtectedTestDataObject;
 use PHPUnit\Framework\TestCase;
@@ -18,6 +19,7 @@ use PDGA\DataObjects\Models\Test\Member;
 use PDGA\DataObjects\Models\Test\ModelInstantiatorTestDBModel;
 use PDGA\DataObjects\Models\Test\PhoneNumber;
 use ReflectionClass;
+use ReflectionProperty;
 
 class ModelInstantiatorTest extends TestCase
 {
@@ -683,10 +685,10 @@ class ModelInstantiatorTest extends TestCase
         // Search to make sure the property exists in the data object or we'll get a false
         // positive for this test.
         $found = array_search($property, array_column($property_reflection, 'name'));
-        $result = $this->model_instantiator->propertyAllowsNull($property, $property_reflection);
+        $this->assertGreaterThan(0, $found, "The {$property} was not found; check that the test is reflects a property that exists.");
 
+        $result = $this->model_instantiator->propertyAllowsNull($property, $property_reflection);
         $this->assertTrue($result);
-        $this->assertGreaterThan(0, $found);
     }
 
     /**
@@ -703,10 +705,10 @@ class ModelInstantiatorTest extends TestCase
         // Search to make sure the property exists in the data object or we'll get a false
         // positive for this test.
         $found = array_search($property, array_column($property_reflection, 'name'), true);
-        $result = $this->model_instantiator->propertyAllowsNull($property, $property_reflection);
+        $this->assertGreaterThan(0, $found, "The {$property} was not found; check that the test is reflects a property that exists.");
 
+        $result = $this->model_instantiator->propertyAllowsNull($property, $property_reflection);
         $this->assertFalse($result);
-        $this->assertGreaterThan(0, $found);
     }
 
     public function testGetReflectionPropertyCorrectlyReturnsReflectionPropertyObject()
@@ -717,7 +719,7 @@ class ModelInstantiatorTest extends TestCase
 
         $result = $this->model_instantiator->getReflectionProperty($property, $property_reflection);
 
-        $this->assertInstanceOf(\ReflectionProperty::class, $result);
+        $this->assertInstanceOf(ReflectionProperty::class, $result);
     }
 
     public function testGetReflectionPropertyCorrectlyReturnsFalseIfNotFound()
@@ -726,7 +728,7 @@ class ModelInstantiatorTest extends TestCase
         $property_reflection = $reflection_class->getProperties();
         $property = 'zzz__does_not_exist'; // this property should not exist on the test data object
 
-        $this->expectException(\TypeError::class);
+        $this->expectException(OutOfBoundsException::class);
 
         $this->model_instantiator->getReflectionProperty($property, $property_reflection);
     }

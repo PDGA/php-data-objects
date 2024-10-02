@@ -2,6 +2,7 @@
 
 namespace PDGA\DataObjects\Models;
 
+use OutOfBoundsException;
 use PDGA\DataObjects\Attributes\Column;
 use PDGA\DataObjects\Enforcers\ValidationEnforcer;
 use PDGA\DataObjects\Interfaces\IDatabaseModel;
@@ -10,6 +11,7 @@ use PDGA\Exception\InvalidRelationshipDataException;
 use PDGA\Exception\ValidationException;
 use \Datetime;
 use ReflectionException;
+use ReflectionProperty;
 
 class ModelInstantiator
 {
@@ -337,15 +339,15 @@ class ModelInstantiator
      *                         a string which is the key of the array that
      *                         handles this property.
      * @param array $property_reflection
-     * @return \ReflectionProperty
-     * @throws \TypeError
+     * @return ReflectionProperty
+     * @throws OutOfBoundsException
      */
-    public function getReflectionProperty(string $property, array $property_reflection): \ReflectionProperty
+    public function getReflectionProperty(string $property, array $property_reflection): ReflectionProperty
     {
         $reflection_index = array_search($property, array_column($property_reflection, 'name'), true);
 
         if (false === $reflection_index || !isset($property_reflection[$reflection_index])) {
-            throw new \TypeError();
+            throw new OutOfBoundsException();
         }
 
         return $property_reflection[$reflection_index];
