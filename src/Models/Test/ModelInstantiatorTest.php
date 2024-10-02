@@ -685,7 +685,11 @@ class ModelInstantiatorTest extends TestCase
         // Search to make sure the property exists in the data object or we'll get a false
         // positive for this test.
         $found = array_search($property, array_column($property_reflection, 'name'));
-        $this->assertGreaterThan(0, $found, "The {$property} was not found; check that the test is reflects a property that exists.");
+        $this->assertGreaterThan(
+            0,
+            $found,
+            "The {$property} was not found; check that the test is reflects a property that exists.",
+        );
 
         $result = $this->model_instantiator->propertyAllowsNull($property, $property_reflection);
         $this->assertTrue($result);
@@ -705,7 +709,11 @@ class ModelInstantiatorTest extends TestCase
         // Search to make sure the property exists in the data object or we'll get a false
         // positive for this test.
         $found = array_search($property, array_column($property_reflection, 'name'), true);
-        $this->assertGreaterThan(0, $found, "The {$property} was not found; check that the test is reflects a property that exists.");
+        $this->assertGreaterThan(
+            0,
+            $found,
+            "The {$property} was not found; check that the test is reflects a property that exists.",
+        );
 
         $result = $this->model_instantiator->propertyAllowsNull($property, $property_reflection);
         $this->assertFalse($result);
