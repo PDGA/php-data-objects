@@ -347,7 +347,7 @@ class ModelInstantiator
         $reflection_index = array_search($property, array_column($property_reflection, 'name'), true);
 
         if (false === $reflection_index || !isset($property_reflection[$reflection_index])) {
-            throw new OutOfBoundsException();
+            throw new OutOfBoundsException("The property {$property} does not exist in property reflection.");
         }
 
         return $property_reflection[$reflection_index];

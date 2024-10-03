@@ -727,7 +727,8 @@ class ModelInstantiatorTest extends TestCase
 
         $result = $this->model_instantiator->getReflectionProperty($property, $property_reflection);
 
-        $this->assertInstanceOf(ReflectionProperty::class, $result);
+        $this->assertEquals($property, $result->getName());
+        $this->assertEquals(ModelInstantiatorTestObject::class, $result->getDeclaringClass()->getName());
     }
 
     public function testGetReflectionPropertyCorrectlyReturnsFalseIfNotFound()
