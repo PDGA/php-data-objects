@@ -107,10 +107,11 @@ class ValidationEnforcer
                 $metadata[$propName]['validators'][] = $validators['notNull'];
             }
 
-            //String-type properties cannot be blank.
-            if ($propType === 'string') {
-                $metadata[$propName]['validators'][] = new NotBlankValidator();
-            }
+            /**
+             * Ideally, we would use a NotBlankValidator to prevent empty or whitespace strings.
+             * Empty string values are allowed currently due to having code that depends on them being allowed.
+             * https://pdga.atlassian.net/browse/PDGA-686
+             */
 
             //If the property has any validation attributes make sure they are included.
             foreach ($propAttrs as $attr) {

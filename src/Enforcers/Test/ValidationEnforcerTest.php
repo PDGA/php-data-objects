@@ -21,8 +21,8 @@ class ValidationEnforcerTest extends TestCase
 
         //id validators include int and not null
         $this->assertEquals(count($result['id']['validators']), 2);
-        //email validators include string, not blank, max length, and email
-        $this->assertEquals(count($result['email']['validators']), 4);
+        //email validators include string, max length, and email
+        $this->assertEquals(count($result['email']['validators']), 3);
     }
 
     public function testValidatesInstancesCorrectly(): void
@@ -151,16 +151,24 @@ class ValidationEnforcerTest extends TestCase
         $this->assertFalse($this->enforcer->propIsNotNull($person, 'id'));
     }
 
-    public function testNoBlankStrings(): void
+    public function testBlankStringIsAllowed(): void
     {
-        $person = ['name' => '', 'id' => 42];
-        try {
-            $this->enforcer->enforce($person, Person::class);
-            $this->assertTrue(false, 'Blank string validation failed.');
-        } catch (ValidationListException $e) {
-            $this->assertEquals(1, count($e->getErrors()));
-            $this->assertEquals('The name field must not be blank.', $e->getErrors()['name'][0]['message']);
-        }
+        $person = ['name' => ''];
+
+        $this->expectNotToPerformAssertions();
+
+        // If this throws an exception, this test will fail.
+        $this->enforcer->enforce($person, Person::class);
+    }
+
+    public function testWhitespaceStringIsAllowed(): void
+    {
+        $person = ['name' => '  '];
+
+        $this->expectNotToPerformAssertions();
+
+        // If this throws an exception, this test will fail.
+        $this->enforcer->enforce($person, Person::class);
     }
 
     public function testNestedArray(): void
