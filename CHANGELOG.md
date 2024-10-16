@@ -1,3 +1,7 @@
+### 5.5.0
+* Allow data object relationship values to be null when nullable.
+* Allow empty and whitespace strings for data object property values.
+
 ### 5.4.0
 * Permits a boolean to be passed in to `dataObjectToArray()` to turn off privacy cleansing, in the case that the method will be used internally and not want to remove privacy fields.
 
