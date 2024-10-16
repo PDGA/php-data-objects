@@ -4,6 +4,7 @@ namespace PDGA\DataObjects\Models\Test;
 
 use \DateTime;
 
+use OutOfBoundsException;
 use PDGA\DataObjects\Models\Test\ModelInstantiatorTestObject;
 use PDGA\DataObjects\Models\Test\PrivacyProtectedTestDataObject;
 use PHPUnit\Framework\TestCase;
@@ -17,6 +18,8 @@ use PDGA\DataObjects\Models\ReflectionContainer;
 use PDGA\DataObjects\Models\Test\Member;
 use PDGA\DataObjects\Models\Test\ModelInstantiatorTestDBModel;
 use PDGA\DataObjects\Models\Test\PhoneNumber;
+use ReflectionClass;
+use ReflectionProperty;
 
 class ModelInstantiatorTest extends TestCase
 {
@@ -154,6 +157,81 @@ class ModelInstantiatorTest extends TestCase
         } catch (ValidationException $e) {
             $this->assertEquals('member must be an associative array.', $e->getMessage());
         }
+    }
+
+    /**
+     * Validates that relationships can be null if defined that way
+     * in the data object.
+     * @throws ValidationException
+     */
+    public function testArrayToDataObjectPermitsNullableRelationsWhenDefinedNullable(): void
+    {
+        $fake_has_one_data_object = $this->getTestDataObject();
+        $fake_has_many_data_object = [$this->getTestDataObject()];
+
+        $data_object = $this->getTestDataObject();
+        $data_object->fakeHasOneRelation = $fake_has_one_data_object;
+        $data_object->nullableFakeHasOneRelation = null;
+        $data_object->fakeHasManyRelation = $fake_has_many_data_object;
+
+        $fake_relationship_array = [
+            'pdgaNumber' => 4297,
+            'firstName' => 'Ken',
+            'lastName' => 'Climo',
+            'testProperty' => true,
+            'email' => 'champ@pdga.com',
+            'privacy' => true,
+            'birthDate' => '2020-01-01T00:00:00+00:00',
+        ];
+
+        $array = [
+            'pdgaNumber' => 4297,
+            'firstName' => 'Ken',
+            'lastName' => 'Climo',
+            'testProperty' => true,
+            'email' => 'champ@pdga.com',
+            'privacy' => true,
+            'birthDate' => '2020-01-01T00:00:00+00:00',
+            'fakeHasOneRelation' => $fake_relationship_array,
+            'nullableFakeHasOneRelation' => null,
+            'fakeHasManyRelation' => [$fake_relationship_array],
+        ];
+
+        $actual = $this->model_instantiator->arrayToDataObject(
+            $array,
+            ModelInstantiatorTestObject::class,
+        );
+
+        $this->assertEquals(
+            $data_object,
+            $actual
+        );
+    }
+
+    /**
+     * Validates a relationship not defined as nullable will be enforced that way if
+     * null in the incoming array.
+     * @throws ValidationException
+     */
+    public function testArrayToDataObjectEnforcesThatNotNullRelationshipCannotBeNull(): void
+    {
+        $array = [
+            'pdgaNumber' => 4297,
+            'firstName' => 'Ken',
+            'lastName' => 'Climo',
+            'testProperty' => true,
+            'email' => 'champ@pdga.com',
+            'privacy' => true,
+            'birthDate' => '2020-01-01T00:00:00+00:00',
+            'fakeHasOneRelation' => null,
+        ];
+
+        $this->expectException(ValidationListException::class);
+
+        $this->model_instantiator->arrayToDataObject(
+            $array,
+            ModelInstantiatorTestObject::class,
+        );
     }
 
     public function testDataObjectToDatabaseModel(): void
@@ -594,12 +672,97 @@ class ModelInstantiatorTest extends TestCase
     }
 
     /**
+     * When given a property that is defined as nullable, `propertyAllowsNull` should
+     * return true
+     * @return void
+     */
+    public function testPropertyAllowsNullCorrectlyReturnsWhenPropertyIsNullable()
+    {
+        $reflection_class = new ReflectionClass(ModelInstantiatorTestObject::class);
+        $property_reflection = $reflection_class->getProperties();
+        $property = 'nullableFakeHasOneRelation'; // this is defined as being nullable
+
+        // Search to make sure the property exists in the data object or we'll get a false
+        // positive for this test.
+        $found = array_search($property, array_column($property_reflection, 'name'));
+        $this->assertGreaterThan(
+            0,
+            $found,
+            "The {$property} was not found; check that the test is reflects a property that exists.",
+        );
+
+        $result = $this->model_instantiator->propertyAllowsNull($property, $property_reflection);
+        $this->assertTrue($result);
+    }
+
+    /**
+     * When given a property that is not defined as nullable, `propertyAllowsNull` should
+     * return false
+     * @return void
+     */
+    public function testPropertyAllowsNullCorrectlyReturnsWhenPropertyIsNotNullable()
+    {
+        $reflection_class = new ReflectionClass(ModelInstantiatorTestObject::class);
+        $property_reflection = $reflection_class->getProperties();
+        $property = 'fakeHasOneRelation'; // this is defined as not being nullable
+
+        // Search to make sure the property exists in the data object or we'll get a false
+        // positive for this test.
+        $found = array_search($property, array_column($property_reflection, 'name'), true);
+        $this->assertGreaterThan(
+            0,
+            $found,
+            "The {$property} was not found; check that the test is reflects a property that exists.",
+        );
+
+        $result = $this->model_instantiator->propertyAllowsNull($property, $property_reflection);
+        $this->assertFalse($result);
+    }
+
+    public function testGetReflectionPropertyCorrectlyReturnsReflectionPropertyObject()
+    {
+        $reflection_class = new ReflectionClass(ModelInstantiatorTestObject::class);
+        $property_reflection = $reflection_class->getProperties();
+        $property = 'fakeHasOneRelation'; // this property should exist on the test data object
+
+        $result = $this->model_instantiator->getReflectionProperty($property, $property_reflection);
+
+        $this->assertEquals($property, $result->getName());
+        $this->assertEquals(ModelInstantiatorTestObject::class, $result->getDeclaringClass()->getName());
+    }
+
+    public function testGetReflectionPropertyCorrectlyReturnsFalseIfNotFound()
+    {
+        $reflection_class = new ReflectionClass(ModelInstantiatorTestObject::class);
+        $property_reflection = $reflection_class->getProperties();
+        $property = 'zzz__does_not_exist'; // this property should not exist on the test data object
+
+        $this->expectException(OutOfBoundsException::class);
+
+        $this->model_instantiator->getReflectionProperty($property, $property_reflection);
+    }
+
+    /**
      * @return PrivacyProtectedTestDataObject
      */
     private function getPrivacyProtectedTestDataObject(): PrivacyProtectedTestDataObject
     {
         // Create an input Privacy Protected Data Object instance.
         $data_object = new PrivacyProtectedTestDataObject();
+        $data_object->firstName = 'Ken';
+        $data_object->lastName = 'Climo';
+        $data_object->pdgaNumber = 4297;
+        $data_object->email = 'champ@pdga.com';
+        $data_object->privacy = true;
+        $data_object->testProperty = true;
+        $data_object->birthDate = new DateTime('2020-01-01');
+
+        return $data_object;
+    }
+
+    private function getTestDataObject(): ModelInstantiatorTestObject
+    {
+        $data_object = new ModelInstantiatorTestObject();
         $data_object->firstName = 'Ken';
         $data_object->lastName = 'Climo';
         $data_object->pdgaNumber = 4297;

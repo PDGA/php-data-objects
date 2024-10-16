@@ -2,15 +2,16 @@
 
 namespace PDGA\DataObjects\Models;
 
+use OutOfBoundsException;
 use PDGA\DataObjects\Attributes\Column;
 use PDGA\DataObjects\Enforcers\ValidationEnforcer;
 use PDGA\DataObjects\Interfaces\IDatabaseModel;
 use PDGA\DataObjects\Interfaces\IPrivacyProtectedDataObject;
-use PDGA\DataObjects\Models\ReflectionContainer;
 use PDGA\Exception\InvalidRelationshipDataException;
 use PDGA\Exception\ValidationException;
 use \Datetime;
 use ReflectionException;
+use ReflectionProperty;
 
 class ModelInstantiator
 {
@@ -83,6 +84,13 @@ class ModelInstantiator
                 $instance->{$property} = $instances;
             } else {
                 // ManyToOne: Map to a single nested Data Object.
+
+                if ($enforcer->propIsNull($arr, $property) &&
+                    $this->propertyAllowsNull($property, $property_reflection)) {
+                    $instance->{$property} = null;
+                    continue;
+                }
+
                 if (!is_array($arr[$property])) {
                     throw new ValidationException("{$property} must be an associative array.");
                 }
@@ -206,8 +214,7 @@ class ModelInstantiator
                 // Many-to-one relationship (a single nested Data Object).
                 // If the value is null make sure it's allowed to be null.
                 if (is_null($model_relations[$alias])) {
-                    $reflection_index    = array_search($property, array_column($property_reflection, 'name'));
-                    $reflection_property = $property_reflection[$reflection_index];
+                    $reflection_property = $this->getReflectionProperty($property, $property_reflection);
 
                     if ($reflection_property->getType()->allowsNull()) {
                         $data_object->{$property} = null;
@@ -324,5 +331,40 @@ class ModelInstantiator
         }
 
         return $column->getConverter()->onRetrieve($property);
+    }
+
+    /**
+     * Public for testability.
+     * @param string $property ReflectionProperties->getName() always returns
+     *                         a string which is the key of the array that
+     *                         handles this property.
+     * @param array $property_reflection
+     * @return ReflectionProperty
+     * @throws OutOfBoundsException
+     */
+    public function getReflectionProperty(string $property, array $property_reflection): ReflectionProperty
+    {
+        $reflection_index = array_search($property, array_column($property_reflection, 'name'), true);
+
+        if (false === $reflection_index || !isset($property_reflection[$reflection_index])) {
+            throw new OutOfBoundsException("The property {$property} does not exist in property reflection.");
+        }
+
+        return $property_reflection[$reflection_index];
+    }
+
+    /**
+     * Public for testability.
+     * @param string $property ReflectionProperties->getName() always returns
+     * *                         a string which is the key of the array that
+     * *                         handles this property.
+     * @param array $property_reflection
+     * @return bool
+     */
+    public function propertyAllowsNull(string $property, array $property_reflection): bool
+    {
+        $reflection_property = $this->getReflectionProperty($property, $property_reflection);
+
+        return $reflection_property->getType()->allowsNull();
     }
 }
