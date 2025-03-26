@@ -9,7 +9,6 @@ use PDGA\DataObjects\Validators\BoolValidator;
 use PDGA\DataObjects\Validators\DateValidator;
 use PDGA\DataObjects\Validators\FloatValidator;
 use PDGA\DataObjects\Validators\IntValidator;
-use PDGA\DataObjects\Validators\NotBlankValidator;
 use PDGA\DataObjects\Validators\NotNullValidator;
 use PDGA\DataObjects\Validators\SequentialArrayValidator;
 use PDGA\DataObjects\Validators\StringValidator;
