@@ -1,3 +1,6 @@
+### 5.6.0
+* Add back the `NotBlankValidator`.
+
 ### 5.5.0
 * Allow data object relationship values to be null when nullable.
 * Allow empty and whitespace strings for data object property values.
