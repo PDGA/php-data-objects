@@ -2,7 +2,7 @@
 
 namespace PDGA\DataObjects\Converters;
 
-use \DateTime;
+use DateTime;
 
 /**
  * Converts a date string value into a DateTime object and vice versa.

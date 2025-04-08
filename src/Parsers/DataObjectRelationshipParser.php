@@ -80,8 +80,10 @@ class DataObjectRelationshipParser
 
         // The specified alias does not exist as a known relationship alias
         // or an equivalent cardinality has already been used making it a duplicate and invalid
-        if (!key_exists($alias_to_validate_lower, $valid_cardinalities_by_alias_lower)
-            || in_array($valid_cardinalities_by_alias_lower[$alias_to_validate_lower], $applied_cardinalities)) {
+        if (
+            !key_exists($alias_to_validate_lower, $valid_cardinalities_by_alias_lower)
+            || in_array($valid_cardinalities_by_alias_lower[$alias_to_validate_lower], $applied_cardinalities)
+        ) {
             throw new ValidationException();
         }
 

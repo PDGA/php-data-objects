@@ -2,9 +2,8 @@
 
 namespace PDGA\DataObjects\Enforcers;
 
-use \ReflectionClass;
-use \ReflectionAttribute;
-
+use ReflectionClass;
+use ReflectionAttribute;
 use PDGA\DataObjects\Validators\BoolValidator;
 use PDGA\DataObjects\Validators\DateValidator;
 use PDGA\DataObjects\Validators\FloatValidator;

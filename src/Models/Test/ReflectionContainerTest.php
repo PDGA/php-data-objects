@@ -3,9 +3,7 @@
 namespace PDGA\DataObjects\Models\Test;
 
 use ReflectionClass;
-
 use PHPUnit\Framework\TestCase;
-
 use PDGA\DataObjects\Models\ReflectionContainer;
 use PDGA\DataObjects\Models\Test\Address;
 use PDGA\DataObjects\Models\Test\Member;

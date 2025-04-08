@@ -4,7 +4,6 @@ namespace PDGA\DataObjects\Models;
 
 use PDGA\DataObjects\Attributes\Cardinality;
 use PDGA\DataObjects\Attributes\Column;
-
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionException;

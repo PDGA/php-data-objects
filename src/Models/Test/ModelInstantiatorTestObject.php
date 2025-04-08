@@ -2,8 +2,7 @@
 
 namespace PDGA\DataObjects\Models\Test;
 
-use \DateTime;
-
+use DateTime;
 use PDGA\DataObjects\Attributes\Column;
 use PDGA\DataObjects\Attributes\ManyToOne;
 use PDGA\DataObjects\Attributes\OneToMany;

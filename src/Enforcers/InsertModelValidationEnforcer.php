@@ -2,8 +2,7 @@
 
 namespace PDGA\DataObjects\Enforcers;
 
-use \ReflectionAttribute;
-
+use ReflectionAttribute;
 use PDGA\DataObjects\Attributes\Column;
 use PDGA\DataObjects\Enforcers\ModelValidationEnforcer;
 use PDGA\Exception\ValidationListException;
@@ -56,7 +55,8 @@ class InsertModelValidationEnforcer extends ModelValidationEnforcer
 
                 //If the column is not generated, has no default value, can not be null, and is either set as null
                 //on the object or is not present on the object at all throw an error.
-                if (!$generated &&
+                if (
+                    !$generated &&
                     !$default &&
                     !$propCanNull &&
                     (

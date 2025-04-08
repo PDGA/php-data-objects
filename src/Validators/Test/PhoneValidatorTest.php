@@ -45,7 +45,8 @@ class PhoneValidatorTest extends TestCase
      */
     public function testValidPhoneNumbersValidate(): void
     {
-        foreach ([
+        foreach (
+            [
              17184441122,
              7184441122,
              '1-718-444-1122',
@@ -66,7 +67,8 @@ class PhoneValidatorTest extends TestCase
              '+1 800 555-1234',
              '+86 800 555 1234',
              '+86 800 555 1234 567', // Maximum of 15 characters.
-            ] as $valid_phone_number) {
+            ] as $valid_phone_number
+        ) {
             $this->assertTrue($this->validator->validate($valid_phone_number));
         }
     }
@@ -78,13 +80,15 @@ class PhoneValidatorTest extends TestCase
      */
     public function testInvalidPhoneNumbersFail(): void
     {
-        foreach ([
+        foreach (
+            [
              '12 345 6789', // Fewer than 10 numeric characters.
              '123 456 789 10111213', // More than 15 characters.
              '123 45a 67890', // Invalid alpha character.
              '123 456 7890 x234', // Invalid alpha character (extensions are disallowed).
              '123 456 7890 Ext. 234', // Invalid alpha characters (extensions are disallowed).
-             ] as $invalid_phone_number) {
+             ] as $invalid_phone_number
+        ) {
             $this->assertFalse($this->validator->validate($invalid_phone_number));
         }
     }

@@ -2,10 +2,9 @@
 
 namespace PDGA\DataObjects\Validators;
 
-use \DateTime;
-use \Exception;
+use DateTime;
+use Exception;
 use Attribute;
-
 use PDGA\DataObjects\Validators\Validator;
 
 #[Attribute]
@@ -29,11 +28,13 @@ class ISO8601Validator implements Validator
             return false;
         }
 
-        if (!preg_match('/^'.
-            '(\d{4}-\d{2}-\d{2})(?:T'. // YYYY-MM-DDT ex: 2014-01-01T
-            '\d{2}:\d{2}:\d{2}'.  // HH:MM:SS  ex: 17:00:00
-            '(?:Z|(?:[-|\+]\d{2}:\d{2})))?'.  // Z or +01:00 or -01:00
-            '$/', $val, $matches)) {
+        if (
+            !preg_match('/^' .
+            '(\d{4}-\d{2}-\d{2})(?:T' . // YYYY-MM-DDT ex: 2014-01-01T
+            '\d{2}:\d{2}:\d{2}' .  // HH:MM:SS  ex: 17:00:00
+            '(?:Z|(?:[-|\+]\d{2}:\d{2})))?' .  // Z or +01:00 or -01:00
+            '$/', $val, $matches)
+        ) {
             return false;
         }
 
