@@ -1,7 +1,19 @@
 #!/bin/bash
 
-docker compose run --rm -u $(id -u):$(id -g) php ./vendor/bin/phpunit ./src \
-    --colors always \
+if [[ $1 == "-debug" ]]
+then
+    DEBUG_VAR=XDEBUG_SESSION
+else
+    DEBUG_VAR=XDEBUG_NONE
+fi
+
+echo $DEBUG
+
+docker compose run \
+    -v ./:/var/pdga \
+    -e "$DEBUG_VAR"=1 \
+    --rm -u $(id -u):$(id -g) php ./vendor/bin/phpunit ./src \
+    --colors \
     --display-errors \
     --display-warnings \
     --display-deprecations \
