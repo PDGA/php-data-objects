@@ -7,7 +7,6 @@ namespace PDGA\DataObjects\Validators;
  */
 interface Validator
 {
-
     /**
      * This returns true if $val is valid; else false.
      *

@@ -2,17 +2,14 @@
 
 namespace PDGA\DataObjects\Models\Test;
 
-use \DateTime;
-
+use DateTime;
 use OutOfBoundsException;
 use PDGA\DataObjects\Models\Test\ModelInstantiatorTestObject;
 use PDGA\DataObjects\Models\Test\PrivacyProtectedTestDataObject;
 use PHPUnit\Framework\TestCase;
-
 use PDGA\Exception\InvalidRelationshipDataException;
 use PDGA\Exception\ValidationException;
 use PDGA\Exception\ValidationListException;
-
 use PDGA\DataObjects\Models\ModelInstantiator;
 use PDGA\DataObjects\Models\ReflectionContainer;
 use PDGA\DataObjects\Models\Test\Member;

@@ -9,7 +9,7 @@ use PDGA\DataObjects\Interfaces\IDatabaseModel;
 use PDGA\DataObjects\Interfaces\IPrivacyProtectedDataObject;
 use PDGA\Exception\InvalidRelationshipDataException;
 use PDGA\Exception\ValidationException;
-use \Datetime;
+use Datetime;
 use ReflectionException;
 use ReflectionProperty;
 
@@ -85,8 +85,10 @@ class ModelInstantiator
             } else {
                 // ManyToOne: Map to a single nested Data Object.
 
-                if ($enforcer->propIsNull($arr, $property) &&
-                    $this->propertyAllowsNull($property, $property_reflection)) {
+                if (
+                    $enforcer->propIsNull($arr, $property) &&
+                    $this->propertyAllowsNull($property, $property_reflection)
+                ) {
                     $instance->{$property} = null;
                     continue;
                 }

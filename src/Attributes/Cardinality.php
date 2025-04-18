@@ -41,7 +41,7 @@ abstract class Cardinality
     */
     public function getRelationInstance(): object
     {
-        return new $this->relation;
+        return new $this->relation();
     }
 
     /**

@@ -2,8 +2,7 @@
 
 namespace PDGA\DataObjects\Models\Test;
 
-use \DateTime;
-
+use DateTime;
 use PDGA\DataObjects\Attributes\Column;
 use PDGA\DataObjects\Attributes\ManyToOne;
 use PDGA\DataObjects\Attributes\OneToMany;
@@ -18,7 +17,7 @@ use PDGA\DataObjects\Interfaces\IPrivacyProtectedDataObject;
 #[Table]
 class PrivacyProtectedTestDataObject implements IPrivacyProtectedDataObject
 {
-    const PRIVACY_PROTECTED_PROPERTIES = [
+    public const PRIVACY_PROTECTED_PROPERTIES = [
         'email',
         'birthDate',
         'privacy',

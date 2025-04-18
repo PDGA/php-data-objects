@@ -14,6 +14,15 @@ Data object related code for the PDGA's back-end PHP API systems.
 ./bin/phpunit
 ```
 
+### Run Unit Tests with debugging
+
+```
+./bin/phpunit -debug
+```
+
+Note: If you pass the `-debug` flag but your debugger is not listening, you will
+receive a warning `Could not connect to debugging client.`
+
 ### Code Formatting Standards
 #### Run PHP_CodeSniffer to see the existing styling issues.
 ```
@@ -24,7 +33,7 @@ composer sniff
 ```
 composer format
 ```
-or 
+or
 ```
 composer format-verbose
 ```

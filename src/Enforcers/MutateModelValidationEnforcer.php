@@ -2,8 +2,7 @@
 
 namespace PDGA\DataObjects\Enforcers;
 
-use \ReflectionAttribute;
-
+use ReflectionAttribute;
 use PDGA\DataObjects\Attributes\Column;
 use PDGA\DataObjects\Enforcers\ModelValidationEnforcer;
 use PDGA\Exception\ValidationListException;
@@ -33,7 +32,8 @@ class MutateModelValidationEnforcer extends ModelValidationEnforcer
                 $isPrimary = $column->getIsPrimary();
 
                 //If the column is a primary key it must be present and not null.
-                if ($isPrimary &&
+                if (
+                    $isPrimary &&
                     (
                         $this->propIsUndefined($arr, $propName) ||
                         $this->propIsNull($arr, $propName)

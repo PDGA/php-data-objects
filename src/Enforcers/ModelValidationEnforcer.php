@@ -2,8 +2,7 @@
 
 namespace PDGA\DataObjects\Enforcers;
 
-use \ReflectionAttribute;
-
+use ReflectionAttribute;
 use PDGA\DataObjects\Attributes\Column;
 use PDGA\DataObjects\Enforcers\ValidationEnforcer;
 use PDGA\DataObjects\Validators\MaxLengthValidator;
