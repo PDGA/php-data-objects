@@ -7,8 +7,6 @@ else
     DEBUG_VAR=XDEBUG_NONE
 fi
 
-echo $DEBUG
-
 docker compose run \
     -v ./:/var/pdga \
     -e "$DEBUG_VAR"=1 \
