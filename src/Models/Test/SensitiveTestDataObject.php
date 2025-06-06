@@ -9,15 +9,15 @@ use PDGA\DataObjects\Attributes\OneToMany;
 use PDGA\DataObjects\Attributes\Table;
 use PDGA\DataObjects\Converters\YesNoConverter;
 use PDGA\DataObjects\Converters\DateTimeConverter;
-use PDGA\DataObjects\Interfaces\IPrivacyProtectedDataObject;
+use PDGA\DataObjects\Interfaces\ISensitiveDataObject;
 
 /**
  * Placeholder class.
  */
 #[Table]
-class PrivacyProtectedTestDataObject implements IPrivacyProtectedDataObject
+class SensitiveTestDataObject implements ISensitiveDataObject
 {
-    public const PRIVACY_PROTECTED_PROPERTIES = [
+    public const SENSITIVE_PROPERTIES = [
         'email',
         'birthDate',
         'privacy',
@@ -70,30 +70,30 @@ class PrivacyProtectedTestDataObject implements IPrivacyProtectedDataObject
 
     // Used to test ManyToOne relations.
     #[ManyToOne(
-        PrivacyProtectedTestDataObject::class,
+        SensitiveTestDataObject::class,
         'FakeHasOneRelation',
     )]
-    public PrivacyProtectedTestDataObject $fakeHasOneRelation;
+    public SensitiveTestDataObject $fakeHasOneRelation;
 
     // Used to test nullable ManyToOne relations.
     #[ManyToOne(
-        PrivacyProtectedTestDataObject::class,
+        SensitiveTestDataObject::class,
         'NullableFakeHasOneRelation',
     )]
-    public ?PrivacyProtectedTestDataObject $nullableFakeHasOneRelation;
+    public ?SensitiveTestDataObject $nullableFakeHasOneRelation;
 
     // Used to test OneToMany relations.
     #[OneToMany(
-        PrivacyProtectedTestDataObject::class,
+        SensitiveTestDataObject::class,
         'FakeHasManyRelation',
     )]
     public array $fakeHasManyRelation;
 
-    public function cleansePrivacyProtectedFields(): void
+    public function cleanseSensitiveFields(): void
     {
-        // Unsets the values for the privacy protected properties
+        // Unsets the values for the sensitive properties
         if (isset($this->privacy) && $this->privacy) {
-            foreach (self::PRIVACY_PROTECTED_PROPERTIES as $property) {
+            foreach (self::SENSITIVE_PROPERTIES as $property) {
                 unset($this->$property);
             }
         }
