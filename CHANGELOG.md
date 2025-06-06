@@ -1,4 +1,4 @@
-### 5.7.0
+### 6.0.0
 * Codesniffer Fixes.
 * Added Xdebug.
 * Changed IPrivacyProtectedDataObject name to ISensitiveDataObject to better communicate intent.
