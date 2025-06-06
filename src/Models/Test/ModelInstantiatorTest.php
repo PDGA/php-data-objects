@@ -5,7 +5,7 @@ namespace PDGA\DataObjects\Models\Test;
 use DateTime;
 use OutOfBoundsException;
 use PDGA\DataObjects\Models\Test\ModelInstantiatorTestObject;
-use PDGA\DataObjects\Models\Test\PrivacyProtectedTestDataObject;
+use PDGA\DataObjects\Models\Test\SensitiveTestDataObject;
 use PHPUnit\Framework\TestCase;
 use PDGA\Exception\InvalidRelationshipDataException;
 use PDGA\Exception\ValidationException;
@@ -374,16 +374,16 @@ class ModelInstantiatorTest extends TestCase
         );
     }
 
-    public function testDataObjectToArrayWithPrivacyProtectedDataObject(): void
+    public function testDataObjectToArrayWithSensitiveDataObject(): void
     {
-        // Create an input Privacy Protected Data Object instance.
-        $data_object = $this->getPrivacyProtectedTestDataObject();
+        // Create an input Sensitive Data Object instance.
+        $data_object = $this->getSensitiveTestDataObject();
 
-        // Assert that the privacy protected properties are set prior to array conversion.
-        $this->assertPrivacyProtectedPropertiesAreSet($data_object);
+        // Assert that the sensitive properties are set prior to array conversion.
+        $this->assertSensitivePropertiesAreSet($data_object);
 
         // The output array should reflect the Data Object properties.
-        // The values for the privacy protected fields should be removed.
+        // The values for the sensitive fields should be removed.
         $result = $this->model_instantiator->dataObjectToArray($data_object);
 
         $this->assertSame(
@@ -396,12 +396,12 @@ class ModelInstantiatorTest extends TestCase
             $result
         );
 
-        foreach (PrivacyProtectedTestDataObject::PRIVACY_PROTECTED_PROPERTIES as $property) {
+        foreach (SensitiveTestDataObject::SENSITIVE_PROPERTIES as $property) {
             $this->assertFalse(isset($result[$property]));
         }
     }
 
-    public function testDataObjectToArrayWithPrivacyProtectedDataObjectButAlsoOverridden(): void
+    public function testDataObjectToArrayWithSensitiveDataObjectButAlsoOverridden(): void
     {
         // Create an input Data Object instance.
         $data_object               = new ModelInstantiatorTestObject();
@@ -432,27 +432,27 @@ class ModelInstantiatorTest extends TestCase
         );
     }
 
-    public function testNestedDataObjectToArrayWithPrivacyProtectedDataObject(): void
+    public function testNestedDataObjectToArrayWithSensitiveDataObject(): void
     {
-        // Create a related Privacy Protected Data Object instance.
-        $fake_has_one_data_object = $this->getPrivacyProtectedTestDataObject();
-        $nullable_fake_has_one_data_object = $this->getPrivacyProtectedTestDataObject();
-        $fake_has_many_data_object = [$this->getPrivacyProtectedTestDataObject()];
+        // Create a related Sensitive Data Object instance.
+        $fake_has_one_data_object = $this->getSensitiveTestDataObject();
+        $nullable_fake_has_one_data_object = $this->getSensitiveTestDataObject();
+        $fake_has_many_data_object = [$this->getSensitiveTestDataObject()];
 
         // Create the primary data object and set relationship values.
-        $data_object = $this->getPrivacyProtectedTestDataObject();
+        $data_object = $this->getSensitiveTestDataObject();
         $data_object->fakeHasOneRelation = $fake_has_one_data_object;
         $data_object->nullableFakeHasOneRelation = $nullable_fake_has_one_data_object;
         $data_object->fakeHasManyRelation = $fake_has_many_data_object;
 
-        // Assert that the privacy protected properties are set prior to array conversion.
-        $this->assertPrivacyProtectedPropertiesAreSet($data_object);
-        $this->assertPrivacyProtectedPropertiesAreSet($fake_has_one_data_object);
-        $this->assertPrivacyProtectedPropertiesAreSet($nullable_fake_has_one_data_object);
-        $this->assertPrivacyProtectedPropertiesAreSet($fake_has_many_data_object[0]);
+        // Assert that the sensitive properties are set prior to array conversion.
+        $this->assertSensitivePropertiesAreSet($data_object);
+        $this->assertSensitivePropertiesAreSet($fake_has_one_data_object);
+        $this->assertSensitivePropertiesAreSet($nullable_fake_has_one_data_object);
+        $this->assertSensitivePropertiesAreSet($fake_has_many_data_object[0]);
 
         // The output array should reflect the Data Object properties.
-        // The values for the privacy protected fields should be removed.
+        // The values for the sensitive fields should be removed.
         $result = $this->model_instantiator->dataObjectToArray($data_object);
 
         $this->assertSame(
@@ -740,12 +740,12 @@ class ModelInstantiatorTest extends TestCase
     }
 
     /**
-     * @return PrivacyProtectedTestDataObject
+     * @return SensitiveTestDataObject
      */
-    private function getPrivacyProtectedTestDataObject(): PrivacyProtectedTestDataObject
+    private function getSensitiveTestDataObject(): SensitiveTestDataObject
     {
-        // Create an input Privacy Protected Data Object instance.
-        $data_object = new PrivacyProtectedTestDataObject();
+        // Create an input Sensitive Data Object instance.
+        $data_object = new SensitiveTestDataObject();
         $data_object->firstName = 'Ken';
         $data_object->lastName = 'Climo';
         $data_object->pdgaNumber = 4297;
@@ -771,9 +771,9 @@ class ModelInstantiatorTest extends TestCase
         return $data_object;
     }
 
-    private function assertPrivacyProtectedPropertiesAreSet(PrivacyProtectedTestDataObject $data_object): void
+    private function assertSensitivePropertiesAreSet(SensitiveTestDataObject $data_object): void
     {
-        foreach (PrivacyProtectedTestDataObject::PRIVACY_PROTECTED_PROPERTIES as $property) {
+        foreach (SensitiveTestDataObject::SENSITIVE_PROPERTIES as $property) {
             $this->assertTrue(isset($data_object->$property));
         }
     }

@@ -6,7 +6,7 @@ use OutOfBoundsException;
 use PDGA\DataObjects\Attributes\Column;
 use PDGA\DataObjects\Enforcers\ValidationEnforcer;
 use PDGA\DataObjects\Interfaces\IDatabaseModel;
-use PDGA\DataObjects\Interfaces\IPrivacyProtectedDataObject;
+use PDGA\DataObjects\Interfaces\ISensitiveDataObject;
 use PDGA\Exception\InvalidRelationshipDataException;
 use PDGA\Exception\ValidationException;
 use Datetime;
@@ -239,8 +239,8 @@ class ModelInstantiator
 
     /**
      * Converts a Data Object instance to an array.
-     * If a data object is an instance of IPrivacyProtectedDataObject,
-     * the method to cleanse the privacy related fields will be called on that object.
+     * If a data object is an instance of ISensitiveDataObject,
+     * the method to cleanse the sensitive fields will be called on that object.
      *
      * @param object $data_object An instance of a hydrated Data Object.
      * @param bool $cleanse_privacy Defaults to allowing if data object
@@ -263,9 +263,9 @@ class ModelInstantiator
                 return $data_obj->format(DateTime::ATOM);
             }
 
-            // This will cleanse any private data from the data object if necessary.
-            if ($data_obj instanceof IPrivacyProtectedDataObject && $cleanse_privacy === true) {
-                $data_obj->cleansePrivacyProtectedFields();
+            // This will cleanse any sensitive data from the data object if necessary.
+            if ($data_obj instanceof ISensitiveDataObject && $cleanse_privacy === true) {
+                $data_obj->cleanseSensitiveFields();
             }
 
             // $data_obj is an array or object.  Cast to array, then cast each
