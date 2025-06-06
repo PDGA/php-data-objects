@@ -415,8 +415,8 @@ class ModelInstantiatorTest extends TestCase
 
         // The output array should reflect the Data Object properties.
         // Note that the order of the array keys matters and must match the class definition.
-        $cleanse_privacy = false;
-        $result = $this->model_instantiator->dataObjectToArray($data_object, $cleanse_privacy);
+        $cleanse_sensitive_data = false;
+        $result = $this->model_instantiator->dataObjectToArray($data_object, $cleanse_sensitive_data);
 
         $this->assertSame(
             [
