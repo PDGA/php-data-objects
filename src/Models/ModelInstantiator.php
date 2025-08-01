@@ -272,8 +272,11 @@ class ModelInstantiator
             // $data_obj is an array or object.  Cast to array, then cast each
             // element recursively.
             $arr = (array) $data_obj;
-
-            foreach ($arr as &$ele) {
+           
+            foreach ($arr as $key=>&$ele) {
+                if($ele instanceof ModelInstantiator) {
+                    unset($arr[$key]);
+                }
                 $ele = $to_array($ele);
             }
 
