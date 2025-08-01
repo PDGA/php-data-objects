@@ -11,7 +11,6 @@ use API\LiveScore\Test\LiveScoreTestDataHelper;
 use API\SeriesLeaderboardPlayer\SeriesLeaderboardPlayerDataObject;
 use API\SeriesLeaderboardPlayer\SeriesLeaderboardPlayerModel;
 use API\SeriesLeaderboardPlayer\Test\SeriesLeaderboardPlayerTestDataHelper;
-use Core\Helpers\DTOMapper;
 use DateTime;
 use OutOfBoundsException;
 use PDGA\DataObjects\Models\Test\ModelInstantiatorTestObject;
@@ -888,35 +887,6 @@ class ModelInstantiatorTest extends TestCase
             LiveScoreDTO::class
         );
     }
-
-    //todo null test
-//    public function testDestinationCannotBeNull()
-//    {
-//        $source = SeriesLeaderboardPlayerTestDataHelper::getSeriesLeaderboardPlayer();
-//        $source->seriesLeaderboard = null;
-//
-//        // Mock ValidationEnforcer to always return true for propIsDefined
-//        Mockery::mock('alias:ValidationEnforcer')
-//            ->shouldReceive('propIsDefined')
-//            ->with($source, 'liveScores')
-//            ->andReturn(false);
-//
-//
-//        // Mock ModelInstantiator::propertyAllowsNull (not called in this path)
-//        Mockery::mock('alias:ModelInstantiator')
-//            ->shouldReceive('propertyAllowsNull')
-//            ->never();
-//
-//        $this->expectException(ValidationException::class);
-//
-//        $result = $this->model_instantiator->determineValueForRelationshipProperty(
-//            $source,
-//            'liveScores',
-//            'liveScores',
-//            SeriesLeaderboardPlayerDataObject::class,
-//            SeriesLeaderboardPlayerDataObject::class
-//        );
-//    }
 
     public function testHandleIssetAndNullPropertyExistsAndDefinedAndReturnsMappedArray()
     {
