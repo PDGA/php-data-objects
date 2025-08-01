@@ -364,7 +364,7 @@ class ModelInstantiator
      * @param array $property_reflection
      * @return bool
      */
-    public  function propertyAllowsNull(string $property, array $property_reflection): bool
+    public function propertyAllowsNull(string $property, array $property_reflection): bool
     {
         $reflection_property = $this->getReflectionProperty($property, $property_reflection);
 

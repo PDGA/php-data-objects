@@ -746,7 +746,7 @@ class ModelInstantiatorTest extends TestCase
         $this->model_instantiator->getReflectionProperty($property, $property_reflection);
     }
 
-    public function testHandleIssetAndNullPropertyExistsAndUndefined()
+    public function testDetermineValueForRelationshipPropertyPropertyExistsAndUndefined()
     {
         $source = LiveResultTestDataHelper::getLiveResultWithDefaultBaseProperties();
 
@@ -775,7 +775,7 @@ class ModelInstantiatorTest extends TestCase
         $this->assertNull($result->result);
     }
 
-    public function testSourcePropertyDoesNotExist()
+    public function testDetermineValueForRelationshipPropertySourcePropertyDoesNotExist()
     {
         $source = LiveResultTestDataHelper::getLiveResultWithDefaultBaseProperties();
 
@@ -819,7 +819,7 @@ class ModelInstantiatorTest extends TestCase
     
     }
 
-    public function testDestinationPropertyDoesNotAllowNull()
+    public function testDetermineValueForRelationshipPropertyDestinationPropertyDoesNotAllowNull()
     {
         $source = new ModelInstantiatorTestDataObject();
         $source->propertyForcesException = null;
@@ -858,7 +858,7 @@ class ModelInstantiatorTest extends TestCase
 
     }
 
-    public function testDestinationPropertyDoesNotExist()
+    public function testDetermineValueForRelationshipPropertyDestinationPropertyDoesNotExist()
     {
         $source = LiveResultTestDataHelper::getLiveResultWithDefaultBaseProperties();
 
@@ -885,7 +885,7 @@ class ModelInstantiatorTest extends TestCase
         );
     }
 
-    public function testHandleIssetAndNullPropertyExistsAndDefinedAndReturnsMappedArray()
+    public function testDetermineValueForRelationshipPropertyPropertyExistsAndDefinedAndReturnsMappedArray()
     {
         $source = LiveResultTestDataHelper::getLiveResultWithDefaultBaseProperties();
         $score = LiveScoreTestDataHelper::getLiveScore();
@@ -914,7 +914,7 @@ class ModelInstantiatorTest extends TestCase
         $this->assertInstanceOf(LiveScoreDTO::class, $result->result[0]);
     }
 
-    public function testHandleIssetAndNullPropertyExistsAndDefinedAndReturnsEmptyArray()
+    public function testDetermineValueForRelationshipPropertyPropertyExistsAndDefinedAndReturnsEmptyArray()
     {
         $source = LiveResultTestDataHelper::getLiveResultWithDefaultBaseProperties();
         $source->liveScores = [];
@@ -942,7 +942,7 @@ class ModelInstantiatorTest extends TestCase
         $this->assertEmpty($result->result);
     }
 
-    public function testHandleIssetAndNullPropertyExistsAndDefinedAndReturnsMappedObject()
+    public function testDetermineValueForRelationshipPropertyPropertyExistsAndDefinedAndReturnsMappedObject()
     {
         $source = LiveScoreTestDataHelper::getLiveScore();
         $round = LiveRoundTestDataHelper::getLiveRoundWithDefaultBaseProperties();
