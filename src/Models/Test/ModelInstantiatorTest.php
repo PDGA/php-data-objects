@@ -2,6 +2,16 @@
 
 namespace PDGA\DataObjects\Models\Test;
 
+use API\Feat\LiveResult\DTOs\LiveResultMemberDTO;
+use API\Feat\LiveRound\DTOs\LiveRoundDTO;
+use API\Feat\LiveScore\DTOs\LiveScoreDTO;
+use API\LiveResult\Test\LiveResultTestDataHelper;
+use API\LiveRound\Test\LiveRoundTestDataHelper;
+use API\LiveScore\Test\LiveScoreTestDataHelper;
+use API\SeriesLeaderboardPlayer\SeriesLeaderboardPlayerDataObject;
+use API\SeriesLeaderboardPlayer\SeriesLeaderboardPlayerModel;
+use API\SeriesLeaderboardPlayer\Test\SeriesLeaderboardPlayerTestDataHelper;
+use Core\Helpers\DTOMapper;
 use DateTime;
 use OutOfBoundsException;
 use PDGA\DataObjects\Models\Test\ModelInstantiatorTestObject;
@@ -17,6 +27,7 @@ use PDGA\DataObjects\Models\Test\ModelInstantiatorTestDBModel;
 use PDGA\DataObjects\Models\Test\PhoneNumber;
 use ReflectionClass;
 use ReflectionProperty;
+use Mockery;
 
 class ModelInstantiatorTest extends TestCase
 {
@@ -737,6 +748,259 @@ class ModelInstantiatorTest extends TestCase
         $this->expectException(OutOfBoundsException::class);
 
         $this->model_instantiator->getReflectionProperty($property, $property_reflection);
+    }
+
+    public function testHandleIssetAndNullPropertyExistsAndUndefined()
+    {
+        $source = LiveResultTestDataHelper::getLiveResultWithDefaultBaseProperties();
+
+        // Mock ValidationEnforcer to always return true for propIsDefined
+        Mockery::mock('alias:ValidationEnforcer')
+            ->shouldReceive('propIsDefined')
+            ->with($source, 'liveScores')
+            ->andReturn(false);
+
+
+        // Mock ModelInstantiator::propertyAllowsNull (not called in this path)
+        Mockery::mock('alias:ModelInstantiator')
+            ->shouldReceive('propertyAllowsNull')
+            ->never();
+
+
+        $result = $this->model_instantiator->determineValueForRelationshipProperty(
+            $source,
+            'liveScores',
+            'liveScores',
+            LiveResultMemberDTO::class,
+            LiveScoreDTO::class
+        );
+
+        $this->assertTrue($result->undefined);
+        $this->assertNull($result->result);
+    }
+
+    public function testSourcePropertyDoesNotExist()
+    {
+        $source = LiveResultTestDataHelper::getLiveResultWithDefaultBaseProperties();
+
+        // Mock ValidationEnforcer to always return true for propIsDefined
+        Mockery::mock('alias:ValidationEnforcer')
+            ->shouldReceive('propIsDefined')
+            ->with($source, 'liveScores')
+            ->andReturn(false);
+
+
+        // Mock ModelInstantiator::propertyAllowsNull (not called in this path)
+        Mockery::mock('alias:ModelInstantiator')
+            ->shouldReceive('propertyAllowsNull')
+            ->never();
+
+        $sourceProperty = "iDoNotExistSorry";
+        $destinationProperty = "liveScores";
+        
+
+        try {
+            $result = $this->model_instantiator->determineValueForRelationshipProperty(
+                $source,
+                $sourceProperty,
+                $destinationProperty,
+                LiveResultMemberDTO::class,
+                LiveScoreDTO::class
+            );
+            $this->fail('Expected ValidationException not thrown.');
+        }
+        catch (ValidationException $e) {
+            $this->assertStringContainsStringIgnoringCase(
+                $sourceProperty,
+                $e->getMessage(),
+                "Exception message should contain the property name.");
+
+            $this->assertStringContainsStringIgnoringCase(
+                $destinationProperty,
+                $e->getMessage(),
+                "Exception message should contain the property name.");
+        }
+    
+    }
+
+    public function testDestinationPropertyDoesNotAllowNull()
+    {
+        $source = new ModelInstantiatorTestDataObject();
+        $source->propertyForcesException = null;
+
+        // Mock ValidationEnforcer to always return true for propIsDefined
+        Mockery::mock('alias:ValidationEnforcer')
+            ->shouldReceive('propIsDefined')
+            ->with($source, 'liveScores')
+            ->andReturn(false);
+
+
+        $sourceProperty = "propertyForcesException";
+        $destinationProperty = "propertyForcesException";
+        try {
+            $result = $this->model_instantiator->determineValueForRelationshipProperty(
+                $source,
+                $sourceProperty,
+                $destinationProperty,
+                LiveResultMemberDTO::class,
+                LiveScoreDTO::class
+            );
+            $this->fail('Expected ValidationException not thrown.');
+        }
+
+        catch (ValidationException $e) {
+            $this->assertStringContainsStringIgnoringCase(
+                $sourceProperty,
+                $e->getMessage(),
+                "Exception message should contain the property name.");
+
+            $this->assertStringContainsStringIgnoringCase(
+                "source object passed in",
+                $e->getMessage(),
+                "Exception message should be the right message.");
+        }
+
+    }
+
+    public function testDestinationPropertyDoesNotExist()
+    {
+        $source = LiveResultTestDataHelper::getLiveResultWithDefaultBaseProperties();
+
+        // Mock ValidationEnforcer to always return true for propIsDefined
+        Mockery::mock('alias:ValidationEnforcer')
+            ->shouldReceive('propIsDefined')
+            ->with($source, 'liveScores')
+            ->andReturn(false);
+
+
+        // Mock ModelInstantiator::propertyAllowsNull (not called in this path)
+        Mockery::mock('alias:ModelInstantiator')
+            ->shouldReceive('propertyAllowsNull')
+            ->never();
+
+        $this->expectException(ValidationException::class);
+
+        $result = $this->model_instantiator->determineValueForRelationshipProperty(
+            $source,
+            'liveScores',
+            'iDoNotExistSorry',
+            LiveResultMemberDTO::class,
+            LiveScoreDTO::class
+        );
+    }
+
+    //todo null test
+//    public function testDestinationCannotBeNull()
+//    {
+//        $source = SeriesLeaderboardPlayerTestDataHelper::getSeriesLeaderboardPlayer();
+//        $source->seriesLeaderboard = null;
+//
+//        // Mock ValidationEnforcer to always return true for propIsDefined
+//        Mockery::mock('alias:ValidationEnforcer')
+//            ->shouldReceive('propIsDefined')
+//            ->with($source, 'liveScores')
+//            ->andReturn(false);
+//
+//
+//        // Mock ModelInstantiator::propertyAllowsNull (not called in this path)
+//        Mockery::mock('alias:ModelInstantiator')
+//            ->shouldReceive('propertyAllowsNull')
+//            ->never();
+//
+//        $this->expectException(ValidationException::class);
+//
+//        $result = $this->model_instantiator->determineValueForRelationshipProperty(
+//            $source,
+//            'liveScores',
+//            'liveScores',
+//            SeriesLeaderboardPlayerDataObject::class,
+//            SeriesLeaderboardPlayerDataObject::class
+//        );
+//    }
+
+    public function testHandleIssetAndNullPropertyExistsAndDefinedAndReturnsMappedArray()
+    {
+        $source = LiveResultTestDataHelper::getLiveResultWithDefaultBaseProperties();
+        $score = LiveScoreTestDataHelper::getLiveScore();
+        $source->liveScores = [$score];
+
+        Mockery::mock('alias:ValidationEnforcer')
+            ->shouldReceive('propIsDefined')
+            ->with($source, 'liveScores')
+            ->andReturn(true);
+
+        // Mock ModelInstantiator::propertyAllowsNull (not called in this path)
+        Mockery::mock('alias:ModelInstantiator')
+            ->shouldReceive('propertyAllowsNull')
+            ->never();
+
+        $result = $this->model_instantiator->determineValueForRelationshipProperty(
+            $source,
+            'liveScores',
+            'liveScores',
+            LiveResultMemberDTO::class,
+            LiveScoreDTO::class
+        );
+
+        $this->assertFalse($result->undefined);
+        $this->assertIsArray($result->result);
+        $this->assertInstanceOf(LiveScoreDTO::class, $result->result[0]);
+    }
+
+    public function testHandleIssetAndNullPropertyExistsAndDefinedAndReturnsEmptyArray()
+    {
+        $source = LiveResultTestDataHelper::getLiveResultWithDefaultBaseProperties();
+        $source->liveScores = [];
+
+        Mockery::mock('alias:ValidationEnforcer')
+            ->shouldReceive('propIsDefined')
+            ->with($source, 'liveScores')
+            ->andReturn(true);
+
+        // Mock ModelInstantiator::propertyAllowsNull (not called in this path)
+        Mockery::mock('alias:ModelInstantiator')
+            ->shouldReceive('propertyAllowsNull')
+            ->never();
+
+        $result = $this->model_instantiator->determineValueForRelationshipProperty(
+            $source,
+            'liveScores',
+            'liveScores',
+            LiveResultMemberDTO::class,
+            LiveScoreDTO::class
+        );
+
+        $this->assertFalse($result->undefined);
+        $this->assertIsArray($result->result);
+        $this->assertEmpty($result->result);
+    }
+
+    public function testHandleIssetAndNullPropertyExistsAndDefinedAndReturnsMappedObject()
+    {
+        $source = LiveScoreTestDataHelper::getLiveScore();
+        $round = LiveRoundTestDataHelper::getLiveRoundWithDefaultBaseProperties();
+        $source->liveRound = $round;
+
+        Mockery::mock('alias:ValidationEnforcer')
+            ->shouldReceive('propIsDefined')
+            ->with($source, 'liveRound')
+            ->andReturn(true);
+
+        // Mock ModelInstantiator::propertyAllowsNull (not called in this path)
+        Mockery::mock('alias:ModelInstantiator')
+            ->shouldReceive('propertyAllowsNull')
+            ->never();
+
+        $result = $this->model_instantiator->determineValueForRelationshipProperty(
+            $source,
+            'liveRound',
+            'liveRound',
+            LiveScoreDTO::class,
+            LiveRoundDTO::class
+        );
+
+        $this->assertFalse($result->undefined);
+        $this->assertInstanceOf(LiveRoundDTO::class, $result->result);
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace PDGA\DataObjects\Models;
 
+use PDGA\DataObjects\Models\PropertyValueResult;
 use OutOfBoundsException;
 use PDGA\DataObjects\Attributes\Column;
 use PDGA\DataObjects\Enforcers\ValidationEnforcer;
@@ -363,10 +364,54 @@ class ModelInstantiator
      * @param array $property_reflection
      * @return bool
      */
-    public function propertyAllowsNull(string $property, array $property_reflection): bool
+    public  function propertyAllowsNull(string $property, array $property_reflection): bool
     {
         $reflection_property = $this->getReflectionProperty($property, $property_reflection);
 
         return $reflection_property->getType()->allowsNull();
+    }
+
+    public function determineValueForRelationshipProperty(
+        object $source,
+        string $sourceProperty,
+        string $destinationProperty,
+        string $destinationClass,
+        string $dtoClass
+    ): PropertyValueResult {
+        if (!(property_exists($source, $sourceProperty) && property_exists($destinationClass, $destinationProperty))) {
+            throw new ValidationException(
+                "Either property '$destinationProperty' on class '$destinationClass' doesn't exist or property 
+            '$sourceProperty' doesn't exist on source object passed in."
+            );
+        }
+        if (ValidationEnforcer::propIsDefined($source, $sourceProperty)) {
+            $value = $source->$sourceProperty;
+
+            if (is_null($value)) {
+
+                $property_reflection = $this->reflection_container->dataObjectProperties($destinationClass);
+                $canDTOPropertyBeNull = $this->propertyAllowsNull(
+                    $destinationProperty,
+                    $property_reflection
+                );
+                if ($canDTOPropertyBeNull) {
+                    return new PropertyValueResult(false);
+                }
+
+                throw new ValidationException(
+                    "Property '$destinationProperty' on class '$destinationClass' cannot be null."
+                );
+            }
+            if (is_array($value)) {
+                if (count($value) === 0) {
+                    return new PropertyValueResult(false,  []);
+                }
+                return new PropertyValueResult(false, array_map(fn($item)
+                => new $dtoClass($item), $value));
+            }
+
+            return new PropertyValueResult(false, new $dtoClass($value));
+        }
+        return new PropertyValueResult(true);
     }
 }

@@ -128,7 +128,7 @@ class ValidationEnforcer
      * @param string $property - The property being looked for.
      * @return bool Returns true if the property is defined on the object.
      */
-    public function propIsDefined(mixed $object, string $property): bool
+    public static function propIsDefined(mixed $object, string $property): bool
     {
         $arr = is_array($object) ? $object : (array) $object;
 
@@ -143,11 +143,11 @@ class ValidationEnforcer
      * @param string $property - The property being looked at.
      * @return bool Returns true if the property is defined as null on the object.
      */
-    public function propIsNull(mixed $object, string $property): bool
+    public static function propIsNull(mixed $object, string $property): bool
     {
         $arr = is_array($object) ? $object : (array) $object;
 
-        return $this->propIsDefined($arr, $property) && is_null($arr[$property]);
+        return self::propIsDefined($arr, $property) && is_null($arr[$property]);
     }
 
     /**
@@ -158,9 +158,9 @@ class ValidationEnforcer
      * @param string $property - The property being looked for.
      * @return bool Returns true if the property is not defined on the object.
      */
-    public function propIsUndefined(mixed $object, string $property): bool
+    public static function propIsUndefined(mixed $object, string $property): bool
     {
-        return !$this->propIsDefined($object, $property);
+        return !self::propIsDefined($object, $property);
     }
 
     /**
@@ -171,10 +171,10 @@ class ValidationEnforcer
      * @param string $property - The property being looked for.
      * @return bool Returns true if the property is not defined as null on the object.
      */
-    public function propIsNotNull(mixed $object, string $property): bool
+    public static function propIsNotNull(mixed $object, string $property): bool
     {
         $arr = is_array($object) ? $object : (array) $object;
 
-        return $this->propIsDefined($arr, $property) && !is_null($arr[$property]);
+        return self::propIsDefined($arr, $property) && !is_null($arr[$property]);
     }
 }
