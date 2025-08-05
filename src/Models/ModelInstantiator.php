@@ -406,9 +406,6 @@ class ModelInstantiator
                 );
             }
             if (is_array($value)) {
-                if (count($value) === 0) {
-                    return new PropertyValueResult(false,  []);
-                }
                 return new PropertyValueResult(false, array_map(fn($item)
                 => new $dtoClass($item), $value));
             }
