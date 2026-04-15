@@ -1,4 +1,4 @@
-FROM php:8.5-cli-alpine
+FROM php:8.5.5-cli-alpine
 
 RUN apk add --update linux-headers
 RUN apk --no-cache add ${PHPIZE_DEPS}
